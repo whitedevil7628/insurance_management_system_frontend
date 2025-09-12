@@ -111,12 +111,12 @@
 
 .btn-outline {
   background: transparent;
-  color: #667eea;
+  color: #ffffff;
   border: 2px solid #667eea;
 }
 
 .btn-outline:hover {
-  background: #667eea;
+  background:#667eea;
   color: white;
 }
 
