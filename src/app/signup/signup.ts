@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { LoginRegisterService } from '../Services/login-register-service';
+import { JwtService } from '../Services/jwt.service';
 
 @Component({
   selector: 'app-signup',
@@ -22,7 +23,8 @@ export class SignupComponent {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private userService: LoginRegisterService
+    private userService: LoginRegisterService,
+    private jwtService: JwtService
   ) {
     this.signupForm = this.fb.group({
       name: ['', Validators.required],
@@ -46,8 +48,8 @@ export class SignupComponent {
           alert('Signup successful!');
           this.userService.getJwt(signupData.email, signupData.password).subscribe({
             next: (jwtResponse: any) => {
-              localStorage.setItem('jwt', jwtResponse.token);
-              this.router.navigate(['/home']);
+              localStorage.setItem('jwt', jwtResponse);
+              this.jwtService.redirectBasedOnRole();
               this.isLoading = false;
             },
             error: () => {
