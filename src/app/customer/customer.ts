@@ -78,10 +78,13 @@ export class Customer implements OnInit {
     this.isLoading = true;
     this.customerService.getAllPolicies().subscribe({
       next: (data) => {
-        this.policies = data;
+        console.log('Policies data received:', data);
+        this.policies = data || [];
         this.isLoading = false;
       },
-      error: () => {
+      error: (error) => {
+        console.error('Error loading policies:', error);
+        this.policies = [];
         this.isLoading = false;
       }
     });
@@ -156,9 +159,16 @@ export class Customer implements OnInit {
   }
 
   getFilteredPolicies() {
-    return this.policies.filter(policy => 
-      policy.name.toLowerCase().includes(this.searchTerm.toLowerCase())
-    );
+    if (!this.policies || this.policies.length === 0) {
+      console.log('No policies available');
+      return [];
+    }
+    
+    console.log('Filtering policies:', this.policies);
+    return this.policies.filter(policy => {
+      const name = policy.name || policy[4] || 'No Name';
+      return name.toLowerCase().includes(this.searchTerm.toLowerCase());
+    });
   }
 
   openClaimForm(policy: any) {
@@ -242,19 +252,40 @@ export class Customer implements OnInit {
       return;
     }
 
+    console.log('Policy data before processing:', policy);
+    console.log('Policy array values:', {
+      index0: policy[0],
+      index1: policy[1], 
+      index2: policy[2],
+      index3: policy[3],
+      index4: policy[4],
+      index5: policy[5]
+    });
+    
+    // Extract values with proper type conversion
+    const name = policy[4] || policy.name || 'No Name';
+    const policyType = policy[5] || policy.policyType || policy.policy_type || policy.type || 'N/A';
+    const premiumAmount = parseFloat(policy[2]) || parseFloat(policy.premium_amount) || parseFloat(policy.premiumAmount) || parseFloat(policy.premium) || 0;
+    const coverageAmount = parseFloat(policy[0]) || parseFloat(policy.coverageamount) || parseFloat(policy.coverageAmount) || parseFloat(policy.coverage) || 0;
+    const coverageDetails = policy[3] || policy.coverage_details || policy.coverageDetails || policy.description || 'No Description';
+    
     const policyData = {
       customerId: this.customerId,
-      name: policy.name || 'No Name',
-      policyType: policy.policy_type || 'N/A',
-      premiumAmount: policy.premium_amount || 0,
-      coverageAmount: policy.coverageamount || 0,
-      coverageDetails: policy.coverage_details || 'No Description',
+      name: name,
+      policyType: policyType,
+      premiumAmount: premiumAmount,
+      coverageAmount: coverageAmount,
+      coverageDetails: coverageDetails,
       validityPeriod: 1
     };
+
+    console.log('Extracted values:', { name, policyType, premiumAmount, coverageAmount, coverageDetails });
+    console.log('Sending policy data:', policyData);
 
     this.isLoading = true;
     this.customerService.buyPolicy(policyData).subscribe({
       next: (response) => {
+        console.log('Policy creation response:', response);
         this.showNotificationMessage('Policy selected successfully!', 'success');
         this.loadPolicies();
         this.isLoading = false;

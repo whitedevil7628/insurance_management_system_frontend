@@ -94,28 +94,28 @@
               <div class="policy-icon">
                 <i class="fas fa-shield-check"></i>
               </div>
-              <h3>{{ policy.name }}</h3>
+              <h3>{{ policy[4] || policy.name || 'No Name' }}</h3>
             </div>
             <div class="policy-details">
               <div class="detail-item">
                 <span class="label">Name:</span>
-                <span class="value">{{ policy.name || 'No Name' }}</span>
+                <span class="value">{{ policy[4] || policy.name || 'No Name' }}</span>
               </div>
               <div class="detail-item">
                 <span class="label">Type:</span>
-                <span class="value">{{ policy.policy_type || 'N/A' }}</span>
+                <span class="value">{{ policy.policyType || policy[5] || policy.policy_type || policy.type || 'N/A' }}</span>
               </div>
               <div class="detail-item">
                 <span class="label">Premium:</span>
-                <span class="value">₹{{ policy.premium_amount || 0 | number }}</span>
+                <span class="value">₹{{ policy[2] || policy.premium_amount || policy.premiumAmount || policy.premium || 0 | number }}</span>
               </div>
               <div class="detail-item">
                 <span class="label">Coverage:</span>
-                <span class="value">₹{{ policy.coverageamount || 0 | number }}</span>
+                <span class="value">₹{{ policy[0] || policy.coverageamount || policy.coverageAmount || policy.coverage || 0 | number }}</span>
               </div>
               <div class="detail-item">
                 <span class="label">Details:</span>
-                <span class="value">{{ policy.coverage_details || 'No Description' }}</span>
+                <span class="value">{{ policy[3] || policy.coverage_details || policy.coverageDetails || policy.description || 'No Description' }}</span>
               </div>
             </div>
             <div class="policy-actions">
