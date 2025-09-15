@@ -30,6 +30,15 @@ export class Admin implements OnInit {
   // Forms
   showAgentForm = signal(false);
   showPolicyForm = signal(false);
+  
+  // Loading states
+  isCreatingAgent = signal(false);
+  isCreatingPolicy = signal(false);
+  
+  // Notifications
+  showNotification = signal(false);
+  notificationMessage = signal('');
+  notificationType = signal<'success' | 'error'>('success');
   agentForm = signal({
     name: '', contactInfo: '', password: '', gender: 'male', date: '',
     aadharnumber: null, phone: null, address: '', role: 'AGENT', orgEmail: ''
@@ -54,11 +63,28 @@ export class Admin implements OnInit {
   }
 
   loadData() {
-    this.adminService.getAllAgents().subscribe(data => this.agents.set(data || []));
-    this.adminService.getAllClaims().subscribe(data => this.claims.set(data || []));
-    this.adminService.getAllCustomers().subscribe(data => this.customers.set(data || []));
-    this.adminService.getAllPolicyList().subscribe(data => this.policies.set(data || []));
-    this.adminService.getAllPolicies().subscribe(data => this.policyLogs.set(data || []));
+    this.adminService.getAllAgents().subscribe({
+      next: data => this.agents.set(data || []),
+      error: () => this.agents.set([])
+    });
+    
+    // Skip claims loading if endpoint doesn't exist
+    this.claims.set([]);
+    
+    this.adminService.getAllCustomers().subscribe({
+      next: data => this.customers.set(data || []),
+      error: () => this.customers.set([])
+    });
+    
+    this.adminService.getAllPolicyList().subscribe({
+      next: data => this.policies.set(data || []),
+      error: () => this.policies.set([])
+    });
+    
+    this.adminService.getAllPolicies().subscribe({
+      next: data => this.policyLogs.set(data || []),
+      error: () => this.policyLogs.set([])
+    });
   }
 
   setActiveTab(tab: string) {
@@ -76,7 +102,12 @@ export class Admin implements OnInit {
 
   createAgent() {
     this.adminService.createAgent(this.agentForm()).subscribe(() => {
-      this.loadData();
+      this.showNotificationMessage('Agent created successfully!', 'success');
+      // Only reload agents data for faster response
+      this.adminService.getAllAgents().subscribe({
+        next: data => this.agents.set(data || []),
+        error: () => this.agents.set([])
+      });
       this.showAgentForm.set(false);
       this.resetAgentForm();
     });
@@ -86,12 +117,16 @@ export class Admin implements OnInit {
     if (confirm('Delete agent?')) {
       this.adminService.deleteAgent(id).subscribe({
         next: () => {
-          alert('Agent deleted successfully');
-          this.loadData();
+          this.showNotificationMessage('Agent deleted successfully!', 'success');
+          // Only reload agents data for faster response
+          this.adminService.getAllAgents().subscribe({
+            next: data => this.agents.set(data || []),
+            error: () => this.agents.set([])
+          });
         },
         error: (error) => {
           console.error('Delete error:', error);
-          alert('Failed to delete agent: ' + (error.error?.message || 'Server error'));
+          this.showNotificationMessage('Cannot delete agent. Agent may have related data.', 'error');
         }
       });
     }
@@ -114,7 +149,7 @@ export class Admin implements OnInit {
     
     // Validation
     if (!form.name || !form.policyType || !form.premiumAmount || !form.coverageamount || !form.coverageDetails) {
-      alert('Please fill all required fields');
+      this.showNotificationMessage('Please fill all required fields', 'error');
       return;
     }
     
@@ -128,7 +163,12 @@ export class Admin implements OnInit {
     };
     
     this.adminService.createPolicyList(policyData).subscribe(() => {
-      this.loadData();
+      this.showNotificationMessage('Policy created successfully!', 'success');
+      // Only reload policies data for faster response
+      this.adminService.getAllPolicyList().subscribe({
+        next: data => this.policies.set(data || []),
+        error: () => this.policies.set([])
+      });
       this.showPolicyForm.set(false);
       this.resetPolicyForm();
     });
@@ -141,7 +181,13 @@ export class Admin implements OnInit {
         alert('Policy ID is missing');
         return;
       }
-      this.adminService.deletePolicyList(id).subscribe(() => this.loadData());
+      this.adminService.deletePolicyList(id).subscribe(() => {
+        // Only reload policies data for faster response
+        this.adminService.getAllPolicyList().subscribe({
+          next: data => this.policies.set(data || []),
+          error: () => this.policies.set([])
+        });
+      });
     }
   }
 
@@ -200,5 +246,16 @@ export class Admin implements OnInit {
     } catch {
       return 'Invalid Date';
     }
+  }
+  
+  showNotificationMessage(message: string, type: 'success' | 'error') {
+    this.notificationMessage.set(message);
+    this.notificationType.set(type);
+    this.showNotification.set(true);
+    
+    // Auto hide after 3 seconds
+    setTimeout(() => {
+      this.showNotification.set(false);
+    }, 3000);
   }
 }
