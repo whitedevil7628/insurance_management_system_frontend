@@ -35,7 +35,7 @@ export class Admin implements OnInit {
     aadharnumber: null, phone: null, address: '', role: 'AGENT', orgEmail: ''
   });
   policyForm = signal({
-    name: '', policy_type: '', premium_amount: null, coverageamount: null, coverage_details: ''
+    name: '', policyType: '', premiumAmount: null, coverageamount: null, coverageDetails: ''
   });
 
   constructor(private jwtService: JwtService, private adminService: AdminService) {}
@@ -110,7 +110,24 @@ export class Admin implements OnInit {
   }
 
   createPolicy() {
-    this.adminService.createPolicyList(this.policyForm()).subscribe(() => {
+    const form = this.policyForm();
+    
+    // Validation
+    if (!form.name || !form.policyType || !form.premiumAmount || !form.coverageamount || !form.coverageDetails) {
+      alert('Please fill all required fields');
+      return;
+    }
+    
+    // Convert to exact backend format
+    const policyData = {
+      name: form.name,
+      policyType: form.policyType,
+      premiumAmount: Number(form.premiumAmount),
+      coverageamount: Number(form.coverageamount),
+      coverageDetails: form.coverageDetails
+    };
+    
+    this.adminService.createPolicyList(policyData).subscribe(() => {
       this.loadData();
       this.showPolicyForm.set(false);
       this.resetPolicyForm();
@@ -130,12 +147,19 @@ export class Admin implements OnInit {
 
   resetPolicyForm() {
     this.policyForm.set({
-      name: '', policy_type: '', premium_amount: null, coverageamount: null, coverage_details: ''
+      name: '', policyType: '', premiumAmount: null, coverageamount: null, coverageDetails: ''
     });
   }
 
   updatePolicyForm(field: string, value: any) {
-    this.policyForm.update(form => ({ ...form, [field]: value }));
+    let processedValue = value;
+    
+    // Convert numeric fields to numbers
+    if (field === 'premiumAmount' || field === 'coverageamount') {
+      processedValue = value ? Number(value) : null;
+    }
+    
+    this.policyForm.update(form => ({ ...form, [field]: processedValue }));
   }
 
   getFilteredPolicies() {
