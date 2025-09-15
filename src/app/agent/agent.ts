@@ -165,7 +165,18 @@ approveClaim(claimId: number) {
       next: (response) => {
         console.log('Claim approved successfully:', response);
         alert('Claim approved successfully!');
-        this.loadClaims();
+        
+        // Update the claim status locally
+        const claimIndex = this.claims.findIndex(c => c.claimId === claimId);
+        if (claimIndex !== -1) {
+          this.claims[claimIndex].status = 'APPROVED';
+        }
+        
+        // Update selected claim if it's the same one
+        if (this.selectedClaim && this.selectedClaim.claimId === claimId) {
+          this.selectedClaim.status = 'APPROVED';
+        }
+        
         this.closeClaimModal();
       },
       error: (error) => {
@@ -181,12 +192,23 @@ approveClaim(claimId: number) {
     });
 
     console.log('Rejecting claim:', claimId);
-    this.http.put(`http://localhost:8763/agents/reject-claim/${claimId}`, {}, { headers })
+    this.http.put(`http://localhost:8763/agents/reject-claim/${claimId}`, {}, { headers, responseType: 'text' })
       .subscribe({
         next: (response) => {
           console.log('Claim rejected successfully:', response);
           alert('Claim rejected successfully!');
-          this.loadClaims();
+          
+          // Update the claim status locally
+          const claimIndex = this.claims.findIndex(c => c.claimId === claimId);
+          if (claimIndex !== -1) {
+            this.claims[claimIndex].status = 'REJECTED';
+          }
+          
+          // Update selected claim if it's the same one
+          if (this.selectedClaim && this.selectedClaim.claimId === claimId) {
+            this.selectedClaim.status = 'REJECTED';
+          }
+          
           this.closeClaimModal();
         },
         error: (error) => {
@@ -198,6 +220,10 @@ approveClaim(claimId: number) {
 
   getAgentInitials(): string {
     return this.agentData?.name ? this.jwtService.getInitials(this.agentData.name) : 'AG';
+  }
+
+  isClaimProcessed(status: string): boolean {
+    return status === 'APPROVED' || status === 'REJECTED';
   }
 
   setActiveSection(section: string) {

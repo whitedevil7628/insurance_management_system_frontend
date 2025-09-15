@@ -480,6 +480,22 @@
   font-size: 0.75rem;
 }
 
+.status-approved {
+  color: #28a745;
+  background: rgba(40, 167, 69, 0.1);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+}
+
+.status-rejected {
+  color: #dc3545;
+  background: rgba(220, 53, 69, 0.1);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+}
+
 /* Modal Styles */
 .modal-overlay {
   position: fixed;
@@ -583,6 +599,18 @@
   display: inline-block;
 }
 
+.status-badge.status-approved {
+  background: #28a745;
+}
+
+.status-badge.status-rejected {
+  background: #dc3545;
+}
+
+.status-badge.status-filed {
+  background: #ffa500;
+}
+
 .modal-actions {
   display: flex;
   gap: 15px;
@@ -622,6 +650,38 @@
 .btn-reject:hover {
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+}
+
+/* Claim Status Message */
+.claim-status-message {
+  text-align: center;
+  padding: 30px 20px;
+  margin-top: 20px;
+  border-top: 1px solid #e1e5e9;
+}
+
+.status-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+}
+
+.status-icon.approved {
+  color: #28a745;
+}
+
+.status-icon.rejected {
+  color: #dc3545;
+}
+
+.claim-status-message p {
+  font-size: 1.1rem;
+  color: #666;
+  margin: 0;
+}
+
+.claim-status-message strong {
+  color: #333;
+  text-transform: capitalize;
 }
 
 /* Responsive Design */
