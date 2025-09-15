@@ -410,7 +410,7 @@
               </div>
               <div class="form-group">
                 <label>Policy Type</label>
-                <select [value]="policyForm().policy_type" #typeSelect (change)="updatePolicyForm('policy_type', typeSelect.value)" required>
+                <select [value]="policyForm().policyType" #typeSelect (change)="updatePolicyForm('policyType', typeSelect.value)" required>
                   <option value="">Select Type</option>
                   <option value="Health">Health</option>
                   <option value="Vehicle">Vehicle</option>
@@ -421,7 +421,7 @@
               </div>
               <div class="form-group">
                 <label>Premium Amount</label>
-                <input [value]="policyForm().premium_amount" #premiumInput (input)="updatePolicyForm('premium_amount', premiumInput.value)" type="number" placeholder="Premium Amount" required>
+                <input [value]="policyForm().premiumAmount" #premiumInput (input)="updatePolicyForm('premiumAmount', premiumInput.value)" type="number" placeholder="Premium Amount" required>
               </div>
               <div class="form-group">
                 <label>Coverage Amount</label>
@@ -430,7 +430,7 @@
             </div>
             <div class="form-group">
               <label>Coverage Details</label>
-              <textarea [value]="policyForm().coverage_details" #detailsTextarea (input)="updatePolicyForm('coverage_details', detailsTextarea.value)" placeholder="Coverage Details" required></textarea>
+              <textarea [value]="policyForm().coverageDetails" #detailsTextarea (input)="updatePolicyForm('coverageDetails', detailsTextarea.value)" placeholder="Coverage Details" required></textarea>
             </div>
             
             <div class="form-actions">
