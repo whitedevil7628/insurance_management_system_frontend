@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class JwtService {
   constructor(private router: Router) {}
@@ -29,7 +29,8 @@ export class JwtService {
     const token = this.getToken();
     if (token) {
       const decoded = this.decodeToken(token);
-      return decoded?.role || 'CUSTOMER';
+      // Check multiple possible role field names
+      return decoded?.role || decoded?.authorities || decoded?.authority || decoded?.roles || 'CUSTOMER';
     }
     return null;
   }
@@ -44,23 +45,33 @@ export class JwtService {
   }
 
   getInitials(name: string): string {
-    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase();
   }
 
   redirectBasedOnRole(): void {
     const role = this.getUserRole();
+    console.log('User role:', role);
+    
     switch (role?.toUpperCase()) {
       case 'CUSTOMER':
       case 'USER':
+        console.log('Navigating to customer');
         this.router.navigate(['/customer']);
         break;
       case 'AGENT':
+        console.log('Navigating to agent');
         this.router.navigate(['/agent']);
         break;
       case 'ADMIN':
+        console.log('Navigating to admin');
         this.router.navigate(['/admin']);
         break;
       default:
+        console.log('No matching role, redirecting to login');
         this.router.navigate(['/login']);
     }
   }
