@@ -15,6 +15,8 @@ export class Login {
   password = '';
   showPassword = false;
   isLoading = false;
+  loginType = ''; // 'customer' or 'agent'
+  showForm = false;
 
   constructor(private router: Router, private http: HttpClient, private jwtService: JwtService) {}
 
@@ -48,16 +50,31 @@ export class Login {
         Accept: 'application/json',
       });
 
+      const loginUrl = this.loginType === 'agent' 
+        ? 'http://localhost:8763/auth/agentlogin' 
+        : 'http://localhost:8763/auth/login';
+
       this.http
-        .post('http://localhost:8763/auth/login', loginData, {
+        .post(loginUrl, loginData, {
           headers,
           responseType: 'text',
         })
         .subscribe({
           next: (response) => {
             console.log('Login successful:', response);
+            console.log('Login type:', this.loginType);
             localStorage.setItem('jwt', response.trim());
-            this.jwtService.redirectBasedOnRole();
+            console.log('Token saved to localStorage');
+            
+            if (this.loginType === 'agent') {
+              console.log('Agent login detected - redirecting to /agent');
+              setTimeout(() => {
+                this.router.navigate(['/agent']);
+              }, 100);
+            } else {
+              console.log('Customer login - using JWT service redirect');
+              this.jwtService.redirectBasedOnRole();
+            }
             this.isLoading = false;
           },
           error: (error) => {
@@ -86,5 +103,15 @@ export class Login {
 
   navigateToHome() {
     this.router.navigate(['/']);
+  }
+
+  goToCustomerLogin() {
+    this.loginType = 'customer';
+    this.showForm = true;
+  }
+
+  goToAgentLogin() {
+    this.loginType = 'agent';
+    this.showForm = true;
   }
 }

@@ -1,1 +1,291 @@
-<p>agent works!</p>
+<div class="agent-dashboard">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="brand">
+        <i class="fas fa-shield-alt"></i>
+        <span>SecureLife</span>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <ul>
+        <li [class.active]="activeSection === 'claims'" (click)="setActiveSection('claims')">
+          <i class="fas fa-file-medical"></i>
+          <span>All Claims</span>
+        </li>
+        <li [class.active]="activeSection === 'profile'" (click)="setActiveSection('profile')">
+          <i class="fas fa-user"></i>
+          <span>Profile</span>
+        </li>
+        <li [class.active]="activeSection === 'help'" (click)="setActiveSection('help')">
+          <i class="fas fa-question-circle"></i>
+          <span>Help</span>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Top Navbar -->
+    <header class="top-navbar">
+      <div class="navbar-left">
+        <div class="user-avatar">
+          {{getAgentInitials()}}
+        </div>
+        <span class="user-name">{{agentData?.name || 'Agent'}}</span>
+      </div>
+      
+      <div class="navbar-center">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Search claims...">
+        </div>
+      </div>
+      
+      <div class="navbar-right">
+        <button class="notification-btn">
+          <i class="fas fa-bell"></i>
+          <span class="notification-badge">5</span>
+        </button>
+        <button class="logout-btn" (click)="logout()">
+          <i class="fas fa-sign-out-alt"></i>
+          Logout
+        </button>
+      </div>
+    </header>
+
+    <!-- Content Area -->
+    <div class="content-area">
+      <!-- All Claims Section -->
+      <div *ngIf="activeSection === 'claims'" class="section">
+        <div class="section-header">
+          <h2>All Claims</h2>
+          <p>Manage and review insurance claims from customers</p>
+        </div>
+        
+        <div class="claims-container">
+          <div class="claims-grid" *ngIf="claims.length > 0">
+            <div class="claim-card" *ngFor="let claim of claims" (click)="openClaimModal(claim)">
+              <div class="claim-header">
+                <div class="claim-icon">
+                  <i class="fas fa-file-medical"></i>
+                </div>
+                <div class="claim-info">
+                  <h3>Claim #{{claim.claimId}}</h3>
+                  <p>Policy ID: {{claim.policyId}}</p>
+                </div>
+              </div>
+              <div class="claim-details">
+                <div class="detail-item">
+                  <span class="label">Amount:</span>
+                  <span class="value">₹{{claim.claimAmount | number}}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Customer ID:</span>
+                  <span class="value">{{claim.customerId}}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Status:</span>
+                  <span class="value status-filed">{{claim.status}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="empty-state" *ngIf="claims.length === 0">
+            <i class="fas fa-file-medical"></i>
+            <h3>No Claims Available</h3>
+            <p>There are currently no claims to review.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile Section -->
+      <div *ngIf="activeSection === 'profile'" class="section">
+        <div class="section-header">
+          <h2>Agent Profile</h2>
+          <p>View and manage your agent information</p>
+        </div>
+        
+        <div class="profile-container">
+          <div class="profile-card">
+            <div class="profile-header">
+              <div class="profile-avatar">
+                {{getAgentInitials()}}
+              </div>
+              <div class="profile-info">
+                <h3>{{agentData?.name || 'Agent Name'}}</h3>
+                <p>Agent ID: {{agentData?.agentId || 'N/A'}}</p>
+              </div>
+            </div>
+            
+            <div class="profile-form">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>Full Name</label>
+                  <input type="text" [value]="agentData?.name || ''" readonly class="readonly">
+                </div>
+                <div class="form-group">
+                  <label>Email Address</label>
+                  <input type="email" [value]="agentData?.orgEmail || ''" readonly class="readonly">
+                </div>
+                <div class="form-group">
+                  <label>Contact Info</label>
+                  <input type="text" [value]="agentData?.contactInfo || ''" readonly class="readonly">
+                </div>
+                <div class="form-group">
+                  <label>Phone</label>
+                  <input type="text" [value]="agentData?.phone || ''" readonly class="readonly">
+                </div>
+                <div class="form-group">
+                  <label>Gender</label>
+                  <input type="text" [value]="agentData?.gender || ''" readonly class="readonly">
+                </div>
+                <div class="form-group">
+                  <label>Date of Birth</label>
+                  <input type="text" [value]="agentData?.date || ''" readonly class="readonly">
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Address</label>
+                <textarea [value]="agentData?.address || ''" readonly class="readonly" rows="2"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Help Section -->
+      <div *ngIf="activeSection === 'help'" class="section">
+        <div class="section-header">
+          <h2>Help & Support</h2>
+          <p>Get assistance with agent portal and claim processing</p>
+        </div>
+        
+        <div class="help-container">
+          <div class="help-card">
+            <div class="help-header">
+              <i class="fas fa-envelope"></i>
+              <h3>Contact Admin</h3>
+            </div>
+            <div class="help-content">
+              <p>Need help with the agent portal? Contact our admin team.</p>
+              <a href="mailto:admin@securelife.com?subject=Agent Support Request" class="btn-primary">
+                <i class="fas fa-paper-plane"></i>
+                Send Email to Admin
+              </a>
+            </div>
+          </div>
+          
+          <div class="help-card">
+            <div class="help-header">
+              <i class="fas fa-phone"></i>
+              <h3>Agent Hotline</h3>
+            </div>
+            <div class="help-content">
+              <p>Call our agent support hotline:</p>
+              <p class="phone-number">1-800-AGENT (1-800-243-68)</p>
+              <p class="hours">Available 24/7</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Claim Details Modal -->
+  <div class="modal-overlay" *ngIf="showClaimModal" (click)="closeClaimModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Claim Details #{{selectedClaim?.claimId}}</h3>
+        <button class="close-btn" (click)="closeClaimModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="claim-modal-content">
+        <!-- Claim Information -->
+        <div class="info-section">
+          <h4>Claim Information</h4>
+          <div class="info-grid">
+            <div class="info-item">
+              <label>Claim ID:</label>
+              <span>{{selectedClaim?.claimId}}</span>
+            </div>
+            <div class="info-item">
+              <label>Claim Amount:</label>
+              <span>₹{{selectedClaim?.claimAmount | number}}</span>
+            </div>
+            <div class="info-item">
+              <label>Status:</label>
+              <span class="status-badge">{{selectedClaim?.status}}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Customer Information -->
+        <div class="info-section" *ngIf="claimDetails.customer">
+          <h4>Customer Information</h4>
+          <div class="info-grid">
+            <div class="info-item">
+              <label>Customer ID:</label>
+              <span>{{claimDetails.customer.customerId}}</span>
+            </div>
+            <div class="info-item">
+              <label>Name:</label>
+              <span>{{claimDetails.customer.name}}</span>
+            </div>
+            <div class="info-item">
+              <label>Email:</label>
+              <span>{{claimDetails.customer.email}}</span>
+            </div>
+            <div class="info-item">
+              <label>Phone:</label>
+              <span>{{claimDetails.customer.phone}}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Policy Information -->
+        <div class="info-section" *ngIf="claimDetails.policy">
+          <h4>Policy Information</h4>
+          <div class="info-grid">
+            <div class="info-item">
+              <label>Policy ID:</label>
+              <span>{{claimDetails.policy.policyId}}</span>
+            </div>
+            <div class="info-item">
+              <label>Policy Name:</label>
+              <span>{{claimDetails.policy.name}}</span>
+            </div>
+            <div class="info-item">
+              <label>Premium Amount:</label>
+              <span>₹{{claimDetails.policy.premiumAmount | number}}</span>
+            </div>
+            <div class="info-item">
+              <label>Coverage:</label>
+              <span>{{claimDetails.policy.coverageDetails}}</span>
+            </div>
+            <div class="info-item">
+              <label>Validity:</label>
+              <span>{{claimDetails.policy.validityPeriod}} years</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="modal-actions" *ngIf="selectedClaim">
+          <button class="btn-reject" (click)="rejectClaim(selectedClaim.claimId)">
+            <i class="fas fa-times"></i>
+            Reject Claim
+          </button>
+          <button class="btn-approve" (click)="approveClaim(selectedClaim.claimId)">
+            <i class="fas fa-check"></i>
+            Approve Claim
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
