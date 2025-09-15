@@ -48,7 +48,16 @@ export class CustomerService {
 
   updateProfile(customerData: any): Observable<any> {
     const customerId = this.jwtService.getCustomerId();
-    const updateData = { ...customerData, customerId };
+    const updateData = {
+      customerId: customerId,
+      name: customerData.name,
+      email: customerData.email,
+      gender: customerData.gender,
+      date: customerData.date,
+      aadharnumber: customerData.aadharnumber,
+      phone: customerData.phone,
+      address: customerData.address
+    };
     return this.http.put(`${this.apiUrl}/customer/Update`, updateData, {
       headers: this.getHeaders(),
       responseType: 'text'
