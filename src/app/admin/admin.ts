@@ -41,6 +41,8 @@ export class Admin implements OnInit {
   showNotification = signal(false);
   notificationMessage = signal('');
   notificationType = signal<'success' | 'error'>('success');
+  
+
   agentForm = signal({
     name: '', contactInfo: '', password: '', gender: 'male', date: '',
     aadharnumber: null, phone: null, address: '', role: 'AGENT', orgEmail: ''
@@ -58,6 +60,7 @@ export class Admin implements OnInit {
   ngOnInit() {
     this.loadUserData();
     this.loadData();
+
   }
 
   loadUserData() {
@@ -297,4 +300,6 @@ export class Admin implements OnInit {
       this.showNotification.set(false);
     }, 3000);
   }
+  
+
 }

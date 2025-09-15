@@ -81,4 +81,15 @@ export class AdminService {
   sendCustomSMS(smsData: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/api/sms/send`, smsData, { headers: this.getHeaders() });
   }
+  
+  getNotifications(agentId: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/notify/agent/${agentId}`, { headers: this.getHeaders() });
+  }
+  
+  deleteNotification(notificationId: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/notify/delete/${notificationId}`, { 
+      headers: this.getHeaders(),
+      responseType: 'text'
+    });
+  }
 }

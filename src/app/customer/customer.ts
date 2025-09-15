@@ -39,6 +39,10 @@ export class Customer implements OnInit {
   queryForm: FormGroup;
   customerClaims: any[] = [];
   isQueryLoading = false;
+  
+  // Notifications
+  notifications: any[] = [];
+  showNotificationPanel = false;
 
   constructor(
     private jwtService: JwtService,
@@ -78,6 +82,7 @@ export class Customer implements OnInit {
     this.loadPolicies();
     this.loadProfile();
     this.loadClaims();
+    this.loadNotifications();
   }
 
   loadUserData() {
@@ -385,5 +390,34 @@ export class Customer implements OnInit {
       this.showNotificationMessage('Please fill all required fields correctly.', 'error');
       this.queryForm.markAllAsTouched();
     }
+  }
+  
+  loadNotifications() {
+    if (this.customerId) {
+      this.customerService.getNotifications(this.customerId).subscribe({
+        next: (data) => this.notifications = data || [],
+        error: () => this.notifications = []
+      });
+    }
+  }
+  
+  toggleNotifications() {
+    this.showNotificationPanel = !this.showNotificationPanel;
+  }
+  
+  toggleNotificationExpand(index: number) {
+    this.notifications[index].expanded = !this.notifications[index].expanded;
+  }
+  
+  markAsRead(notification: any, event: Event) {
+    event.stopPropagation();
+    this.customerService.deleteNotification(notification.id).subscribe({
+      next: () => {
+        this.notifications = this.notifications.filter(n => n.id !== notification.id);
+      },
+      error: (error) => {
+        console.error('Error marking notification as read:', error);
+      }
+    });
   }
 }
