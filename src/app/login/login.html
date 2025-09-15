@@ -13,22 +13,38 @@
       <div class="login-form-container">
         <div class="login-form">
           <div class="form-header">
+            <div class="redirect-buttons">
+              <button 
+                type="button" 
+                class="redirect-btn customer-redirect" 
+                (click)="goToCustomerLogin()">
+                <i class="fas fa-user"></i>
+                Customer Login
+              </button>
+              <button 
+                type="button" 
+                class="redirect-btn agent-redirect" 
+                (click)="goToAgentLogin()">
+                <i class="fas fa-user-tie"></i>
+                Agent Login
+              </button>
+            </div>
             <h1>Welcome Back</h1>
             <p>Sign in to your SecureLife Insurance account</p>
           </div>
 
-          <form (ngSubmit)="onLogin()" #loginForm="ngForm">
+          <form *ngIf="showForm" (ngSubmit)="onLogin()" #loginForm="ngForm">
             <div class="form-group">
               <label for="email">
                 <i class="fas fa-envelope"></i>
-                Email Address
+                {{ loginType === 'agent' ? 'Agent Email' : 'Customer Email' }}
               </label>
               <input 
                 type="email" 
                 id="email" 
                 name="email"
                 [(ngModel)]="email"
-                placeholder="Enter your email address"
+                [placeholder]="loginType === 'agent' ? 'Enter your agent email' : 'Enter your customer email'"
                 required
                 email
                 #emailInput="ngModel"
@@ -42,7 +58,7 @@
             <div class="form-group">
               <label for="password">
                 <i class="fas fa-lock"></i>
-                Password
+                {{ loginType === 'agent' ? 'Agent Password' : 'Customer Password' }}
               </label>
               <div class="password-input">
                 <input 
@@ -50,7 +66,7 @@
                   id="password" 
                   name="password"
                   [(ngModel)]="password"
-                  placeholder="Enter your password"
+                  [placeholder]="loginType === 'agent' ? 'Enter your agent password' : 'Enter your customer password'"
                   required
                   minlength="6"
                   #passwordInput="ngModel"
@@ -80,7 +96,7 @@
               [disabled]="loginForm.invalid || isLoading"
             >
               <i [class]="isLoading ? 'fas fa-spinner fa-spin' : 'fas fa-sign-in-alt'"></i>
-              {{ isLoading ? 'Signing In...' : 'Sign In' }}
+              {{ isLoading ? 'Signing In...' : 'Sign In as ' + (loginType === 'agent' ? 'Agent' : 'Customer') }}
             </button>
           </form>
 
