@@ -22,6 +22,7 @@ export class AdminService {
   createAgent(agentData: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/auth/registeragent`, agentData, {
       headers: this.getHeaders(),
+      responseType: 'text'
     });
   }
 
