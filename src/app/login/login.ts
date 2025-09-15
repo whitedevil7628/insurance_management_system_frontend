@@ -15,6 +15,9 @@ export class Login {
   password = '';
   showPassword = false;
   isLoading = false;
+  showNotification = false;
+  notificationMessage = '';
+  notificationType: 'success' | 'error' = 'success';
   loginType = ''; // 'customer' or 'agent'
   showForm = false;
 
@@ -23,12 +26,12 @@ export class Login {
   onLogin() {
     // Validate inputs
     if (!this.email || !this.password) {
-      alert('Please enter both email and password.');
+      this.showNotificationMessage('Please enter both email and password.', 'error');
       return;
     }
 
     if (this.email.trim() === '' || this.password.trim() === '') {
-      alert('Email and password cannot be empty.');
+      this.showNotificationMessage('Email and password cannot be empty.', 'error');
       return;
     }
 
@@ -66,15 +69,17 @@ export class Login {
             localStorage.setItem('jwt', response.trim());
             console.log('Token saved to localStorage');
             
-            if (this.loginType === 'agent') {
-              console.log('Agent login detected - redirecting to /agent');
-              setTimeout(() => {
+            this.showNotificationMessage('Login successful! Redirecting...', 'success');
+            
+            setTimeout(() => {
+              if (this.loginType === 'agent') {
+                console.log('Agent login detected - redirecting to /agent');
                 this.router.navigate(['/agent']);
-              }, 100);
-            } else {
-              console.log('Customer login - using JWT service redirect');
-              this.jwtService.redirectBasedOnRole();
-            }
+              } else {
+                console.log('Customer login - using JWT service redirect');
+                this.jwtService.redirectBasedOnRole();
+              }
+            }, 1000);
             this.isLoading = false;
           },
           error: (error) => {
@@ -87,7 +92,7 @@ export class Login {
               errorMessage = 'Invalid email or password.';
             }
             
-            alert(errorMessage);
+            this.showNotificationMessage(errorMessage, 'error');
             this.isLoading = false;
           },
         });
@@ -113,5 +118,15 @@ export class Login {
   goToAgentLogin() {
     this.loginType = 'agent';
     this.showForm = true;
+  }
+
+  showNotificationMessage(message: string, type: 'success' | 'error') {
+    this.notificationMessage = message;
+    this.notificationType = type;
+    this.showNotification = true;
+    
+    setTimeout(() => {
+      this.showNotification = false;
+    }, 3000);
   }
 }

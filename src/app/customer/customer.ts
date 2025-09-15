@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { JwtService } from '../Services/jwt.service';
 import { CustomerService } from '../Services/customer.service';
 
@@ -23,19 +24,27 @@ export class Customer implements OnInit {
   myPolicies: any[] = [];
   profileForm: FormGroup;
   isLoading = false;
+  isPolicyLoading = false;
+  isClaimLoading = false;
+  isProfileLoading = false;
   searchTerm = '';
   showNotification = false;
   notificationMessage = '';
   notificationType: 'success' | 'error' = 'success';
   showClaimForm = false;
+  showPolicyDetails = false;
   selectedPolicy: any = null;
+  selectedPolicyForDetails: any = null;
   claimForm: FormGroup;
+  queryForm: FormGroup;
   customerClaims: any[] = [];
+  isQueryLoading = false;
 
   constructor(
     private jwtService: JwtService,
     private customerService: CustomerService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private router: Router
   ) {
     this.profileForm = this.fb.group({
       name: ['', Validators.required],
@@ -54,6 +63,13 @@ export class Customer implements OnInit {
       customerId: [{value: '', disabled: true}],
       customerName: [{value: '', disabled: true}],
       claimAmount: ['', [Validators.required, Validators.min(1)]]
+    });
+    
+    this.queryForm = this.fb.group({
+      name: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      service: ['', Validators.required],
+      message: ['', Validators.required]
     });
   }
 
@@ -107,17 +123,17 @@ export class Customer implements OnInit {
 
   updateProfile() {
     if (this.profileForm.valid) {
-      this.isLoading = true;
+      this.isProfileLoading = true;
       this.customerService.updateProfile(this.profileForm.value).subscribe({
         next: (response) => {
           console.log('Profile update response:', response);
           this.showNotificationMessage('Profile updated successfully!', 'success');
-          this.isLoading = false;
+          this.isProfileLoading = false;
         },
         error: (error) => {
           console.error('Update error:', error);
           this.showNotificationMessage('Failed to update profile. Please try again.', 'error');
-          this.isLoading = false;
+          this.isProfileLoading = false;
         }
       });
     } else {
@@ -126,7 +142,10 @@ export class Customer implements OnInit {
   }
 
   logout() {
-    this.jwtService.logout();
+    if (confirm('Are you sure you want to logout?')) {
+      this.jwtService.logout();
+      this.router.navigate(['/login']);
+    }
   }
 
   loadProfile() {
@@ -198,18 +217,18 @@ export class Customer implements OnInit {
         claimAmount: this.claimForm.get('claimAmount')?.value
       };
 
-      this.isLoading = true;
+      this.isClaimLoading = true;
       this.customerService.fileClaim(claimData).subscribe({
         next: (response) => {
           this.showNotificationMessage('Claim filed successfully!', 'success');
           this.closeClaimForm();
           this.loadClaims();
-          this.isLoading = false;
+          this.isClaimLoading = false;
         },
         error: (error) => {
           console.error('Claim filing error:', error);
           this.showNotificationMessage('Failed to file claim. Please try again.', 'error');
-          this.isLoading = false;
+          this.isClaimLoading = false;
         }
       });
     }
@@ -282,19 +301,57 @@ export class Customer implements OnInit {
     console.log('Extracted values:', { name, policyType, premiumAmount, coverageAmount, coverageDetails });
     console.log('Sending policy data:', policyData);
 
-    this.isLoading = true;
+    this.isPolicyLoading = true;
     this.customerService.buyPolicy(policyData).subscribe({
       next: (response) => {
         console.log('Policy creation response:', response);
         this.showNotificationMessage('Policy selected successfully!', 'success');
         this.loadPolicies();
-        this.isLoading = false;
+        this.isPolicyLoading = false;
       },
       error: (error) => {
         console.error('Policy selection error:', error);
         this.showNotificationMessage('Failed to select policy. Please try again.', 'error');
-        this.isLoading = false;
+        this.isPolicyLoading = false;
       }
     });
+  }
+
+  openPolicyDetails(policy: any) {
+    this.selectedPolicyForDetails = policy;
+    this.showPolicyDetails = true;
+  }
+
+  closePolicyDetails() {
+    this.showPolicyDetails = false;
+    this.selectedPolicyForDetails = null;
+  }
+
+  getPolicyDetailValue(policy: any, field: string): any {
+    switch (field) {
+      case 'name': return policy[4] || policy.name || 'No Name';
+      case 'type': return policy[5] || policy.policyType || policy.policy_type || policy.type || 'N/A';
+      case 'premium': return parseFloat(policy[2]) || parseFloat(policy.premium_amount) || parseFloat(policy.premiumAmount) || parseFloat(policy.premium) || 0;
+      case 'coverage': return parseFloat(policy[0]) || parseFloat(policy.coverageamount) || parseFloat(policy.coverageAmount) || parseFloat(policy.coverage) || 0;
+      case 'details': return policy[3] || policy.coverage_details || policy.coverageDetails || policy.description || 'No Description';
+      case 'id': return policy[1] || policy.policy_id || policy.policyId || policy.id || 'N/A';
+      default: return 'N/A';
+    }
+  }
+
+  submitQuery() {
+    if (this.queryForm.valid) {
+      this.isQueryLoading = true;
+      
+      // Simulate form submission (replace with actual API call if needed)
+      setTimeout(() => {
+        this.showNotificationMessage('Your query has been submitted successfully! We will get back to you soon.', 'success');
+        this.queryForm.reset();
+        this.isQueryLoading = false;
+      }, 1500);
+    } else {
+      this.showNotificationMessage('Please fill all required fields correctly.', 'error');
+      this.queryForm.markAllAsTouched();
+    }
   }
 }
