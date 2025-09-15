@@ -19,6 +19,9 @@ export class SignupComponent {
   signupForm: FormGroup;
   searchTerm = signal('');
   isLoading = false;
+  showNotification = false;
+  notificationMessage = '';
+  notificationType: 'success' | 'error' = 'success';
 
   constructor(
     private fb: FormBuilder,
@@ -45,27 +48,20 @@ export class SignupComponent {
       
       this.userService.signup(signupData).subscribe({
         next: (response) => {
-          alert('Signup successful!');
-          this.userService.getJwt(signupData.email, signupData.password).subscribe({
-            next: (jwtResponse: any) => {
-              localStorage.setItem('jwt', jwtResponse);
-              this.jwtService.redirectBasedOnRole();
-              this.isLoading = false;
-            },
-            error: () => {
-              alert('Could not get JWT after signup.');
-              this.router.navigate(['/login']);
-              this.isLoading = false;
-            }
-          });
+          this.showNotificationMessage('Signup successful! Redirecting to login...', 'success');
+          setTimeout(() => {
+            this.router.navigate(['/login']);
+          }, 2000);
+          this.isLoading = false;
         },
-        error: () => {
-          alert('Signup failed!');
+        error: (error) => {
+          console.error('Signup error:', error);
+          this.showNotificationMessage('Signup failed! Please try again.', 'error');
           this.isLoading = false;
         }
       });
     } else {
-      console.log('Form is invalid.');
+      this.showNotificationMessage('Please fill all required fields correctly.', 'error');
       this.signupForm.markAllAsTouched();
     }
   }
@@ -76,6 +72,16 @@ export class SignupComponent {
 
   navigateToLogin() {
     this.router.navigate(['/login']);
+  }
+
+  showNotificationMessage(message: string, type: 'success' | 'error') {
+    this.notificationMessage = message;
+    this.notificationType = type;
+    this.showNotification = true;
+    
+    setTimeout(() => {
+      this.showNotification = false;
+    }, 3000);
   }
 
   getFieldError(fieldName: string): string {

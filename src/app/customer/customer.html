@@ -119,8 +119,15 @@
               </div>
             </div>
             <div class="policy-actions">
-              <button class="btn-primary" (click)="buyPolicy(policy)" [disabled]="isLoading">Select Policy</button>
-              <button class="btn-outline">View Details</button>
+              <button class="btn-primary" (click)="buyPolicy(policy)" [disabled]="isPolicyLoading">
+                <span *ngIf="!isPolicyLoading">
+                  <i class="fas fa-check"></i> Select Policy
+                </span>
+                <span *ngIf="isPolicyLoading">
+                  <i class="fas fa-spinner fa-spin"></i> Selecting...
+                </span>
+              </button>
+              <button class="btn-outline" (click)="openPolicyDetails(policy)">View Details</button>
             </div>
           </div>
         </div>
@@ -264,35 +271,88 @@
         </div>
 
         <div class="help-container">
-          <div class="help-card">
-            <div class="help-header">
-              <i class="fas fa-envelope"></i>
-              <h3>Contact Admin</h3>
+          <div class="contact-info">
+            <div class="contact-item">
+              <div class="contact-icon">
+                <i class="fas fa-phone"></i>
+              </div>
+              <div class="contact-details">
+                <h4>Call Us</h4>
+                <p>1-800-SECURE (1-800-732-873)</p>
+                <span>24/7 Customer Support</span>
+              </div>
             </div>
-            <div class="help-content">
-              <p>Need help? Send an email to our admin team for assistance.</p>
-              <a
-                href="mailto:admin@securelife.com?subject=Customer Support Request&body=Hello Admin,%0D%0A%0D%0AI need assistance with:%0D%0A%0D%0ACustomer ID: {{
-                  customerId
-                }}%0D%0AName: {{ customerName }}%0D%0A%0D%0APlease describe your issue here..."
-                class="btn-primary"
-              >
-                <i class="fas fa-paper-plane"></i>
-                Send Email to Admin
-              </a>
+            <div class="contact-item">
+              <div class="contact-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="contact-details">
+                <h4>Email Us</h4>
+                <p>support@securelife.com</p>
+                <span>Quick Response Guaranteed</span>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">
+                <i class="fas fa-headset"></i>
+              </div>
+              <div class="contact-details">
+                <h4>Live Chat</h4>
+                <p>Available 24/7</p>
+                <span>Instant Support</span>
+              </div>
             </div>
           </div>
-
-          <div class="help-card">
-            <div class="help-header">
-              <i class="fas fa-phone"></i>
-              <h3>Phone Support</h3>
-            </div>
-            <div class="help-content">
-              <p>Call our customer service hotline:</p>
-              <p class="phone-number">1-800-SECURE (1-800-732-873)</p>
-              <p class="hours">Available 24/7</p>
-            </div>
+          
+          <div class="query-form-container">
+            <h3>Send us a Message</h3>
+            <form [formGroup]="queryForm" (ngSubmit)="submitQuery()" class="query-form">
+              <div class="form-group">
+                <input type="text" formControlName="name" placeholder="Your Name" required>
+                <div class="error-message" *ngIf="queryForm.get('name')?.invalid && queryForm.get('name')?.touched">
+                  Name is required
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <input type="email" formControlName="email" placeholder="Your Email" required>
+                <div class="error-message" *ngIf="queryForm.get('email')?.invalid && queryForm.get('email')?.touched">
+                  <span *ngIf="queryForm.get('email')?.errors?.['required']">Email is required</span>
+                  <span *ngIf="queryForm.get('email')?.errors?.['email']">Please enter a valid email</span>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <select formControlName="service" required>
+                  <option value="">Select Service</option>
+                  <option value="health">Health Insurance</option>
+                  <option value="life">Life Insurance</option>
+                  <option value="vehicle">Vehicle Insurance</option>
+                  <option value="home">Home Insurance</option>
+                  <option value="claims">Claims Support</option>
+                  <option value="general">General Inquiry</option>
+                </select>
+                <div class="error-message" *ngIf="queryForm.get('service')?.invalid && queryForm.get('service')?.touched">
+                  Please select a service
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <textarea formControlName="message" placeholder="Your Message" rows="4" required></textarea>
+                <div class="error-message" *ngIf="queryForm.get('message')?.invalid && queryForm.get('message')?.touched">
+                  Message is required
+                </div>
+              </div>
+              
+              <button type="submit" class="btn-primary" [disabled]="queryForm.invalid || isQueryLoading">
+                <span *ngIf="!isQueryLoading">
+                  <i class="fas fa-paper-plane"></i> Send Message
+                </span>
+                <span *ngIf="isQueryLoading">
+                  <i class="fas fa-spinner fa-spin"></i> Sending...
+                </span>
+              </button>
+            </form>
           </div>
         </div>
       </div>
@@ -354,9 +414,9 @@
               </div>
 
               <div class="form-actions">
-                <button type="submit" class="btn-primary" [disabled]="isLoading">
-                  <span *ngIf="!isLoading"> <i class="fas fa-save"></i> Update Profile </span>
-                  <span *ngIf="isLoading">
+                <button type="submit" class="btn-primary" [disabled]="isProfileLoading">
+                  <span *ngIf="!isProfileLoading"> <i class="fas fa-save"></i> Update Profile </span>
+                  <span *ngIf="isProfileLoading">
                     <i class="fas fa-spinner fa-spin"></i> Updating...
                   </span>
                 </button>
@@ -417,12 +477,106 @@
 
         <div class="form-actions">
           <button type="button" class="btn-outline" (click)="closeClaimForm()">Cancel</button>
-          <button type="submit" class="btn-primary" [disabled]="claimForm.invalid || isLoading">
-            <span *ngIf="!isLoading"> <i class="fas fa-file-medical"></i> Submit Claim </span>
-            <span *ngIf="isLoading"> <i class="fas fa-spinner fa-spin"></i> Filing... </span>
+          <button type="submit" class="btn-primary" [disabled]="claimForm.invalid || isClaimLoading">
+            <span *ngIf="!isClaimLoading"> <i class="fas fa-file-medical"></i> Submit Claim </span>
+            <span *ngIf="isClaimLoading"> <i class="fas fa-spinner fa-spin"></i> Filing... </span>
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Policy Details Modal -->
+  <div class="modal-overlay" *ngIf="showPolicyDetails" (click)="closePolicyDetails()">
+    <div class="modal-content policy-details-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Policy Details</h3>
+        <button class="close-btn" (click)="closePolicyDetails()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="policy-details-content" *ngIf="selectedPolicyForDetails">
+        <div class="policy-overview">
+          <div class="policy-icon-large">
+            <i class="fas fa-shield-check"></i>
+          </div>
+          <div class="policy-title">
+            <h2>{{ getPolicyDetailValue(selectedPolicyForDetails, 'name') }}</h2>
+            <span class="policy-type-badge">{{ getPolicyDetailValue(selectedPolicyForDetails, 'type') }}</span>
+          </div>
+        </div>
+        
+        <div class="details-grid">
+          <div class="detail-card">
+            <div class="detail-icon">
+              <i class="fas fa-id-card"></i>
+            </div>
+            <div class="detail-info">
+              <h4>Policy ID</h4>
+              <p>{{ getPolicyDetailValue(selectedPolicyForDetails, 'id') }}</p>
+            </div>
+          </div>
+          
+          <div class="detail-card">
+            <div class="detail-icon">
+              <i class="fas fa-money-bill-wave"></i>
+            </div>
+            <div class="detail-info">
+              <h4>Premium Amount</h4>
+              <p>₹{{ getPolicyDetailValue(selectedPolicyForDetails, 'premium') | number }}</p>
+            </div>
+          </div>
+          
+          <div class="detail-card">
+            <div class="detail-icon">
+              <i class="fas fa-umbrella"></i>
+            </div>
+            <div class="detail-info">
+              <h4>Coverage Amount</h4>
+              <p>₹{{ getPolicyDetailValue(selectedPolicyForDetails, 'coverage') | number }}</p>
+            </div>
+          </div>
+          
+          <div class="detail-card">
+            <div class="detail-icon">
+              <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="detail-info">
+              <h4>Validity Period</h4>
+              <p>1 Year</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="coverage-details">
+          <h4><i class="fas fa-info-circle"></i> Coverage Details</h4>
+          <p>{{ getPolicyDetailValue(selectedPolicyForDetails, 'details') }}</p>
+        </div>
+        
+        <div class="policy-benefits">
+          <h4><i class="fas fa-check-circle"></i> Key Benefits</h4>
+          <ul>
+            <li><i class="fas fa-check"></i> Comprehensive coverage for all eligible claims</li>
+            <li><i class="fas fa-check"></i> 24/7 customer support and assistance</li>
+            <li><i class="fas fa-check"></i> Quick claim processing within 7-10 business days</li>
+            <li><i class="fas fa-check"></i> No hidden charges or additional fees</li>
+            <li><i class="fas fa-check"></i> Renewable policy with flexible terms</li>
+          </ul>
+        </div>
+        
+        <div class="modal-actions">
+          <button class="btn-outline" (click)="closePolicyDetails()">Close</button>
+          <button class="btn-primary" (click)="buyPolicy(selectedPolicyForDetails); closePolicyDetails()" [disabled]="isPolicyLoading">
+            <span *ngIf="!isPolicyLoading">
+              <i class="fas fa-check"></i> Select This Policy
+            </span>
+            <span *ngIf="isPolicyLoading">
+              <i class="fas fa-spinner fa-spin"></i> Selecting...
+            </span>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
