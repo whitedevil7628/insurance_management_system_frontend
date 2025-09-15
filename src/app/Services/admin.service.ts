@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AdminService {
   private baseUrl = 'http://localhost:8763';
@@ -14,13 +14,15 @@ export class AdminService {
     const token = localStorage.getItem('jwt');
     return new HttpHeaders({
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     });
   }
 
   // Agent operations
   createAgent(agentData: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/auth/registeragent`, agentData, { headers: this.getHeaders() });
+    return this.http.post(`${this.baseUrl}/auth/registeragent`, agentData, {
+      headers: this.getHeaders(),
+    });
   }
 
   getAllAgents(): Observable<any> {
@@ -51,7 +53,9 @@ export class AdminService {
   }
 
   createPolicyList(policyData: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/api/policylist`, policyData, { headers: this.getHeaders() });
+    return this.http.post(`${this.baseUrl}/api/policylist`, policyData, {
+      headers: this.getHeaders(),
+    });
   }
 
   // Policy logs
@@ -61,7 +65,9 @@ export class AdminService {
 
   // Communication
   sendCustomMail(mailData: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/api/mail/send`, mailData, { headers: this.getHeaders() });
+    return this.http.post(`${this.baseUrl}/api/mail/send`, mailData, {
+      headers: this.getHeaders(),
+    });
   }
 
   sendCustomSMS(smsData: any): Observable<any> {

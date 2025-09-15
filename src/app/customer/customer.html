@@ -98,20 +98,28 @@
             </div>
             <div class="policy-details">
               <div class="detail-item">
+                <span class="label">Name:</span>
+                <span class="value">{{ policy.name || 'No Name' }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="label">Type:</span>
+                <span class="value">{{ policy.policy_type || 'N/A' }}</span>
+              </div>
+              <div class="detail-item">
                 <span class="label">Premium:</span>
-                <span class="value">₹{{ policy.premiumAmount | number }}</span>
+                <span class="value">₹{{ policy.premium_amount || 0 | number }}</span>
               </div>
               <div class="detail-item">
                 <span class="label">Coverage:</span>
-                <span class="value">{{ policy.coverageDetails }}</span>
+                <span class="value">₹{{ policy.coverageamount || 0 | number }}</span>
               </div>
               <div class="detail-item">
-                <span class="label">Validity:</span>
-                <span class="value">{{ policy.validityPeriod }} years</span>
+                <span class="label">Details:</span>
+                <span class="value">{{ policy.coverage_details || 'No Description' }}</span>
               </div>
             </div>
             <div class="policy-actions">
-              <button class="btn-primary">Buy Now</button>
+              <button class="btn-primary" (click)="buyPolicy(policy)" [disabled]="isLoading">Select Policy</button>
               <button class="btn-outline">View Details</button>
             </div>
           </div>
@@ -141,16 +149,24 @@
               </div>
               <div class="policy-details">
                 <div class="detail-item">
+                  <span class="label">Name:</span>
+                  <span class="value">{{ policy.name || 'No Name' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Type:</span>
+                  <span class="value">{{ policy.policyType || policy.policy_type || 'N/A' }}</span>
+                </div>
+                <div class="detail-item">
                   <span class="label">Premium:</span>
-                  <span class="value">₹{{ policy.premiumAmount | number }}</span>
+                  <span class="value">₹{{ policy.premiumAmount || policy.premium_amount || 0 | number }}</span>
                 </div>
                 <div class="detail-item">
                   <span class="label">Coverage:</span>
-                  <span class="value">{{ policy.coverageDetails }}</span>
+                  <span class="value">₹{{ policy.coverageAmount || policy.coverageamount || 0 | number }}</span>
                 </div>
                 <div class="detail-item">
-                  <span class="label">Validity:</span>
-                  <span class="value">{{ policy.validityPeriod }} years</span>
+                  <span class="label">Details:</span>
+                  <span class="value">{{ policy.coverageDetails || policy.coverage_details || 'No Description' }}</span>
                 </div>
                 <div class="detail-item" *ngIf="policy.status">
                   <span class="label">Status:</span>

@@ -164,8 +164,8 @@ export class Customer implements OnInit {
   openClaimForm(policy: any) {
     this.selectedPolicy = policy;
     this.claimForm.patchValue({
-      policyId: policy.policyId,
-      policyName: policy.name,
+      policyId: policy.policyId || policy.id,
+      policyName: policy.name || 'No Name',
       customerId: this.customerId,
       customerName: this.customerName,
       claimAmount: ''
@@ -182,7 +182,7 @@ export class Customer implements OnInit {
   submitClaim() {
     if (this.claimForm.valid && this.selectedPolicy) {
       const claimData = {
-        policyId: this.selectedPolicy.policyId,
+        policyId: this.selectedPolicy.policyId || this.selectedPolicy.id,
         customerId: this.customerId,
         agentId: this.selectedPolicy.agentId || 17,
         claimAmount: this.claimForm.get('claimAmount')?.value
@@ -234,5 +234,36 @@ export class Customer implements OnInit {
       case 'REJECTED': return 'fas fa-times-circle';
       default: return 'fas fa-question-circle';
     }
+  }
+
+  buyPolicy(policy: any) {
+    if (!this.customerId) {
+      this.showNotificationMessage('Customer ID not found. Please login again.', 'error');
+      return;
+    }
+
+    const policyData = {
+      customerId: this.customerId,
+      name: policy.name || 'No Name',
+      policyType: policy.policy_type || 'N/A',
+      premiumAmount: policy.premium_amount || 0,
+      coverageAmount: policy.coverageamount || 0,
+      coverageDetails: policy.coverage_details || 'No Description',
+      validityPeriod: 1
+    };
+
+    this.isLoading = true;
+    this.customerService.buyPolicy(policyData).subscribe({
+      next: (response) => {
+        this.showNotificationMessage('Policy selected successfully!', 'success');
+        this.loadPolicies();
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Policy selection error:', error);
+        this.showNotificationMessage('Failed to select policy. Please try again.', 'error');
+        this.isLoading = false;
+      }
+    });
   }
 }

@@ -20,7 +20,7 @@ export class CustomerService {
   }
 
   getAllPolicies(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/api/policies`, { headers: this.getHeaders() });
+    return this.http.get(`${this.apiUrl}/api/policylist`, { headers: this.getHeaders() });
   }
   
   getCustomerPolicies(): Observable<any> {
@@ -66,6 +66,13 @@ export class CustomerService {
     const customerId = this.jwtService.getCustomerId();
     return this.http.get(`${this.apiUrl}/api/claims/customer/${customerId}`, {
       headers: this.getHeaders()
+    });
+  }
+
+  buyPolicy(policyData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/api/policies/create`, policyData, {
+      headers: this.getHeaders(),
+      responseType: 'text'
     });
   }
 }
