@@ -75,4 +75,15 @@ export class CustomerService {
       responseType: 'text'
     });
   }
+  
+  getNotifications(customerId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/notify/customer/${customerId}`, { headers: this.getHeaders() });
+  }
+  
+  deleteNotification(notificationId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/notify/delete/${notificationId}`, { 
+      headers: this.getHeaders(),
+      responseType: 'text'
+    });
+  }
 }
