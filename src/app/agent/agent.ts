@@ -96,7 +96,7 @@ export class Agent implements OnInit {
     console.log('Policy ID:', claim.policyId);
 
     // Load customer details
-    const customerUrl = `http://localhost:8763/agents/getCustomerForAgent/${claim.customerId}`;
+    const customerUrl = `http://localhost:8763/customer/getCustomer/${claim.customerId}`;
     console.log('Fetching customer from:', customerUrl);
     
     this.http.get(customerUrl, { headers })
@@ -113,15 +113,14 @@ export class Agent implements OnInit {
       });
 
     // Load policy details
-    const policyUrl = `http://localhost:8763/agents/getAgentPolicyDetails/${claim.policyId}`;
+    const policyUrl = `http://localhost:8763/api/policies/${claim.policyId}`;
     console.log('Fetching policy from:', policyUrl);
     
     this.http.get(policyUrl, { headers })
       .subscribe({
         next: (response: any) => {
           console.log('Policy response:', response);
-          // Extract the first policy from the policy array
-          this.claimDetails.policy = response.policy && response.policy.length > 0 ? response.policy[0] : null;
+          this.claimDetails.policy = response;
           console.log('Extracted policy:', this.claimDetails.policy);
         },
         error: (error) => {
