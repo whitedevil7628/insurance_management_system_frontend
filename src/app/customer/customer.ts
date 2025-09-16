@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
@@ -15,7 +15,7 @@ import { CustomerService } from '../Services/customer.service';
   templateUrl: './customer.html',
   styleUrl: './customer.css'
 })
-export class Customer implements OnInit {
+export class Customer implements OnInit, OnDestroy {
   activeSection = 'policies';
   customerName = '';
   customerInitials = '';
@@ -43,6 +43,7 @@ export class Customer implements OnInit {
   // Notifications
   notifications: any[] = [];
   showNotificationPanel = false;
+  notificationInterval: any;
 
   constructor(
     private jwtService: JwtService,
@@ -83,6 +84,13 @@ export class Customer implements OnInit {
     this.loadProfile();
     this.loadClaims();
     this.loadNotifications();
+    this.startNotificationPolling();
+  }
+  
+  ngOnDestroy() {
+    if (this.notificationInterval) {
+      clearInterval(this.notificationInterval);
+    }
   }
 
   loadUserData() {
@@ -148,9 +156,18 @@ export class Customer implements OnInit {
 
   logout() {
     if (confirm('Are you sure you want to logout?')) {
+      if (this.notificationInterval) {
+        clearInterval(this.notificationInterval);
+      }
       this.jwtService.logout();
       this.router.navigate(['/login']);
     }
+  }
+  
+  startNotificationPolling() {
+    this.notificationInterval = setInterval(() => {
+      this.loadNotifications();
+    }, 10000); // Check every 10 seconds
   }
 
   loadProfile() {
@@ -362,9 +379,16 @@ export class Customer implements OnInit {
   
   loadNotifications() {
     if (this.customerId) {
+      console.log('Loading notifications for customer ID:', this.customerId);
       this.customerService.getNotifications(this.customerId).subscribe({
-        next: (data) => this.notifications = data || [],
-        error: () => this.notifications = []
+        next: (data) => {
+          console.log('Customer notifications received:', data);
+          this.notifications = data || [];
+        },
+        error: (error) => {
+          console.error('Error loading customer notifications:', error);
+          this.notifications = [];
+        }
       });
     }
   }

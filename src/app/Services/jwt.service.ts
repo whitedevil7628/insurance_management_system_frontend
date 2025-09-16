@@ -95,4 +95,13 @@ export class JwtService {
     }
     return null;
   }
+  
+  getAgentId(): number | null {
+    const token = this.getToken();
+    if (token) {
+      const decoded = this.decodeToken(token);
+      return decoded?.agentId || null;
+    }
+    return null;
+  }
 }
