@@ -234,7 +234,17 @@ export class Customer implements OnInit, OnDestroy {
     });
   }
 
+  isPolicyClaimed(policy: any): boolean {
+    const policyId = policy.policyId || policy.id;
+    return this.customerClaims.some(claim => claim.policyId === policyId);
+  }
+
   openClaimForm(policy: any) {
+    if (this.isPolicyClaimed(policy)) {
+      this.showNotificationMessage('This policy has already been claimed', 'error');
+      return;
+    }
+    
     this.selectedPolicy = policy;
     this.claimForm.patchValue({
       policyId: policy.policyId || policy.id,

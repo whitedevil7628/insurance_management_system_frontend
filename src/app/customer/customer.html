@@ -223,8 +223,14 @@
                 </div>
               </div>
               <div class="policy-actions">
-                <button class="btn-primary">Renew Policy</button>
-                <button class="btn-outline" (click)="openClaimForm(policy)">File Claim</button>
+                <button class="btn-primary" (click)="openClaimForm(policy)" [disabled]="isPolicyClaimed(policy)">
+                  <span *ngIf="!isPolicyClaimed(policy)">
+                    <i class="fas fa-file-medical"></i> File Claim
+                  </span>
+                  <span *ngIf="isPolicyClaimed(policy)">
+                    <i class="fas fa-check-circle"></i> Already Claimed
+                  </span>
+                </button>
               </div>
             </div>
           </div>
