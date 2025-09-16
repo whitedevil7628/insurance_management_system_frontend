@@ -44,7 +44,7 @@ export class Admin implements OnInit {
   
 
   agentForm = signal({
-    name: '', contactInfo: '', password: '', gender: 'male', date: '',
+    name: '', contactInfo: '', password: '', gender: 'male',
     aadharnumber: null, phone: null, address: '', role: 'AGENT', orgEmail: ''
   });
   updateForm = signal({
@@ -110,7 +110,12 @@ export class Admin implements OnInit {
   }
 
   createAgent() {
-    this.adminService.createAgent(this.agentForm()).subscribe(() => {
+    const agentData = {
+      ...this.agentForm(),
+      date: new Date().toISOString()
+    };
+    
+    this.adminService.createAgent(agentData).subscribe(() => {
       this.showNotificationMessage('Agent created successfully!', 'success');
       // Only reload agents data for faster response
       this.adminService.getAllAgents().subscribe({
@@ -167,7 +172,7 @@ export class Admin implements OnInit {
 
   resetAgentForm() {
     this.agentForm.set({
-      name: '', contactInfo: '', password: '', gender: 'male', date: '',
+      name: '', contactInfo: '', password: '', gender: 'male',
       aadharnumber: null, phone: null, address: '', role: 'AGENT', orgEmail: ''
     });
   }

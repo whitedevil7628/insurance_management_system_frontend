@@ -77,9 +77,14 @@
           <div class="notification-panel" *ngIf="showNotificationPanel">
             <div class="notification-header">
               <h4>Notifications</h4>
-              <button class="close-btn" (click)="showNotificationPanel = false">
-                <i class="fas fa-times"></i>
-              </button>
+              <div class="notification-actions">
+                <button class="refresh-btn" (click)="loadNotifications()" title="Refresh">
+                  <i class="fas fa-sync-alt"></i>
+                </button>
+                <button class="close-btn" (click)="showNotificationPanel = false">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
             </div>
             
             <div class="notification-list" *ngIf="notifications.length > 0">

@@ -29,6 +29,29 @@
   background: #f8f9fa;
 }
 
+.notification-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.refresh-btn {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.refresh-btn:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: #007bff;
+  transform: rotate(180deg);
+}
+
 .notification-header h4 {
   margin: 0;
   font-size: 1rem;

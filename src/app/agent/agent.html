@@ -55,10 +55,52 @@
       </div>
       
       <div class="navbar-right">
-        <button class="notification-btn">
-          <i class="fas fa-bell"></i>
-          <span class="notification-badge">5</span>
-        </button>
+        <div class="notification-dropdown">
+          <button class="notification-btn" (click)="toggleNotifications()">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge" *ngIf="notifications.length > 0">{{notifications.length}}</span>
+          </button>
+          
+          <div class="notification-panel" *ngIf="showNotificationPanel">
+            <div class="notification-header">
+              <h4>Notifications</h4>
+              <div class="notification-actions">
+                <button class="refresh-btn" (click)="loadNotifications()" title="Refresh">
+                  <i class="fas fa-sync-alt"></i>
+                </button>
+                <button class="close-btn" (click)="showNotificationPanel = false">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+            
+            <div class="notification-list" *ngIf="notifications.length > 0">
+              <div class="notification-item" *ngFor="let notif of notifications; let i = index">
+                <div class="notif-dot"></div>
+                <div class="notif-content" (click)="toggleNotificationExpand(i)">
+                  <div class="notif-header">
+                    <h5>{{notif.subject}}</h5>
+                    <i class="fas" [class.fa-chevron-down]="!notif.expanded" [class.fa-chevron-up]="notif.expanded"></i>
+                  </div>
+                  <p class="notif-preview" *ngIf="!notif.expanded">{{notif.details | slice:0:40}}...</p>
+                  <div class="notif-details" *ngIf="notif.expanded">
+                    <p>{{notif.details}}</p>
+                    <div class="notif-actions">
+                      <span class="notif-type">{{notif.type}}</span>
+                      <button class="mark-read-btn" (click)="markAsRead(notif, $event)">Mark as Read</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="no-notifications" *ngIf="notifications.length === 0">
+              <i class="fas fa-bell-slash"></i>
+              <p>No notifications</p>
+            </div>
+          </div>
+        </div>
+        
         <button class="logout-btn" (click)="logout()">
           <i class="fas fa-sign-out-alt"></i>
           Logout

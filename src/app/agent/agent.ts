@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { JwtService } from '../Services/jwt.service';
+import { AgentService } from '../Services/agent.service';
 
 @Component({
   selector: 'app-agent',
@@ -10,7 +11,7 @@ import { JwtService } from '../Services/jwt.service';
   templateUrl: './agent.html',
   styleUrl: './agent.css'
 })
-export class Agent implements OnInit {
+export class Agent implements OnInit, OnDestroy {
   activeSection = 'claims';
   agentData: any = {};
   claims: any[] = [];
@@ -18,15 +19,27 @@ export class Agent implements OnInit {
   selectedClaim: any = null;
   showClaimModal = false;
   claimDetails: any = {};
+  
+  // Notifications
+  notifications: any[] = [];
+  showNotificationPanel = false;
+  notificationInterval: any;
   showNotification = false;
   notificationMessage = '';
   notificationType: 'success' | 'error' = 'success';
 
-  constructor(private router: Router, private jwtService: JwtService, private http: HttpClient) {}
+  constructor(private router: Router, private jwtService: JwtService, private http: HttpClient, private agentService: AgentService) {}
 
   ngOnInit() {
     this.loadAgentData();
     this.loadClaims();
+    this.startNotificationPolling();
+  }
+  
+  ngOnDestroy() {
+    if (this.notificationInterval) {
+      clearInterval(this.notificationInterval);
+    }
   }
 
   loadAgentData() {
@@ -44,11 +57,15 @@ export class Agent implements OnInit {
         next: (response: any) => {
           console.log('Agent data response:', response);
           this.agentData = response.agent;
+          // Load notifications after we have agent data
+          this.loadNotifications();
         },
         error: (error) => {
           console.error('Error loading agent data:', error);
           console.error('Error status:', error.status);
           console.error('Error message:', error.message);
+          // Still try to load notifications with fallback ID
+          this.loadNotifications();
         }
       });
   }
@@ -233,8 +250,64 @@ approveClaim(claimId: number) {
   }
 
   logout() {
+    if (this.notificationInterval) {
+      clearInterval(this.notificationInterval);
+    }
     this.jwtService.logout();
   }
+
+  
+  loadNotifications() {
+    // Try to get agent ID from multiple sources
+    let agentId = this.jwtService.getAgentId();
+    if (!agentId && this.agentData?.agentId) {
+      agentId = this.agentData.agentId;
+    }
+    if (!agentId) {
+      agentId = 17; // fallback
+    }
+    
+    console.log('Loading notifications for agent ID:', agentId);
+    console.log('Agent data:', this.agentData);
+    
+    this.agentService.getNotifications(agentId).subscribe({
+      next: (data) => {
+        console.log('Agent notifications received:', data);
+        this.notifications = data || [];
+      },
+      error: (error) => {
+        console.error('Error loading agent notifications:', error);
+        console.error('Error details:', error.status, error.message);
+        this.notifications = [];
+      }
+    });
+  }
+  
+  startNotificationPolling() {
+    this.notificationInterval = setInterval(() => {
+      this.loadNotifications();
+    }, 10000); // Check every 10 seconds
+  }
+  
+  toggleNotifications() {
+    this.showNotificationPanel = !this.showNotificationPanel;
+  }
+  
+  toggleNotificationExpand(index: number) {
+    this.notifications[index].expanded = !this.notifications[index].expanded;
+  }
+  
+  markAsRead(notification: any, event: Event) {
+    event.stopPropagation();
+    this.agentService.deleteNotification(notification.id).subscribe({
+      next: () => {
+        this.notifications = this.notifications.filter(n => n.id !== notification.id);
+      },
+      error: (error) => {
+        console.error('Error marking notification as read:', error);
+      }
+    });
+
 
   showNotificationMessage(message: string, type: 'success' | 'error') {
     this.notificationMessage = message;
@@ -245,5 +318,6 @@ approveClaim(claimId: number) {
     setTimeout(() => {
       this.showNotification = false;
     }, 4000);
+
   }
 }
