@@ -22,6 +22,7 @@ export class SignupComponent {
   showNotification = false;
   notificationMessage = '';
   notificationType: 'success' | 'error' = 'success';
+  showPassword = false;
 
   constructor(
     private fb: FormBuilder,
@@ -82,6 +83,10 @@ export class SignupComponent {
     setTimeout(() => {
       this.showNotification = false;
     }, 3000);
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
   }
 
   getFieldError(fieldName: string): string {

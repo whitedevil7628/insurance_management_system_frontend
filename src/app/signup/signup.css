@@ -156,6 +156,34 @@
   position: relative;
 }
 
+.password-group {
+  position: relative;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 5px;
+  font-size: 1.1rem;
+  transition: color 0.3s ease;
+  z-index: 10;
+}
+
+.password-toggle:hover {
+  color: #667eea;
+}
+
+.password-toggle:focus {
+  outline: none;
+  color: #667eea;
+}
+
 .form-group input,
 .form-group select,
 .form-group textarea {
@@ -212,6 +240,8 @@
   padding: 0 8px;
 }
 
+.form-group input:focus + .password-toggle + label,
+.form-group input:not(:placeholder-shown) + .password-toggle + label,
 .form-group input:focus + label,
 .form-group input:not(:placeholder-shown) + label,
 .form-group textarea:focus + label,
