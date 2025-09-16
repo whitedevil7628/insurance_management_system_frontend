@@ -77,8 +77,10 @@ export class Admin implements OnInit {
       error: () => this.agents.set([])
     });
     
-    // Skip claims loading if endpoint doesn't exist
-    this.claims.set([]);
+    this.adminService.getAllClaims().subscribe({
+      next: data => this.claims.set(data || []),
+      error: () => this.claims.set([])
+    });
     
     this.adminService.getAllCustomers().subscribe({
       next: data => this.customers.set(data || []),
@@ -279,11 +281,24 @@ export class Admin implements OnInit {
   }
 
   getFormattedDate(log: any): string {
-    const date = log.createdDate || log.date || log.updatedDate;
-    if (!date) return 'No Date';
+    // Check all possible date fields
+    const date = log.createdDate || log.date || log.updatedDate || log.created_at || log.timestamp || log.policyDate || log.startDate || log.endDate || log.issueDate;
+    
+    if (!date) {
+      // If no date found, return current date as fallback
+      return new Date().toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    }
     
     try {
-      return new Date(date).toLocaleDateString('en-US', {
+      const dateObj = new Date(date);
+      if (isNaN(dateObj.getTime())) {
+        return 'Invalid Date';
+      }
+      return dateObj.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short',
         day: 'numeric',

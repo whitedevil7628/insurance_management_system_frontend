@@ -1072,3 +1072,179 @@
   font-size: 0.8rem;
   font-weight: 500;
 }
+
+/* No Data Message */
+.no-data-message {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+}
+
+.no-data-message i {
+  font-size: 3rem;
+  color: #ccc;
+  margin-bottom: 15px;
+  display: block;
+}
+
+.no-data-message p {
+  font-size: 1.1rem;
+  margin: 0;
+  color: #888;
+}
+
+/* Enhanced Policy Logs Table Styling */
+.policy-logs-table {
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.policy-logs-table thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.policy-logs-table th {
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 18px 15px;
+  border: none;
+}
+
+.policy-logs-table th i {
+  color: #ffd700;
+  margin-right: 8px;
+  font-size: 1.1rem;
+}
+
+.policy-log-row {
+  transition: all 0.3s ease;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.policy-log-row:hover {
+  background: linear-gradient(135deg, #f8f9ff 0%, #fff5f5 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.1);
+}
+
+.policy-logs-table td {
+  padding: 16px 15px;
+  vertical-align: middle;
+}
+
+.policy-badge {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.customer-badge {
+  background: linear-gradient(135deg, #43e97b, #38f9d7);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  box-shadow: 0 2px 8px rgba(67, 233, 123, 0.3);
+}
+
+.agent-badge {
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  box-shadow: 0 2px 8px rgba(240, 147, 251, 0.3);
+}
+
+.status-enhanced {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 3px 10px rgba(40, 167, 69, 0.3);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.date-display.enhanced {
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  color: white;
+  padding: 10px 14px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  box-shadow: 0 3px 10px rgba(79, 172, 254, 0.3);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Professional Table Styling */
+.professional-table {
+  background: white;
+  border: 1px solid #e1e5e9;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.professional-table thead {
+  background: #f8f9fa;
+}
+
+.professional-table th {
+  color: #495057;
+  font-weight: 600;
+  padding: 16px 20px;
+  border-bottom: 2px solid #dee2e6;
+  text-align: left;
+}
+
+.professional-table td {
+  padding: 14px 20px;
+  border-bottom: 1px solid #f1f3f4;
+  vertical-align: middle;
+}
+
+.professional-table tr:hover {
+  background: #f8f9fa;
+}
+
+.simple-badge {
+  background: #e9ecef;
+  color: #495057;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.status-simple {
+  background: #d4edda;
+  color: #155724;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+
+.date-simple {
+  color: #6c757d;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
