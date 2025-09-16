@@ -260,7 +260,7 @@
 
 .stat-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
 .card-action {
@@ -283,18 +283,18 @@
 }
 
 .logs-card .stat-icon {
-  background: linear-gradient(135deg,  #f0ff25,#ff6c10);
+  background: linear-gradient(135deg, #f0ff25, #ff6c10);
 }
 
 .logs-card .card-action {
-  color: rgba(255,255,255,0.7);
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .quick-actions {
   background: white;
   border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   margin-bottom: 2rem;
 }
 
@@ -337,7 +337,7 @@
   background: white;
   border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .recent-activity h3 {
@@ -440,7 +440,9 @@
 }
 
 /* Buttons */
-.btn-primary, .btn-outline, .btn-danger {
+.btn-primary,
+.btn-outline,
+.btn-danger {
   padding: 10px 20px;
   border-radius: 8px;
   font-weight: 500;
@@ -520,7 +522,7 @@
 .close-btn {
   background: none;
   border: none;
-  color: white;
+  color: darkgray;
   font-size: 1.2rem;
   cursor: pointer;
   padding: 5px;
@@ -823,47 +825,47 @@
   .admin-dashboard {
     flex-direction: column;
   }
-  
+
   .sidebar {
     width: 100%;
     height: auto;
   }
-  
+
   .sidebar-nav {
     padding: 10px 0;
   }
-  
+
   .sidebar-nav ul {
     display: flex;
     overflow-x: auto;
   }
-  
+
   .sidebar-nav li {
     min-width: 120px;
     text-align: center;
     flex-direction: column;
     gap: 5px;
   }
-  
+
   .top-navbar {
     flex-direction: column;
     gap: 15px;
     padding: 15px;
   }
-  
+
   .navbar-center {
     margin: 0;
     max-width: 100%;
   }
-  
+
   .stats-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .form-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .section-header {
     flex-direction: column;
     align-items: flex-start;
@@ -1053,9 +1055,15 @@
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .notif-meta {
