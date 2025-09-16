@@ -82,8 +82,10 @@ export class Agent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
           console.log('Claims response:', response);
-          this.claims = response.claim || [];
-          console.log('Claims array:', this.claims);
+          const claims = response.claim || [];
+          
+          // Load updated status for each claim
+          this.loadClaimsWithUpdatedStatus(claims, headers);
         },
         error: (error) => {
           console.error('Error loading claims:', error);
@@ -91,6 +93,39 @@ export class Agent implements OnInit, OnDestroy {
           console.error('Error message:', error.message);
         }
       });
+  }
+
+  loadClaimsWithUpdatedStatus(claims: any[], headers: HttpHeaders) {
+    if (claims.length === 0) {
+      this.claims = [];
+      return;
+    }
+
+    let completedRequests = 0;
+    const updatedClaims = [...claims];
+
+    claims.forEach((claim, index) => {
+      this.http.get(`http://localhost:8763/api/claims/${claim.claimId}`, { headers })
+        .subscribe({
+          next: (claimData: any) => {
+            updatedClaims[index] = { ...claim, status: claimData.status };
+            completedRequests++;
+            
+            if (completedRequests === claims.length) {
+              this.claims = updatedClaims;
+              console.log('Updated claims with current status:', this.claims);
+            }
+          },
+          error: (error) => {
+            console.error(`Error loading status for claim ${claim.claimId}:`, error);
+            completedRequests++;
+            
+            if (completedRequests === claims.length) {
+              this.claims = updatedClaims;
+            }
+          }
+        });
+    });
   }
 
   openClaimModal(claim: any) {
@@ -164,17 +199,8 @@ export class Agent implements OnInit, OnDestroy {
           console.log('Claim approved successfully:', response);
           this.showNotificationMessage('Claim approved successfully!', 'success');
           
-          // Update the claim status locally
-          const claimIndex = this.claims.findIndex(c => c.claimId === claimId);
-          if (claimIndex !== -1) {
-            this.claims[claimIndex].status = 'APPROVED';
-          }
-          
-          // Update selected claim if it's the same one
-          if (this.selectedClaim && this.selectedClaim.claimId === claimId) {
-            this.selectedClaim.status = 'APPROVED';
-          }
-          
+          // Reload claims to get updated status from backend
+          this.loadClaims();
           this.closeClaimModal();
         },
         error: (error) => {
@@ -197,17 +223,8 @@ export class Agent implements OnInit, OnDestroy {
           console.log('Claim rejected successfully:', response);
           this.showNotificationMessage('Claim rejected successfully!', 'success');
           
-          // Update the claim status locally
-          const claimIndex = this.claims.findIndex(c => c.claimId === claimId);
-          if (claimIndex !== -1) {
-            this.claims[claimIndex].status = 'REJECTED';
-          }
-          
-          // Update selected claim if it's the same one
-          if (this.selectedClaim && this.selectedClaim.claimId === claimId) {
-            this.selectedClaim.status = 'REJECTED';
-          }
-          
+          // Reload claims to get updated status from backend
+          this.loadClaims();
           this.closeClaimModal();
         },
         error: (error) => {
