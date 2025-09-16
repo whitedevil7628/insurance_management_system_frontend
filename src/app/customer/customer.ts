@@ -177,6 +177,12 @@ export class Customer implements OnInit {
           phone: data.phone,
           address: data.address
         });
+        
+        // Update navbar display name from profile data
+        if (data.name) {
+          this.customerName = data.name;
+          this.customerInitials = this.jwtService.getInitials(data.name);
+        }
       },
       error: (error) => {
         console.log('Failed to load profile');
