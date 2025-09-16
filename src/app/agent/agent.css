@@ -701,7 +701,7 @@
 }
 
 .claim-status-indicator.status-filed {
-  background: linear-gradient(90deg, #ffa500, #ffb347);
+  background: #e9ecef;
 }
 
 .claim-header {
@@ -755,7 +755,7 @@
 }
 
 .claim-icon.filed {
-  background: linear-gradient(135deg, #ffa500, #ffb347);
+  background: linear-gradient(135deg, #6c757d, #868e96);
 }
 
 .claim-info h3 {
@@ -811,7 +811,7 @@
 .detail-item .value {
   color: #333;
   font-weight: 600;
-  margin-left: auto;
+  margin-left: 4px;
 }
 
 .status-badge {
@@ -856,8 +856,9 @@
 }
 
 .status-filed {
-  color: #ffa500;
-  background: rgba(255, 165, 0, 0.1);
+  color: #666;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
   padding: 2px 8px;
   border-radius: 12px;
   font-size: 0.75rem;
@@ -1248,7 +1249,9 @@
 }
 
 .status-badge.status-filed {
-  background: #ffa500;
+  background: #f8f9fa;
+  color: #666;
+  border: 1px solid #e9ecef;
 }
 
 .modal-actions {
