@@ -1,4 +1,15 @@
 <div class="agent-dashboard">
+  <!-- Notification -->
+  <div class="notification" [class.show]="showNotification" [class.success]="notificationType === 'success'" [class.error]="notificationType === 'error'">
+    <div class="notification-content">
+      <i class="fas fa-check-circle" *ngIf="notificationType === 'success'"></i>
+      <i class="fas fa-exclamation-circle" *ngIf="notificationType === 'error'"></i>
+      <span>{{ notificationMessage }}</span>
+      <button class="notification-close" (click)="showNotification = false">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
   <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-header">
@@ -66,32 +77,54 @@
         
         <div class="claims-container">
           <div class="claims-grid" *ngIf="claims.length > 0">
-            <div class="claim-card" *ngFor="let claim of claims" (click)="openClaimModal(claim)">
+            <div class="claim-card enhanced" *ngFor="let claim of claims" (click)="openClaimModal(claim)">
+              <div class="claim-status-indicator" 
+                   [class.status-approved]="claim.status === 'APPROVED'"
+                   [class.status-rejected]="claim.status === 'REJECTED'"
+                   [class.status-filed]="claim.status === 'FILED'"></div>
+              
               <div class="claim-header">
-                <div class="claim-icon">
+                <div class="claim-icon" 
+                     [class.approved]="claim.status === 'APPROVED'"
+                     [class.rejected]="claim.status === 'REJECTED'"
+                     [class.filed]="claim.status === 'FILED'">
                   <i class="fas fa-file-medical"></i>
                 </div>
                 <div class="claim-info">
                   <h3>Claim #{{claim.claimId}}</h3>
-                  <p>Policy ID: {{claim.policyId}}</p>
+                  <p><i class="fas fa-shield-alt"></i> Policy ID: {{claim.policyId}}</p>
+                </div>
+                <div class="claim-amount">
+                  <span class="amount-label">Amount</span>
+                  <span class="amount-value">₹{{claim.claimAmount | number}}</span>
                 </div>
               </div>
+              
               <div class="claim-details">
-                <div class="detail-item">
-                  <span class="label">Amount:</span>
-                  <span class="value">₹{{claim.claimAmount | number}}</span>
+                <div class="detail-row">
+                  <div class="detail-item">
+                    <i class="fas fa-user"></i>
+                    <span class="label">Customer ID:</span>
+                    <span class="value">{{claim.customerId}}</span>
+                  </div>
+                  <div class="detail-item">
+                    <i class="fas fa-info-circle"></i>
+                    <span class="label">Status:</span>
+                    <span class="status-badge" 
+                          [class.status-approved]="claim.status === 'APPROVED'"
+                          [class.status-rejected]="claim.status === 'REJECTED'"
+                          [class.status-filed]="claim.status === 'FILED'">
+                      <i class="fas fa-check-circle" *ngIf="claim.status === 'APPROVED'"></i>
+                      <i class="fas fa-times-circle" *ngIf="claim.status === 'REJECTED'"></i>
+                      <i class="fas fa-clock" *ngIf="claim.status === 'FILED'"></i>
+                      {{claim.status}}
+                    </span>
+                  </div>
                 </div>
-                <div class="detail-item">
-                  <span class="label">Customer ID:</span>
-                  <span class="value">{{claim.customerId}}</span>
-                </div>
-                <div class="detail-item">
-                  <span class="label">Status:</span>
-                  <span class="value" 
-                        [class.status-approved]="claim.status === 'APPROVED'"
-                        [class.status-rejected]="claim.status === 'REJECTED'"
-                        [class.status-filed]="claim.status === 'FILED'">{{claim.status}}</span>
-                </div>
+              </div>
+              
+              <div class="claim-footer">
+                <span class="view-details">Click to view details <i class="fas fa-arrow-right"></i></span>
               </div>
             </div>
           </div>
@@ -197,123 +230,166 @@
     </div>
   </main>
 
-  <!-- Claim Details Modal -->
-  <div class="modal-overlay" *ngIf="showClaimModal" (click)="closeClaimModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h3>Claim Details #{{selectedClaim?.claimId}}</h3>
-        <button class="close-btn" (click)="closeClaimModal()">
+  <!-- Enhanced Claim Details Modal -->
+  <div class="modal-overlay enhanced" *ngIf="showClaimModal" (click)="closeClaimModal()">
+    <div class="modal-content enhanced" (click)="$event.stopPropagation()">
+      <!-- Modal Header -->
+      <div class="modal-header enhanced">
+        <div class="header-content">
+          <div class="claim-badge">
+            <i class="fas fa-file-medical"></i>
+            <span>Claim #{{selectedClaim?.claimId}}</span>
+          </div>
+          <div class="status-indicator" 
+               [class.status-approved]="selectedClaim?.status === 'APPROVED'"
+               [class.status-rejected]="selectedClaim?.status === 'REJECTED'"
+               [class.status-filed]="selectedClaim?.status === 'FILED'">
+            <i class="fas fa-check-circle" *ngIf="selectedClaim?.status === 'APPROVED'"></i>
+            <i class="fas fa-times-circle" *ngIf="selectedClaim?.status === 'REJECTED'"></i>
+            <i class="fas fa-clock" *ngIf="selectedClaim?.status === 'FILED'"></i>
+            {{selectedClaim?.status}}
+          </div>
+        </div>
+        <button class="close-btn enhanced" (click)="closeClaimModal()">
           <i class="fas fa-times"></i>
         </button>
       </div>
       
-      <div class="claim-modal-content">
-        <!-- Claim Information -->
-        <div class="info-section">
-          <h4>Claim Information</h4>
-          <div class="info-grid">
-            <div class="info-item">
-              <label>Claim ID:</label>
-              <span>{{selectedClaim?.claimId}}</span>
+      <div class="claim-modal-content enhanced">
+        <!-- Claim Summary Card -->
+        <div class="summary-card">
+          <div class="summary-header">
+            <h3>Claim Summary</h3>
+            <div class="amount-display">
+              <span class="currency">₹</span>
+              <span class="amount">{{selectedClaim?.claimAmount | number}}</span>
             </div>
-            <div class="info-item">
-              <label>Claim Amount:</label>
-              <span>₹{{selectedClaim?.claimAmount | number}}</span>
+          </div>
+          <div class="summary-details">
+            <div class="detail-chip">
+              <i class="fas fa-hashtag"></i>
+              <span>ID: {{selectedClaim?.claimId}}</span>
             </div>
-            <div class="info-item">
-              <label>Status:</label>
-              <span class="status-badge" 
-                    [class.status-approved]="selectedClaim?.status === 'APPROVED'"
-                    [class.status-rejected]="selectedClaim?.status === 'REJECTED'"
-                    [class.status-filed]="selectedClaim?.status === 'FILED'">{{selectedClaim?.status}}</span>
+            <div class="detail-chip">
+              <i class="fas fa-shield-alt"></i>
+              <span>Policy: {{selectedClaim?.policyId}}</span>
             </div>
           </div>
         </div>
 
-        <!-- Customer Information -->
-        <div class="info-section" *ngIf="claimDetails.customer">
-          <h4>Customer Information</h4>
-          <div class="info-grid">
-            <div class="info-item">
-              <label>Customer ID:</label>
-              <span>{{claimDetails.customer.customerId}}</span>
+        <!-- Information Cards Grid -->
+        <div class="info-cards-grid">
+          <!-- Customer Card -->
+          <div class="info-card customer-card" *ngIf="claimDetails.customer">
+            <div class="card-header">
+              <div class="card-icon customer">
+                <i class="fas fa-user"></i>
+              </div>
+              <h4>Customer Details</h4>
             </div>
-            <div class="info-item">
-              <label>Name:</label>
-              <span>{{claimDetails.customer.name}}</span>
-            </div>
-            <div class="info-item">
-              <label>Email:</label>
-              <span>{{claimDetails.customer.email}}</span>
-            </div>
-            <div class="info-item">
-              <label>Phone:</label>
-              <span>{{claimDetails.customer.phone}}</span>
-            </div>
-            <div class="info-item">
-              <label>Aadhaar Number:</label>
-              <span>{{claimDetails.customer.aadharnumber}}</span>
-            </div>
-            <div class="info-item">
-              <label>Address:</label>
-              <span>{{claimDetails.customer.address}}</span>
+            <div class="card-content">
+              <div class="info-row">
+                <i class="fas fa-id-badge"></i>
+                <span class="label">ID:</span>
+                <span class="value">{{claimDetails.customer.customerId}}</span>
+              </div>
+              <div class="info-row">
+                <i class="fas fa-user-circle"></i>
+                <span class="label">Name:</span>
+                <span class="value">{{claimDetails.customer.name}}</span>
+              </div>
+              <div class="info-row">
+                <i class="fas fa-envelope"></i>
+                <span class="label">Email:</span>
+                <span class="value">{{claimDetails.customer.email}}</span>
+              </div>
+              <div class="info-row">
+                <i class="fas fa-phone"></i>
+                <span class="label">Phone:</span>
+                <span class="value">{{claimDetails.customer.phone}}</span>
+              </div>
+              <div class="info-row">
+                <i class="fas fa-id-card"></i>
+                <span class="label">Aadhaar:</span>
+                <span class="value">{{claimDetails.customer.aadharnumber}}</span>
+              </div>
+              <div class="info-row address">
+                <i class="fas fa-map-marker-alt"></i>
+                <span class="label">Address:</span>
+                <span class="value">{{claimDetails.customer.address}}</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- Policy Information -->
-        <div class="info-section" *ngIf="claimDetails.policy">
-          <h4>Policy Information</h4>
-          <div class="info-grid">
-            <div class="info-item">
-              <label>Policy ID:</label>
-              <span>{{claimDetails.policy.policyId}}</span>
+          <!-- Policy Card -->
+          <div class="info-card policy-card" *ngIf="claimDetails.policy">
+            <div class="card-header">
+              <div class="card-icon policy">
+                <i class="fas fa-file-contract"></i>
+              </div>
+              <h4>Policy Details</h4>
             </div>
-            <div class="info-item">
-              <label>Policy Name:</label>
-              <span>{{claimDetails.policy.name}}</span>
-            </div>
-            <div class="info-item">
-              <label>Premium Amount:</label>
-              <span>₹{{claimDetails.policy.premiumAmount | number}}</span>
-            </div>
-            <div class="info-item">
-              <label>Coverage:</label>
-              <span>{{claimDetails.policy.coverageDetails}}</span>
-            </div>
-            <div class="info-item">
-              <label>Validity:</label>
-              <span>{{claimDetails.policy.validityPeriod}} years</span>
-            </div>
-            <div class="info-item">
-              <label>Entry Date:</label>
-              <span>{{claimDetails.policy.entryDate}}</span>
-            </div>
-            <div class="info-item">
-              <label>Expiry Date:</label>
-              <span>{{claimDetails.policy.expiryDate}}</span>
+            <div class="card-content">
+              <div class="info-row">
+                <i class="fas fa-hashtag"></i>
+                <span class="label">Policy ID:</span>
+                <span class="value">{{claimDetails.policy.policyId}}</span>
+              </div>
+              <div class="info-row">
+                <i class="fas fa-tag"></i>
+                <span class="label">Name:</span>
+                <span class="value">{{claimDetails.policy.name}}</span>
+              </div>
+              <div class="info-row">
+                <i class="fas fa-rupee-sign"></i>
+                <span class="label">Premium:</span>
+                <span class="value">₹{{claimDetails.policy.premiumAmount | number}}</span>
+              </div>
+              <div class="info-row">
+                <i class="fas fa-shield-check"></i>
+                <span class="label">Coverage:</span>
+                <span class="value">{{claimDetails.policy.coverageDetails}}</span>
+              </div>
+              <div class="info-row">
+                <i class="fas fa-calendar-alt"></i>
+                <span class="label">Validity:</span>
+                <span class="value">{{claimDetails.policy.validityPeriod}} years</span>
+              </div>
+              <div class="info-row">
+                <i class="fas fa-calendar-plus"></i>
+                <span class="label">Entry Date:</span>
+                <span class="value">{{claimDetails.policy.entryDate}}</span>
+              </div>
+              <div class="info-row">
+                <i class="fas fa-calendar-times"></i>
+                <span class="label">Expiry Date:</span>
+                <span class="value">{{claimDetails.policy.expiryDate}}</span>
+              </div>
             </div>
           </div>
         </div>
 
         <!-- Action Buttons -->
-        <div class="modal-actions" *ngIf="selectedClaim && !isClaimProcessed(selectedClaim.status)">
-          <button class="btn-reject" (click)="rejectClaim(selectedClaim.claimId)">
-            <i class="fas fa-times"></i>
-            Reject Claim
+        <div class="modal-actions enhanced" *ngIf="selectedClaim && !isClaimProcessed(selectedClaim.status)">
+          <button class="btn-reject enhanced" (click)="rejectClaim(selectedClaim.claimId)">
+            <i class="fas fa-times-circle"></i>
+            <span>Reject Claim</span>
           </button>
-          <button class="btn-approve" (click)="approveClaim(selectedClaim.claimId)">
-            <i class="fas fa-check"></i>
-            Approve Claim
+          <button class="btn-approve enhanced" (click)="approveClaim(selectedClaim.claimId)">
+            <i class="fas fa-check-circle"></i>
+            <span>Approve Claim</span>
           </button>
         </div>
         
         <!-- Status Message for Processed Claims -->
-        <div class="claim-status-message" *ngIf="selectedClaim && isClaimProcessed(selectedClaim.status)">
-          <div class="status-icon" [class.approved]="selectedClaim.status === 'APPROVED'" [class.rejected]="selectedClaim.status === 'REJECTED'">
+        <div class="claim-status-message enhanced" *ngIf="selectedClaim && isClaimProcessed(selectedClaim.status)">
+          <div class="status-icon-large" [class.approved]="selectedClaim.status === 'APPROVED'" [class.rejected]="selectedClaim.status === 'REJECTED'">
             <i class="fas" [class.fa-check-circle]="selectedClaim.status === 'APPROVED'" [class.fa-times-circle]="selectedClaim.status === 'REJECTED'"></i>
           </div>
-          <p>This claim has been <strong>{{selectedClaim.status.toLowerCase()}}</strong></p>
+          <div class="status-text">
+            <h3>Claim {{selectedClaim.status | titlecase}}</h3>
+            <p>This claim has been processed and marked as <strong>{{selectedClaim.status.toLowerCase()}}</strong></p>
+          </div>
         </div>
       </div>
     </div>

@@ -18,6 +18,9 @@ export class Agent implements OnInit {
   selectedClaim: any = null;
   showClaimModal = false;
   claimDetails: any = {};
+  showNotification = false;
+  notificationMessage = '';
+  notificationType: 'success' | 'error' = 'success';
 
   constructor(private router: Router, private jwtService: JwtService, private http: HttpClient) {}
 
@@ -163,7 +166,7 @@ approveClaim(claimId: number) {
     .subscribe({
       next: (response) => {
         console.log('Claim approved successfully:', response);
-        alert('Claim approved successfully!');
+        this.showNotificationMessage('Claim approved successfully!', 'success');
         
         // Update the claim status locally
         const claimIndex = this.claims.findIndex(c => c.claimId === claimId);
@@ -195,7 +198,7 @@ approveClaim(claimId: number) {
       .subscribe({
         next: (response) => {
           console.log('Claim rejected successfully:', response);
-          alert('Claim rejected successfully!');
+          this.showNotificationMessage('Claim rejected successfully!', 'error');
           
           // Update the claim status locally
           const claimIndex = this.claims.findIndex(c => c.claimId === claimId);
@@ -231,5 +234,16 @@ approveClaim(claimId: number) {
 
   logout() {
     this.jwtService.logout();
+  }
+
+  showNotificationMessage(message: string, type: 'success' | 'error') {
+    this.notificationMessage = message;
+    this.notificationType = type;
+    this.showNotification = true;
+    
+    // Auto hide after 4 seconds
+    setTimeout(() => {
+      this.showNotification = false;
+    }, 4000);
   }
 }
