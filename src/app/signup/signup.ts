@@ -57,7 +57,40 @@ export class SignupComponent {
         },
         error: (error) => {
           console.error('Signup error:', error);
-          this.showNotificationMessage('Signup failed! Please try again.', 'error');
+          console.log('Error status:', error.status);
+          console.log('Error body:', error.error);
+          let errorMessage = 'Signup failed! Please try again.';
+          
+          // Handle specific backend error responses
+          if (error.status === 409 || error.status === 500) {
+            const errorText = error.error;
+            let fullErrorMessage = '';
+            
+            // Extract the actual error message from different response formats
+            if (typeof errorText === 'string') {
+              fullErrorMessage = errorText;
+            } else if (typeof errorText === 'object' && errorText.message) {
+              fullErrorMessage = errorText.message;
+            }
+            
+            console.log('Full error message:', fullErrorMessage);
+            
+            // Check for specific error patterns (case-insensitive)
+            const lowerErrorMessage = fullErrorMessage.toLowerCase();
+            
+            if (lowerErrorMessage.includes('email') && lowerErrorMessage.includes('already exists')) {
+              errorMessage = 'Email address already exists. Please use a different email.';
+            } else if (lowerErrorMessage.includes('aadhaar') && lowerErrorMessage.includes('already exists')) {
+              errorMessage = 'Aadhaar number already exists. Please check your details.';
+            } else if (lowerErrorMessage.includes('409 conflict')) {
+              // This is a fallback for wrapped conflict errors
+              if (lowerErrorMessage.includes('customer/add')) {
+                errorMessage = 'Account with these details already exists.';
+              }
+            }
+          }
+          
+          this.showNotificationMessage(errorMessage, 'error');
           this.isLoading = false;
         }
       });
