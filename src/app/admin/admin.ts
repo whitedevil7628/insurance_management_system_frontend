@@ -112,20 +112,48 @@ export class Admin implements OnInit {
   }
 
   createAgent() {
+    const form = this.agentForm();
+    
+    // Check for duplicate contact info
+    const existingContactInfo = this.agents().find(agent => 
+      agent.contactInfo === form.contactInfo || agent.email === form.contactInfo
+    );
+    
+    if (existingContactInfo) {
+      this.showNotificationMessage('Contact info already exists', 'error');
+      return;
+    }
+    
+    // Check for duplicate organizational email
+    const existingOrgEmail = this.agents().find(agent => 
+      agent.orgEmail === form.orgEmail
+    );
+    
+    if (existingOrgEmail) {
+      this.showNotificationMessage('Organisational Email already exists', 'error');
+      return;
+    }
+    
     const agentData = {
-      ...this.agentForm(),
+      ...form,
       date: new Date().toISOString()
     };
     
-    this.adminService.createAgent(agentData).subscribe(() => {
-      this.showNotificationMessage('Agent created successfully!', 'success');
-      // Only reload agents data for faster response
-      this.adminService.getAllAgents().subscribe({
-        next: data => this.agents.set(data || []),
-        error: () => this.agents.set([])
-      });
-      this.showAgentForm.set(false);
-      this.resetAgentForm();
+    this.adminService.createAgent(agentData).subscribe({
+      next: () => {
+        this.showNotificationMessage('Agent created successfully!', 'success');
+        // Only reload agents data for faster response
+        this.adminService.getAllAgents().subscribe({
+          next: data => this.agents.set(data || []),
+          error: () => this.agents.set([])
+        });
+        this.showAgentForm.set(false);
+        this.resetAgentForm();
+      },
+      error: (error) => {
+        console.error('Create agent error:', error);
+        this.showNotificationMessage('Failed to create agent', 'error');
+      }
     });
   }
 
