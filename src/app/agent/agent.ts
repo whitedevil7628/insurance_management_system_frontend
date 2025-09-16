@@ -151,59 +151,39 @@ export class Agent implements OnInit, OnDestroy {
       });
   }
 
-  // approveClaim(claimId: number) {
-  //   const headers = new HttpHeaders({
-  //     'Authorization': `Bearer ${this.jwtService.getToken()}`,
-  //     'Content-Type': 'application/json'
-  //   });
-
-  //   console.log('Approving claim:', claimId);
-  //   this.http.put(`http://localhost:8763/agents/approve-claim/${claimId}`, {}, { headers })
-  //     .subscribe({
-  //       next: (response) => {
-  //         console.log('Claim approved successfully:', response);
-  //         alert('Claim approved successfully!');
-  //         this.loadClaims();
-  //         this.closeClaimModal();
-  //       },
-  //       error: (error) => {
-  //         console.error('Error approving claim:', error);
-  //         alert('Error approving claim. Please try again.');
-  //       }
-  //     });
-  // }
-approveClaim(claimId: number) {
-  const headers = new HttpHeaders({
-    'Authorization': `Bearer ${this.jwtService.getToken()}`,
-    'Content-Type': 'application/json'
-  });
-
-  console.log('Approving claim:', claimId);
-  this.http.put(`http://localhost:8763/agents/approve-claim/${claimId}`, {}, { headers, responseType: 'text' })
-    .subscribe({
-      next: (response) => {
-        console.log('Claim approved successfully:', response);
-        this.showNotificationMessage('Claim approved successfully!', 'success');
-        
-        // Update the claim status locally
-        const claimIndex = this.claims.findIndex(c => c.claimId === claimId);
-        if (claimIndex !== -1) {
-          this.claims[claimIndex].status = 'APPROVED';
-        }
-        
-        // Update selected claim if it's the same one
-        if (this.selectedClaim && this.selectedClaim.claimId === claimId) {
-          this.selectedClaim.status = 'APPROVED';
-        }
-        
-        this.closeClaimModal();
-      },
-      error: (error) => {
-        console.error('Error approving claim:', error);
-        alert('Error approving claim. Please try again.');
-      }
+  approveClaim(claimId: number) {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.jwtService.getToken()}`,
+      'Content-Type': 'application/json'
     });
-}
+
+    console.log('Approving claim:', claimId);
+    this.http.put(`http://localhost:8763/agents/approve-claim/${claimId}`, {}, { headers, responseType: 'text' })
+      .subscribe({
+        next: (response) => {
+          console.log('Claim approved successfully:', response);
+          this.showNotificationMessage('Claim approved successfully!', 'success');
+          
+          // Update the claim status locally
+          const claimIndex = this.claims.findIndex(c => c.claimId === claimId);
+          if (claimIndex !== -1) {
+            this.claims[claimIndex].status = 'APPROVED';
+          }
+          
+          // Update selected claim if it's the same one
+          if (this.selectedClaim && this.selectedClaim.claimId === claimId) {
+            this.selectedClaim.status = 'APPROVED';
+          }
+          
+          this.closeClaimModal();
+        },
+        error: (error) => {
+          console.error('Error approving claim:', error);
+          this.showNotificationMessage('Error approving claim. Please try again.', 'error');
+        }
+      });
+  }
+
   rejectClaim(claimId: number) {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.jwtService.getToken()}`,
@@ -215,7 +195,7 @@ approveClaim(claimId: number) {
       .subscribe({
         next: (response) => {
           console.log('Claim rejected successfully:', response);
-          this.showNotificationMessage('Claim rejected successfully!', 'error');
+          this.showNotificationMessage('Claim rejected successfully!', 'success');
           
           // Update the claim status locally
           const claimIndex = this.claims.findIndex(c => c.claimId === claimId);
@@ -232,7 +212,7 @@ approveClaim(claimId: number) {
         },
         error: (error) => {
           console.error('Error rejecting claim:', error);
-          alert('Error rejecting claim. Please try again.');
+          this.showNotificationMessage('Error rejecting claim. Please try again.', 'error');
         }
       });
   }
@@ -256,16 +236,9 @@ approveClaim(claimId: number) {
     this.jwtService.logout();
   }
 
-  
   loadNotifications() {
-    // Try to get agent ID from multiple sources
-    let agentId = this.jwtService.getAgentId();
-    if (!agentId && this.agentData?.agentId) {
-      agentId = this.agentData.agentId;
-    }
-    if (!agentId) {
-      agentId = 17; // fallback
-    }
+    // Use agent ID from agent data or fallback
+    let agentId = this.agentData?.agentId || 17;
     
     console.log('Loading notifications for agent ID:', agentId);
     console.log('Agent data:', this.agentData);
@@ -307,7 +280,7 @@ approveClaim(claimId: number) {
         console.error('Error marking notification as read:', error);
       }
     });
-
+  }
 
   showNotificationMessage(message: string, type: 'success' | 'error') {
     this.notificationMessage = message;
@@ -318,6 +291,5 @@ approveClaim(claimId: number) {
     setTimeout(() => {
       this.showNotification = false;
     }, 4000);
-
   }
 }

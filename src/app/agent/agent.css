@@ -180,7 +180,14 @@
   font-size: 1rem;
   cursor: pointer;
   padding: 5px;
-  
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+.close-btn:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
 /* Notification Styles */
 .notification {
   position: fixed;
