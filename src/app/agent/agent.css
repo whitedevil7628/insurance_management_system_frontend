@@ -917,8 +917,12 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
@@ -1266,7 +1270,8 @@
   gap: 20px;
 }
 
-.btn-approve, .btn-reject {
+.btn-approve,
+.btn-reject {
   padding: 12px 24px;
   border: none;
   border-radius: 8px;
@@ -1278,7 +1283,8 @@
   transition: all 0.3s ease;
 }
 
-.btn-approve.enhanced, .btn-reject.enhanced {
+.btn-approve.enhanced,
+.btn-reject.enhanced {
   padding: 14px 28px;
   border-radius: 12px;
   font-size: 1rem;
@@ -1347,11 +1353,13 @@
   flex-shrink: 0;
 }
 
-.status-icon.approved, .status-icon-large.approved {
+.status-icon.approved,
+.status-icon-large.approved {
   color: #28a745;
 }
 
-.status-icon.rejected, .status-icon-large.rejected {
+.status-icon.rejected,
+.status-icon-large.rejected {
   color: #dc3545;
 }
 
@@ -1384,21 +1392,21 @@
   .info-cards-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .modal-content.enhanced {
     width: 95%;
     max-width: none;
   }
-  
+
   .claim-modal-content.enhanced {
     padding: 20px;
   }
-  
+
   .modal-actions.enhanced {
     flex-direction: column;
     margin: 0 -20px -20px -20px;
   }
-  
+
   .claim-status-message.enhanced {
     flex-direction: column;
     text-align: center;
@@ -1410,51 +1418,51 @@
   .agent-dashboard {
     flex-direction: column;
   }
-  
+
   .sidebar {
     width: 100%;
     height: auto;
   }
-  
+
   .sidebar-nav {
     padding: 10px 0;
   }
-  
+
   .sidebar-nav ul {
     display: flex;
     overflow-x: auto;
   }
-  
+
   .sidebar-nav li {
     min-width: 120px;
     text-align: center;
     flex-direction: column;
     gap: 5px;
   }
-  
+
   .top-navbar {
     flex-direction: column;
     gap: 15px;
     padding: 15px;
   }
-  
+
   .navbar-center {
     margin: 0;
     max-width: 100%;
   }
-  
+
   .form-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .claims-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .info-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .modal-actions {
     flex-direction: column;
   }

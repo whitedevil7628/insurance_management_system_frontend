@@ -1072,7 +1072,7 @@
 .close-btn {
   background: none;
   border: none;
-  color: white;
+  color: darkgray;
   font-size: 1.2rem;
   cursor: pointer;
   padding: 5px;
