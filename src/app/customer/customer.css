@@ -870,60 +870,74 @@
 /* Help Section */
 .help-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 30px;
-  max-width: 1000px;
-}
-
-.contact-info {
-  display: flex;
-  flex-direction: column;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 20px;
+  max-width: 800px;
 }
 
-.contact-item {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  padding: 20px;
+.help-card {
   background: white;
   border-radius: 10px;
   box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
+  overflow: hidden;
 }
 
-.contact-item:hover {
-  transform: translateY(-2px);
-}
-
-.contact-icon {
-  width: 50px;
-  height: 50px;
+.help-header {
   background: linear-gradient(135deg, #667eea, #764ba2);
-  border-radius: 50%;
+  color: white;
+  padding: 20px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: white;
+  gap: 15px;
+}
+
+.help-header i {
+  font-size: 1.5rem;
+}
+
+.help-header h3 {
+  margin: 0;
   font-size: 1.2rem;
 }
 
-.contact-details h4 {
-  margin: 0 0 5px 0;
-  font-size: 1.1rem;
-  color: #333;
+.help-content {
+  padding: 20px;
 }
 
-.contact-details p {
-  margin: 0 0 3px 0;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #667eea;
-}
-
-.contact-details span {
-  font-size: 0.85rem;
+.help-content p {
+  margin-bottom: 15px;
   color: #666;
+  line-height: 1.6;
+}
+
+.help-content .btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  padding: 12px 20px;
+  font-size: 0.9rem;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border-radius: 6px;
+  transition: transform 0.3s ease;
+}
+
+.help-content .btn-primary:hover {
+  transform: translateY(-2px);
+}
+
+.phone-number {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.hours {
+  font-size: 0.9rem;
+  color: #28a745;
+  font-weight: 500;
 }
 
 .query-form-container {

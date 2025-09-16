@@ -26,12 +26,12 @@ export class Login {
   onLogin() {
     // Validate inputs
     if (!this.email || !this.password) {
-      this.showNotificationMessage('Please enter both email and password.', 'error');
+      this.showNotificationMessage('Please enter email and password', 'error');
       return;
     }
 
     if (this.email.trim() === '' || this.password.trim() === '') {
-      this.showNotificationMessage('Email and password cannot be empty.', 'error');
+      this.showNotificationMessage('Fields cannot be empty', 'error');
       return;
     }
 
@@ -69,7 +69,7 @@ export class Login {
             localStorage.setItem('jwt', response.trim());
             console.log('Token saved to localStorage');
             
-            this.showNotificationMessage('Login successful! Redirecting...', 'success');
+            this.showNotificationMessage('Login successful!', 'success');
             
             setTimeout(() => {
               if (this.loginType === 'agent') {
@@ -84,12 +84,14 @@ export class Login {
           },
           error: (error) => {
             console.error('Login failed:', error);
-            let errorMessage = 'Login failed. Please check your credentials.';
+            let errorMessage = 'Invalid credentials';
             
             if (error.status === 500) {
-              errorMessage = 'Server error. Please try again later.';
+              errorMessage = 'Invalid username or password';
             } else if (error.status === 401) {
-              errorMessage = 'Invalid email or password.';
+              errorMessage = 'Invalid email or password';
+            } else if (error.error && error.error.includes('Invalid')) {
+              errorMessage = 'Invalid email or password';
             }
             
             this.showNotificationMessage(errorMessage, 'error');

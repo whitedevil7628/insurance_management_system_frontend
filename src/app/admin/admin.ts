@@ -30,6 +30,8 @@ export class Admin implements OnInit {
   // Forms
   showAgentForm = signal(false);
   showPolicyForm = signal(false);
+  showUpdateForm = signal(false);
+  selectedAgent = signal<any>(null);
   
   // Loading states
   isCreatingAgent = signal(false);
@@ -44,6 +46,10 @@ export class Admin implements OnInit {
   agentForm = signal({
     name: '', contactInfo: '', password: '', gender: 'male',
     aadharnumber: null, phone: null, address: '', role: 'AGENT', orgEmail: ''
+  });
+  updateForm = signal({
+    name: '', contactInfo: '', gender: 'male', date: '',
+    aadharnumber: null, phone: null, address: '', orgEmail: ''
   });
   policyForm = signal({
     name: '', policyType: '', premiumAmount: null, coverageamount: null, coverageDetails: ''
@@ -121,23 +127,47 @@ export class Admin implements OnInit {
     });
   }
 
-  deleteAgent(id: number) {
-    if (confirm('Delete agent?')) {
-      this.adminService.deleteAgent(id).subscribe({
-        next: () => {
-          this.showNotificationMessage('Agent deleted successfully!', 'success');
-          // Only reload agents data for faster response
-          this.adminService.getAllAgents().subscribe({
-            next: data => this.agents.set(data || []),
-            error: () => this.agents.set([])
-          });
-        },
-        error: (error) => {
-          console.error('Delete error:', error);
-          this.showNotificationMessage('Cannot delete agent. Agent may have related data.', 'error');
-        }
-      });
+  openUpdateForm(agent: any) {
+    this.selectedAgent.set(agent);
+    this.updateForm.set({
+      name: agent.name || '',
+      contactInfo: agent.contactInfo || agent.email || '',
+      gender: agent.gender || 'male',
+      date: agent.date || '',
+      aadharnumber: agent.aadharnumber || null,
+      phone: agent.phone || null,
+      address: agent.address || '',
+      orgEmail: agent.orgEmail || ''
+    });
+    this.showUpdateForm.set(true);
+  }
+
+  updateAgent() {
+    const agentId = this.selectedAgent()?.agentId || this.selectedAgent()?.id;
+    if (!agentId) {
+      this.showNotificationMessage('Agent ID not found', 'error');
+      return;
     }
+
+    this.adminService.updateAgent(agentId, this.updateForm()).subscribe({
+      next: () => {
+        this.showNotificationMessage('Agent updated successfully!', 'success');
+        this.adminService.getAllAgents().subscribe({
+          next: data => this.agents.set(data || []),
+          error: () => this.agents.set([])
+        });
+        this.closeUpdateForm();
+      },
+      error: (error) => {
+        console.error('Update error:', error);
+        this.showNotificationMessage('Failed to update agent', 'error');
+      }
+    });
+  }
+
+  closeUpdateForm() {
+    this.showUpdateForm.set(false);
+    this.selectedAgent.set(null);
   }
 
   resetAgentForm() {
@@ -225,6 +255,15 @@ export class Admin implements OnInit {
 
   updateAgentForm(field: string, value: any) {
     this.agentForm.update(form => ({ ...form, [field]: value }));
+  }
+
+  updateFormField(field: string, value: any) {
+    this.updateForm.update(form => ({ ...form, [field]: value }));
+  }
+
+  onUpdateInputChange(event: Event, field: string) {
+    const target = event.target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+    this.updateFormField(field, target.value);
   }
 
   onInputChange(event: Event, field: string) {

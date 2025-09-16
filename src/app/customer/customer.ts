@@ -115,6 +115,7 @@ export class Customer implements OnInit, OnDestroy {
         console.error('Error loading policies:', error);
         this.policies = [];
         this.isLoading = false;
+        this.showNotificationMessage('Failed to load policies', 'error');
       }
     });
     
@@ -124,8 +125,14 @@ export class Customer implements OnInit, OnDestroy {
         // Handle single policy object or array
         this.myPolicies = Array.isArray(data) ? data : [data];
       },
-      error: () => {
+      error: (error) => {
         this.myPolicies = [];
+        const errorMsg = error.error?.message || error.message;
+        if (errorMsg && errorMsg.includes('not found')) {
+          console.log('No policies found for customer');
+        } else {
+          this.showNotificationMessage('Failed to load your policies', 'error');
+        }
       }
     });
   }
@@ -145,12 +152,17 @@ export class Customer implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Update error:', error);
-          this.showNotificationMessage('Failed to update profile. Please try again.', 'error');
+          const errorMsg = error.error?.message || error.message || 'Failed to update profile';
+          if (errorMsg.includes('not found')) {
+            this.showNotificationMessage('Profile not found', 'error');
+          } else {
+            this.showNotificationMessage('Update failed. Try again', 'error');
+          }
           this.isProfileLoading = false;
         }
       });
     } else {
-      this.showNotificationMessage('Please fill all required fields correctly.', 'error');
+      this.showNotificationMessage('Please fill all required fields', 'error');
     }
   }
 
@@ -182,9 +194,19 @@ export class Customer implements OnInit, OnDestroy {
           phone: data.phone,
           address: data.address
         });
+        
+        // Update navbar display name from profile data
+        if (data.name) {
+          this.customerName = data.name;
+          this.customerInitials = this.jwtService.getInitials(data.name);
+        }
       },
-      error: () => {
+      error: (error) => {
         console.log('Failed to load profile');
+        const errorMsg = error.error?.message || error.message;
+        if (errorMsg && errorMsg.includes('not found')) {
+          this.showNotificationMessage('Profile not found', 'error');
+        }
       }
     });
   }
@@ -249,7 +271,12 @@ export class Customer implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Claim filing error:', error);
-          this.showNotificationMessage('Failed to file claim. Please try again.', 'error');
+          const errorMsg = error.error?.message || error.message || 'Failed to file claim';
+          if (errorMsg.includes('External service')) {
+            this.showNotificationMessage('Service unavailable. Try later', 'error');
+          } else {
+            this.showNotificationMessage('Claim filing failed', 'error');
+          }
           this.isClaimLoading = false;
         }
       });
@@ -261,8 +288,12 @@ export class Customer implements OnInit, OnDestroy {
       next: (data) => {
         this.customerClaims = Array.isArray(data) ? data : [data];
       },
-      error: () => {
+      error: (error) => {
         this.customerClaims = [];
+        const errorMsg = error.error?.message || error.message;
+        if (errorMsg && errorMsg.includes('not found')) {
+          console.log('No claims found for customer');
+        } 
       }
     });
   }
@@ -289,7 +320,7 @@ export class Customer implements OnInit, OnDestroy {
 
   buyPolicy(policy: any) {
     if (!this.customerId) {
-      this.showNotificationMessage('Customer ID not found. Please login again.', 'error');
+      this.showNotificationMessage('Please login again', 'error');
       return;
     }
 
@@ -327,13 +358,20 @@ export class Customer implements OnInit, OnDestroy {
     this.customerService.buyPolicy(policyData).subscribe({
       next: (response) => {
         console.log('Policy creation response:', response);
-        this.showNotificationMessage('Policy selected successfully!', 'success');
+        this.showNotificationMessage(`${name} policy added successfully!`, 'success');
         this.loadPolicies();
         this.isPolicyLoading = false;
       },
       error: (error) => {
         console.error('Policy selection error:', error);
-        this.showNotificationMessage('Failed to select policy. Please try again.', 'error');
+        const errorMsg = error.error?.message || error.message || 'Failed to select policy';
+        if (errorMsg.includes('not found')) {
+          this.showNotificationMessage('Policy not found', 'error');
+        } else if (errorMsg.includes('External service')) {
+          this.showNotificationMessage('Service unavailable. Try later', 'error');
+        } else {
+          this.showNotificationMessage('Policy purchase failed', 'error');
+        }
         this.isPolicyLoading = false;
       }
     });

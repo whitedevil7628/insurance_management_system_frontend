@@ -34,6 +34,13 @@ export class AdminService {
     return this.http.delete(`${this.baseUrl}/agents/delete/${id}`, { headers: this.getHeaders() });
   }
 
+  updateAgent(id: number, agentData: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}/agents/update/${id}`, agentData, {
+      headers: this.getHeaders(),
+      responseType: 'text'
+    });
+  }
+
   // Claims operations
   getAllClaims(): Observable<any> {
     return this.http.get(`${this.baseUrl}/api/claims/claims/all`, { headers: this.getHeaders() });
