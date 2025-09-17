@@ -1,4 +1,20 @@
-<div class="min-vh-100 d-flex align-items-center justify-content-center bg-white">
+<div class="min-vh-100" style="background: linear-gradient(135deg, #f0f4f8, #d6e7f0);">
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background: linear-gradient(135deg, #f8f9fa, #e9ecef);">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="#">
+        <i class="fas fa-shield-alt me-2" style="color: #2c5aa0;"></i>
+        <span style="color: #2c5aa0;">Insurance Management</span>
+      </a>
+      <div class="ms-auto">
+        <button class="btn" style="border: 2px solid #2c5aa0; color: #2c5aa0; background: transparent;" (click)="navigateToHome()">
+          <i class="fas fa-home me-1"></i>Back to Home
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="d-flex align-items-center justify-content-center" style="min-height: calc(100vh - 76px);">
   <!-- Notification -->
   @if (showNotification) {
     <div class="alert position-fixed top-0 end-0 m-3"
@@ -21,21 +37,21 @@
         
         <!-- Login Type Selection -->
         @if (!showForm) {
-          <div class="card shadow-lg">
-            <div class="card-header bg-white text-center py-4 border-bottom">
+          <div class="card shadow-lg border-0" style="border-radius: 20px; overflow: hidden;">
+            <div class="card-header text-center py-4 border-bottom" style="background: linear-gradient(135deg, #2c5aa0, #1e3d72); color: white;">
               <h2 class="mb-0">
-                <i class="fas fa-shield-alt text-primary me-2"></i>
+                <i class="fas fa-shield-alt me-2"></i>
                 Insurance Login
               </h2>
-              <p class="mb-0 text-muted">Choose your login type</p>
+              <p class="mb-0" style="opacity: 0.9;">Choose your login type</p>
             </div>
             <div class="card-body p-4">
               <div class="d-grid gap-3">
-                <button class="btn btn-dark btn-lg" (click)="goToCustomerLogin()">
+                <button class="btn btn-lg" style="background: linear-gradient(135deg, #4A90E2, #6BB6FF); color: white; border: none;" (click)="goToCustomerLogin()">
                   <i class="fas fa-user me-2"></i>
                   Customer Login
                 </button>
-                <button class="btn btn-secondary btn-lg" (click)="goToAgentLogin()">
+                <button class="btn btn-lg" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; border: none;" (click)="goToAgentLogin()">
                   <i class="fas fa-user-tie me-2"></i>
                   Agent Login
                 </button>
@@ -48,24 +64,22 @@
                 </button>
               </div>
             </div>
-            <div class="card-footer text-center bg-white border-top">
-              <button class="btn btn-sm btn-outline-primary" (click)="navigateToHome()">
-                <i class="fas fa-home me-1"></i>Back to Home
-              </button>
+            <div class="card-footer text-center border-top" style="background: #f8f9fa;">
+              <small class="text-muted">Secure login for insurance management</small>
             </div>
           </div>
         }
 
         <!-- Login Form -->
         @if (showForm) {
-          <div class="card shadow-lg">
-            <div class="card-header bg-white text-center py-4 border-bottom">
+          <div class="card shadow-lg border-0" style="border-radius: 20px; overflow: hidden;">
+            <div class="card-header text-center py-4 border-bottom" style="background: linear-gradient(135deg, #2c5aa0, #1e3d72); color: white;">
               <h3 class="mb-0">
                 @if (loginType === 'agent') {
-                  <i class="fas fa-user-tie text-secondary me-2"></i>
+                  <i class="fas fa-user-tie me-2"></i>
                 }
                 @if (loginType === 'customer') {
-                  <i class="fas fa-user text-dark me-2"></i>
+                  <i class="fas fa-user me-2"></i>
                 }
                 {{ loginType === 'agent' ? 'Agent' : 'Customer' }} Login
               </h3>
@@ -116,8 +130,9 @@
                   <button
                     type="submit"
                     class="btn btn-lg"
-                    [class.btn-secondary]="loginType === 'agent'"
-                    [class.btn-dark]="loginType === 'customer'"
+                    [style.background]="loginType === 'agent' ? 'linear-gradient(135deg, #28a745, #20c997)' : 'linear-gradient(135deg, #4A90E2, #6BB6FF)'"
+                    [style.color]="'white'"
+                    [style.border]="'none'"
                     [disabled]="isLoading">
                     @if (isLoading) {
                       <span class="spinner-border spinner-border-sm me-2"></span>
@@ -137,7 +152,7 @@
                 </div>
               </form>
             </div>
-            <div class="card-footer text-center bg-white border-top">
+            <div class="card-footer text-center border-top" style="background: #f8f9fa;">
               <small class="text-muted">
                 Logging in as {{ loginType === 'agent' ? 'Agent' : 'Customer' }}
               </small>

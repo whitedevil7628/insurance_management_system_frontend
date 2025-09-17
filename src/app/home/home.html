@@ -1,9 +1,9 @@
 <!-- Navigation -->
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+<nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background: linear-gradient(135deg, #f8f9fa, #e9ecef);">
   <div class="container">
     <a class="navbar-brand fw-bold" href="#">
-      <i class="fas fa-shield-alt text-primary me-2"></i>
-      Insurance Management
+      <i class="fas fa-shield-alt me-2" style="color: #2c5aa0;"></i>
+      <span style="color: #2c5aa0;">Insurance Management</span>
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
@@ -17,12 +17,12 @@
           <a class="nav-link" (click)="scrollToSection('about')" style="cursor: pointer;">About</a>
         </li>
         <li class="nav-item">
-          <button class="btn btn-outline-primary me-2" (click)="navigateToLogin()">
+          <button class="btn me-2" style="border: 2px solid #2c5aa0; color: #2c5aa0; background: transparent;" (click)="navigateToLogin()">
             <i class="fas fa-sign-in-alt me-1"></i>Login
           </button>
         </li>
         <li class="nav-item">
-          <button class="btn btn-primary" (click)="navigateToSignup()">
+          <button class="btn" style="background: linear-gradient(135deg, #2c5aa0, #1e3d72); color: white; border: none;" (click)="navigateToSignup()">
             <i class="fas fa-user-plus me-1"></i>Sign Up
           </button>
         </li>
@@ -32,9 +32,9 @@
 </nav>
 
 <!-- Hero Section -->
-<section class="hero-section bg-white text-dark py-5">
+<section class="hero-section py-5" style="background: linear-gradient(135deg, #f0f4f8, #d6e7f0);">
   <div class="container">
-    <div class="row align-items-center min-vh-100">
+    <div class="row align-items-center min-vh-60">
       <div class="col-lg-6">
         <h1 class="display-4 fw-bold mb-4">
           Comprehensive Insurance Management System
@@ -44,23 +44,23 @@
           Handle policies, claims, agents, and customers all in one secure place.
         </p>
         <div class="d-flex gap-3 flex-wrap">
-          <button class="btn btn-primary btn-lg" (click)="navigateToSignup()">
+          <button class="btn btn-lg" style="background: linear-gradient(135deg, #2c5aa0, #1e3d72); color: white; border: none; box-shadow: 0 4px 15px rgba(44, 90, 160, 0.3);" (click)="navigateToSignup()">
             <i class="fas fa-rocket me-2"></i>Get Started
           </button>
-          <button class="btn btn-outline-primary btn-lg" (click)="navigateToLogin()">
+          <button class="btn btn-lg" style="border: 2px solid #2c5aa0; color: #2c5aa0; background: white;" (click)="navigateToLogin()">
             <i class="fas fa-sign-in-alt me-2"></i>Sign In
           </button>
         </div>
       </div>
       <div class="col-lg-6 text-center">
-        <dotlottie-wc src="https://lottie.host/e3f322d9-8598-4498-8bc3-6e6a9981e9e1/pH89aKRoes.lottie" style="width: 400px; height: 400px" speed="1" autoplay loop></dotlottie-wc>
+        <dotlottie-wc src="https://lottie.host/e3f322d9-8598-4498-8bc3-6e6a9981e9e1/pH89aKRoes.lottie" style="width: 400px; height: 400px;margin-left: 120px;" speed="1" autoplay loop></dotlottie-wc>
       </div>
     </div>
   </div>
 </section>
 
 <!-- Features Section -->
-<section id="features" class="py-5 bg-light">
+<section id="features" class="py-5" style="background: linear-gradient(135deg, #e8f2f6, #f5f9fc);">
   <div class="container">
     <div class="row">
       <div class="col-lg-8 mx-auto text-center mb-5">
@@ -72,7 +72,7 @@
       <div class="col-md-4">
         <div class="card h-100 shadow-sm border-0">
           <div class="card-body text-center p-4">
-            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+            <div class="text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; background: linear-gradient(135deg, #2c5aa0, #1e3d72);">
               <i class="fas fa-users-cog fa-2x"></i>
             </div>
             <h5 class="card-title">Admin Management</h5>
@@ -83,7 +83,7 @@
       <div class="col-md-4">
         <div class="card h-100 shadow-sm border-0">
           <div class="card-body text-center p-4">
-            <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+            <div class="text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; background: linear-gradient(135deg, #28a745, #20c997);">
               <i class="fas fa-user-tie fa-2x"></i>
             </div>
             <h5 class="card-title">Agent Portal</h5>
@@ -94,7 +94,7 @@
       <div class="col-md-4">
         <div class="card h-100 shadow-sm border-0">
           <div class="card-body text-center p-4">
-            <div class="bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+            <div class="text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; background: linear-gradient(135deg, #17a2b8, #138496);">
               <i class="fas fa-user-friends fa-2x"></i>
             </div>
             <h5 class="card-title">Customer Dashboard</h5>
@@ -105,7 +105,7 @@
       <div class="col-md-4">
         <div class="card h-100 shadow-sm border-0">
           <div class="card-body text-center p-4">
-            <div class="bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+            <div class="text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; background: linear-gradient(135deg, #ffc107, #e0a800);">
               <i class="fas fa-file-contract fa-2x"></i>
             </div>
             <h5 class="card-title">Policy Management</h5>
@@ -116,7 +116,7 @@
       <div class="col-md-4">
         <div class="card h-100 shadow-sm border-0">
           <div class="card-body text-center p-4">
-            <div class="bg-danger text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+            <div class="text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; background: linear-gradient(135deg, #dc3545, #c82333);">
               <i class="fas fa-file-medical fa-2x"></i>
             </div>
             <h5 class="card-title">Claims Processing</h5>
@@ -127,7 +127,7 @@
       <div class="col-md-4">
         <div class="card h-100 shadow-sm border-0">
           <div class="card-body text-center p-4">
-            <div class="bg-secondary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+            <div class="text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; background: linear-gradient(135deg, #6c757d, #545b62);">
               <i class="fas fa-bell fa-2x"></i>
             </div>
             <h5 class="card-title">Notifications</h5>
@@ -184,7 +184,7 @@
 </section>
 
 <!-- CTA Section -->
-<section class="py-5 bg-light">
+<section class="py-5" style="background: linear-gradient(135deg, #e8f2f6, #f5f9fc);">
   <div class="container text-center">
     <div class="row">
       <div class="col-lg-8 mx-auto">
@@ -193,10 +193,10 @@
           Join thousands of users who trust our insurance management system for their business needs.
         </p>
         <div class="d-flex gap-3 justify-content-center flex-wrap">
-          <button class="btn btn-primary btn-lg" (click)="navigateToSignup()">
+          <button class="btn btn-lg" style="background: linear-gradient(135deg, #2c5aa0, #1e3d72); color: white; border: none; box-shadow: 0 4px 15px rgba(44, 90, 160, 0.3);" (click)="navigateToSignup()">
             <i class="fas fa-user-plus me-2"></i>Create Account
           </button>
-          <button class="btn btn-outline-primary btn-lg" (click)="navigateToLogin()">
+          <button class="btn btn-lg" style="border: 2px solid #2c5aa0; color: #2c5aa0; background: white;" (click)="navigateToLogin()">
             <i class="fas fa-sign-in-alt me-2"></i>Sign In
           </button>
         </div>
@@ -206,12 +206,12 @@
 </section>
 
 <!-- Footer -->
-<footer class="bg-dark text-white py-4">
+<footer class="text-white py-4" style="background: linear-gradient(135deg, #1e3d72, #2c5aa0);">
   <div class="container">
     <div class="row align-items-center">
       <div class="col-md-6">
         <div class="d-flex align-items-center">
-          <i class="fas fa-shield-alt text-light me-2"></i>
+          <i class="fas fa-shield-alt me-2" style="color: #f8f9fa;"></i>
           <span class="fw-bold">Insurance Management System</span>
         </div>
       </div>
