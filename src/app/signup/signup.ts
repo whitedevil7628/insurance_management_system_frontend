@@ -4,12 +4,14 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { ThemeService } from '../Services/theme.service';
 
 @Component({
   selector: 'app-signup',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, FormsModule, HttpClientModule],
-  templateUrl: './signup.html'
+  templateUrl: './signup.html',
+  styleUrl: './signup.css'
 })
 export class SignupComponent {
   signupForm: FormGroup;
@@ -18,11 +20,13 @@ export class SignupComponent {
   notificationMessage = '';
   notificationType: 'success' | 'error' = 'success';
   showPassword = false;
+  isDarkMode = false;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private http: HttpClient
+    private http: HttpClient,
+    private themeService: ThemeService
   ) {
     this.signupForm = this.fb.group({
       name: ['', Validators.required],
@@ -33,6 +37,10 @@ export class SignupComponent {
       aadharnumber: ['', [Validators.required, Validators.pattern('^[0-9]{12}$')]],
       phone: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
       address: ['', Validators.required],
+    });
+    
+    this.themeService.isDarkMode$.subscribe(isDark => {
+      this.isDarkMode = isDark;
     });
   }
 
@@ -110,5 +118,9 @@ export class SignupComponent {
       }
     }
     return '';
+  }
+  
+  toggleTheme() {
+    this.themeService.toggleTheme();
   }
 }

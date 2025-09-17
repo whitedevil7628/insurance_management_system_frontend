@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { JwtService } from '../Services/jwt.service';
 import { AgentService } from '../Services/agent.service';
+import { ThemeService } from '../Services/theme.service';
 
 @Component({
   selector: 'app-agent',
@@ -27,8 +28,11 @@ export class Agent implements OnInit, OnDestroy {
   showNotification = false;
   notificationMessage = '';
   notificationType: 'success' | 'error' = 'success';
+  
+  // Theme
+  isDarkMode = false;
 
-  constructor(private router: Router, private jwtService: JwtService, private http: HttpClient, private agentService: AgentService) {}
+  constructor(private router: Router, private jwtService: JwtService, private http: HttpClient, private agentService: AgentService, private themeService: ThemeService) {}
 
   ngOnInit() {
     if (!this.jwtService.getToken() || this.jwtService.getUserRole() !== 'AGENT') {
@@ -39,6 +43,9 @@ export class Agent implements OnInit, OnDestroy {
     this.loadAgentData();
     this.loadClaims();
     this.startNotificationPolling();
+    this.themeService.isDarkMode$.subscribe(isDark => {
+      this.isDarkMode = isDark;
+    });
   }
   
   ngOnDestroy() {
@@ -345,5 +352,9 @@ export class Agent implements OnInit, OnDestroy {
       case 'update': return 'bg-primary';
       default: return 'bg-primary';
     }
+  }
+  
+  toggleTheme() {
+    this.themeService.toggleTheme();
   }
 }
