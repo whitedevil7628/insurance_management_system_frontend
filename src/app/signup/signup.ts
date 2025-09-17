@@ -42,11 +42,11 @@ export class SignupComponent {
     });
   }
 
-  onSubmitSignup() {
+ onSubmitSignup() {
     if (this.signupForm.valid) {
       this.isLoading = true;
       const signupData = { ...this.signupForm.value, role: 'CUSTOMER' };
-      
+
       this.userService.signup(signupData).subscribe({
         next: (response) => {
           this.showNotificationMessage('Signup successful! Redirecting to login...', 'success');
@@ -57,10 +57,8 @@ export class SignupComponent {
         },
         error: (error) => {
           console.error('Signup error:', error);
-          console.log('Error status:', error.status);
-          console.log('Error body:', error.error);
           let errorMessage = 'Signup failed! Please try again.';
-          
+
           // Handle specific backend error responses
           if (error.status === 409 || error.status === 500) {
             const errorText = error.error;
@@ -72,24 +70,23 @@ export class SignupComponent {
             } else if (typeof errorText === 'object' && errorText.message) {
               fullErrorMessage = errorText.message;
             }
-            
+
             console.log('Full error message:', fullErrorMessage);
-            
-            // Check for specific error patterns (case-insensitive)
-            const lowerErrorMessage = fullErrorMessage.toLowerCase();
-            
-            if (lowerErrorMessage.includes('email') && lowerErrorMessage.includes('already exists')) {
-              errorMessage = 'Email address already exists. Please use a different email.';
-            } else if (lowerErrorMessage.includes('aadhaar') && lowerErrorMessage.includes('already exists')) {
-              errorMessage = 'Aadhaar number already exists. Please check your details.';
-            } else if (lowerErrorMessage.includes('409 conflict')) {
-              // This is a fallback for wrapped conflict errors
-              if (lowerErrorMessage.includes('customer/add')) {
-                errorMessage = 'Account with these details already exists.';
-              }
+
+            // Correct the string comparison to match the backend message
+            if (fullErrorMessage.includes('Customer already exist With this email ID')) {
+              errorMessage = 'This email is already registered. Please use a different email address.';
+            } else if (fullErrorMessage.includes('Customer already exist With this Aadhar number')) {
+              errorMessage = 'This Aadhaar number is already registered. Please verify your Aadhaar number.';
+            } else if (fullErrorMessage.includes('409 Conflict')) {
+                // Fallback for a generic 409
+              errorMessage = 'Account with these details already exists.';
+            } else {
+              // Fallback to the message received from the backend if no specific match is found
+              errorMessage = fullErrorMessage || errorMessage;
             }
           }
-          
+
           this.showNotificationMessage(errorMessage, 'error');
           this.isLoading = false;
         }
@@ -99,7 +96,6 @@ export class SignupComponent {
       this.signupForm.markAllAsTouched();
     }
   }
-
   navigateToHome() {
     this.router.navigate(['/home']);
   }
