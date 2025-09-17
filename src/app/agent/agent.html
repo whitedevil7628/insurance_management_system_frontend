@@ -33,9 +33,7 @@
         <li class="nav-item">
           <a class="nav-link text-dark" [class.bg-dark]="activeSection === 'notifications'" [class.text-white]="activeSection === 'notifications'" [class.shadow-sm]="activeSection === 'notifications'" (click)="setActiveSection('notifications')" style="cursor: pointer;">
             <i class="fas fa-bell me-2"></i>Notifications
-            @if (notifications.length > 0) {
-              <span class="badge bg-danger ms-2">{{ notifications.length }}</span>
-            }
+            <span class="badge bg-danger ms-2" [style.visibility]="notifications.length > 0 ? 'visible' : 'hidden'">{{ notifications.length || 0 }}</span>
           </a>
         </li>
         <li class="nav-item">
@@ -101,35 +99,25 @@
           
           @if (notifications.length > 0) {
             <div class="row g-3">
-              @for (notification of notifications; track notification.id) {
+              @for (notification of notifications.slice().reverse(); track notification.id) {
                 <div class="col-12">
-                  <div class="card shadow-sm" (click)="toggleNotificationExpand($index)" style="cursor: pointer;">
+                  <div class="card shadow-sm">
                     <div class="card-body">
-                      <div class="d-flex justify-content-between align-items-start">
-                        <div class="flex-grow-1">
-                          <div class="d-flex align-items-center mb-2">
-                            <div class="bg-primary text-white rounded p-2 me-3">
-                              <i class="fas fa-info-circle"></i>
-                            </div>
-                            <div>
-                              <h6 class="mb-0">{{ notification.title || 'System Notification' }}</h6>
-                              <small class="text-muted">{{ notification.timestamp || 'Just now' }}</small>
-                            </div>
-                          </div>
-                          <p class="mb-0" [class.text-truncate]="!notification.expanded">
-                            {{ notification.message || notification.content || 'New notification received' }}
-                          </p>
-                          @if (notification.expanded && notification.details) {
-                            <div class="mt-2 p-2 bg-light rounded">
-                              <small>{{ notification.details }}</small>
-                            </div>
-                          }
+                      <div class="d-flex align-items-start">
+                        <div class="bg-primary text-white rounded p-2 me-3">
+                          <i class="fas fa-bell"></i>
                         </div>
-                        <div class="d-flex align-items-center gap-2">
-                          <button class="btn btn-sm btn-outline-success" (click)="markAsRead(notification, $event)">
-                            <i class="fas fa-check"></i>
-                          </button>
-                          <i class="fas" [class.fa-chevron-down]="!notification.expanded" [class.fa-chevron-up]="notification.expanded"></i>
+                        <div class="flex-grow-1">
+                          <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h6 class="mb-0">{{ notification.title || 'System Notification' }}</h6>
+                            <button class="btn btn-sm btn-outline-success" (click)="markAsRead(notification, $event)">
+                              <i class="fas fa-check"></i>
+                            </button>
+                          </div>
+                          <p class="mb-2 text-dark">{{ notification.message || notification.content || 'New notification received' }}</p>
+                          <small class="text-muted">
+                            <i class="fas fa-clock me-1"></i>{{ notification.timestamp || 'Just now' }}
+                          </small>
                         </div>
                       </div>
                     </div>

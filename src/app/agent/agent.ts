@@ -31,6 +31,11 @@ export class Agent implements OnInit, OnDestroy {
   constructor(private router: Router, private jwtService: JwtService, private http: HttpClient, private agentService: AgentService) {}
 
   ngOnInit() {
+    if (!this.jwtService.getToken() || this.jwtService.getUserRole() !== 'AGENT') {
+      this.showNotificationMessage('Not authorized to access this page', 'error');
+      this.router.navigate(['/login']);
+      return;
+    }
     this.loadAgentData();
     this.loadClaims();
     this.startNotificationPolling();

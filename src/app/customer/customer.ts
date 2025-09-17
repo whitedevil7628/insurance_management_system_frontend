@@ -79,6 +79,11 @@ export class Customer implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    if (!this.jwtService.getToken() || this.jwtService.getUserRole() !== 'CUSTOMER') {
+      this.showNotificationMessage('Not authorized to access this page', 'error');
+      this.router.navigate(['/login']);
+      return;
+    }
     this.loadUserData();
     this.loadPolicies();
     this.loadProfile();
@@ -454,8 +459,8 @@ export class Customer implements OnInit, OnDestroy {
     this.showNotificationPanel = !this.showNotificationPanel;
   }
   
-  toggleNotificationExpand(index: number) {
-    this.notifications[index].expanded = !this.notifications[index].expanded;
+  toggleNotificationExpand(notification: any) {
+    notification.expanded = !notification.expanded;
   }
   
   markAsRead(notification: any, event: Event) {
@@ -468,5 +473,37 @@ export class Customer implements OnInit, OnDestroy {
         console.error('Error marking notification as read:', error);
       }
     });
+  }
+  
+  getNotificationIcon(type: string): string {
+    switch (type?.toLowerCase()) {
+      case 'policy': return 'fa-shield-alt';
+      case 'claim': return 'fa-file-medical';
+      case 'payment': return 'fa-credit-card';
+      case 'alert': return 'fa-exclamation-triangle';
+      case 'info': return 'fa-info-circle';
+      case 'success': return 'fa-check-circle';
+      case 'warning': return 'fa-exclamation-circle';
+      case 'error': return 'fa-times-circle';
+      case 'reminder': return 'fa-clock';
+      case 'update': return 'fa-sync-alt';
+      default: return 'fa-bell';
+    }
+  }
+  
+  getNotificationIconClass(type: string): string {
+    switch (type?.toLowerCase()) {
+      case 'policy': return 'bg-primary';
+      case 'claim': return 'bg-success';
+      case 'payment': return 'bg-warning';
+      case 'alert': return 'bg-danger';
+      case 'info': return 'bg-info';
+      case 'success': return 'bg-success';
+      case 'warning': return 'bg-warning';
+      case 'error': return 'bg-danger';
+      case 'reminder': return 'bg-secondary';
+      case 'update': return 'bg-primary';
+      default: return 'bg-primary';
+    }
   }
 }
