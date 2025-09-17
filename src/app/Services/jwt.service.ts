@@ -104,4 +104,13 @@ export class JwtService {
     }
     return null;
   }
+
+  hasRole(role: string): boolean {
+    const userRole = this.getUserRole();
+    return userRole?.toUpperCase() === role.toUpperCase();
+  }
+
+  getRole(): string | null {
+    return this.getUserRole();
+  }
 }

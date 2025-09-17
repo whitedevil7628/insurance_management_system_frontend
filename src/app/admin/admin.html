@@ -1,588 +1,600 @@
-<div class="admin-dashboard">
+<div class="d-flex vh-100">
   <!-- Notification -->
-  <div class="notification" [class.show]="showNotification()" [class.success]="notificationType() === 'success'" [class.error]="notificationType() === 'error'">
-    <div class="notification-content">
-      <i class="fas fa-check-circle" *ngIf="notificationType() === 'success'"></i>
-      <i class="fas fa-exclamation-circle" *ngIf="notificationType() === 'error'"></i>
-      <span>{{ notificationMessage() }}</span>
+  @if (showNotification()) {
+    <div class="alert position-fixed top-0 end-0 m-3"
+         [class.alert-success]="notificationType() === 'success'"
+         [class.alert-danger]="notificationType() === 'error'"
+         style="z-index: 1050; min-width: 300px;">
+      @if (notificationType() === 'success') {
+        <i class="fas fa-check-circle me-2"></i>
+      }
+      @if (notificationType() === 'error') {
+        <i class="fas fa-exclamation-circle me-2"></i>
+      }
+      {{ notificationMessage() }}
     </div>
-  </div>
+  }
   
   <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <div class="brand">
-        <i class="fas fa-shield-alt"></i>
-        <span>Admin Panel</span>
-      </div>
+  <div class="bg-white d-flex flex-column border-end" style="width: 280px; box-shadow: 2px 0 10px rgba(0,0,0,0.1);">
+    <div class="p-3 border-bottom">
+      <h5 class="mb-0 text-dark">
+        <i class="fas fa-shield-alt text-dark me-2"></i>
+        Admin Panel
+      </h5>
     </div>
-    <nav class="sidebar-nav">
-      <ul>
-        <li [class.active]="activeTab() === 'dashboard'" (click)="setActiveTab('dashboard')">
-          <i class="fas fa-tachometer-alt"></i>
-          <span>Dashboard</span>
+    <nav class="flex-grow-1 p-2">
+      <ul class="nav flex-column">
+        <li class="nav-item">
+          <a class="nav-link text-dark" [class.bg-dark]="activeTab() === 'dashboard'" [class.text-white]="activeTab() === 'dashboard'" [class.shadow-sm]="activeTab() === 'dashboard'" (click)="setActiveTab('dashboard')" style="cursor: pointer;">
+            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+          </a>
         </li>
-        <li [class.active]="activeTab() === 'agents'" (click)="setActiveTab('agents')">
-          <i class="fas fa-users"></i>
-          <span>Agents</span>
+        <li class="nav-item">
+          <a class="nav-link text-dark" [class.bg-dark]="activeTab() === 'agents'" [class.text-white]="activeTab() === 'agents'" [class.shadow-sm]="activeTab() === 'agents'" (click)="setActiveTab('agents')" style="cursor: pointer;">
+            <i class="fas fa-users me-2"></i>Agents
+          </a>
         </li>
-        <li [class.active]="activeTab() === 'policies'" (click)="setActiveTab('policies')">
-          <i class="fas fa-file-contract"></i>
-          <span>Policies</span>
+        <li class="nav-item">
+          <a class="nav-link text-dark" [class.bg-dark]="activeTab() === 'policies'" [class.text-white]="activeTab() === 'policies'" [class.shadow-sm]="activeTab() === 'policies'" (click)="setActiveTab('policies')" style="cursor: pointer;">
+            <i class="fas fa-file-contract me-2"></i>Policies
+          </a>
         </li>
-        <li [class.active]="activeTab() === 'claims'" (click)="setActiveTab('claims')">
-          <i class="fas fa-file-medical"></i>
-          <span>Claims</span>
+        <li class="nav-item">
+          <a class="nav-link text-dark" [class.bg-dark]="activeTab() === 'claims'" [class.text-white]="activeTab() === 'claims'" [class.shadow-sm]="activeTab() === 'claims'" (click)="setActiveTab('claims')" style="cursor: pointer;">
+            <i class="fas fa-file-medical me-2"></i>Claims
+          </a>
         </li>
-        <li [class.active]="activeTab() === 'customers'" (click)="setActiveTab('customers')">
-          <i class="fas fa-user-friends"></i>
-          <span>Customers</span>
+        <li class="nav-item">
+          <a class="nav-link text-dark" [class.bg-dark]="activeTab() === 'customers'" [class.text-white]="activeTab() === 'customers'" [class.shadow-sm]="activeTab() === 'customers'" (click)="setActiveTab('customers')" style="cursor: pointer;">
+            <i class="fas fa-user-friends me-2"></i>Customers
+          </a>
         </li>
-        <li [class.active]="activeTab() === 'policy-logs'" (click)="setActiveTab('policy-logs')">
-          <i class="fas fa-history"></i>
-          <span>Policy Logs</span>
+        <li class="nav-item">
+          <a class="nav-link text-dark" [class.bg-dark]="activeTab() === 'policy-logs'" [class.text-white]="activeTab() === 'policy-logs'" [class.shadow-sm]="activeTab() === 'policy-logs'" (click)="setActiveTab('policy-logs')" style="cursor: pointer;">
+            <i class="fas fa-history me-2"></i>Policy Logs
+          </a>
         </li>
       </ul>
     </nav>
-  </aside>
+  </div>
 
   <!-- Main Content -->
-  <main class="main-content">
+  <div class="flex-grow-1 d-flex flex-column">
     <!-- Top Navbar -->
-    <header class="top-navbar">
-      <div class="navbar-left">
-        <div class="user-avatar">{{adminInitials()}}</div>
-        <span class="user-name">{{adminName()}}</span>
-      </div>
-      
-      <div class="navbar-center">
-        <div class="search-box">
-          <i class="fas fa-search"></i>
-          <input type="text" placeholder="Search..." [(ngModel)]="searchTerm">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow">
+      <div class="container-fluid">
+        <div class="d-flex align-items-center">
+          <div class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+            {{adminInitials()}}
+          </div>
+          <span class="fw-bold">{{adminName()}}</span>
         </div>
-      </div>
-      
-      <div class="navbar-right">
-        <button class="logout-btn" (click)="logout()">
-          <i class="fas fa-sign-out-alt"></i>
-          Logout
+        
+        <div class="mx-auto" style="max-width: 400px;">
+          <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-search"></i></span>
+            <input type="text" class="form-control" placeholder="Search..." [(ngModel)]="searchTerm">
+          </div>
+        </div>
+        
+        <button class="btn btn-dark" (click)="logout()">
+          <i class="fas fa-sign-out-alt me-2"></i>Logout
         </button>
       </div>
-    </header>
+    </nav>
 
     <!-- Content Area -->
-    <div class="content-area">
+    <div class="flex-grow-1 p-4 bg-white overflow-auto">
       <!-- Dashboard Section -->
-      <div *ngIf="activeTab() === 'dashboard'" class="section">
-        <div class="section-header">
-          <h2><i class="fas fa-tachometer-alt"></i> Admin Dashboard</h2>
-          <p>Overview of system statistics and metrics</p>
-        </div>
-        
-        <div class="stats-grid">
-          <div class="stat-card agents-card" (click)="setActiveTab('agents')">
-            <div class="stat-icon">
-              <i class="fas fa-users"></i>
-            </div>
-            <div class="stat-info">
-              <h3>{{agents().length}}</h3>
-              <p><i class="fas fa-user-tie"></i> Total Agents</p>
-
-            </div>
-            <div class="card-action">
-              <i class="fas fa-arrow-right"></i>
+      @if (activeTab() === 'dashboard') {
+        <div class="container-fluid">
+          <div class="row mb-4">
+            <div class="col">
+              <h2><i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard</h2>
             </div>
           </div>
-          <div class="stat-card policies-card" (click)="setActiveTab('policies')">
-            <div class="stat-icon">
-              <i class="fas fa-file-contract"></i>
+          
+          <div class="row g-3 mb-4">
+            <div class="col-md-3">
+              <div class="card h-100 shadow-sm" (click)="setActiveTab('agents')" style="cursor: pointer;">
+                <div class="card-body d-flex align-items-center">
+                  <div class="bg-success text-white rounded p-3 me-3">
+                    <i class="fas fa-users fa-2x"></i>
+                  </div>
+                  <div>
+                    <h3 class="card-title mb-1">{{agents().length}}</h3>
+                    <p class="card-text text-muted mb-0"><i class="fas fa-user-tie me-1"></i>Total Agents</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="stat-info">
-              <h3>{{policies().length}}</h3>
-              <p><i class="fas fa-shield-alt"></i> Total Policies</p>
-
+            <div class="col-md-3">
+              <div class="card h-100 shadow-sm" (click)="setActiveTab('policies')" style="cursor: pointer;">
+                <div class="card-body d-flex align-items-center">
+                  <div class="bg-info text-white rounded p-3 me-3">
+                    <i class="fas fa-file-contract fa-2x"></i>
+                  </div>
+                  <div>
+                    <h3 class="card-title mb-1">{{policies().length}}</h3>
+                    <p class="card-text text-muted mb-0"><i class="fas fa-shield-alt me-1"></i>Total Policies</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="card-action">
-              <i class="fas fa-arrow-right"></i>
+            <div class="col-md-3">
+              <div class="card h-100 shadow-sm" (click)="setActiveTab('claims')" style="cursor: pointer;">
+                <div class="card-body d-flex align-items-center">
+                  <div class="bg-warning text-white rounded p-3 me-3">
+                    <i class="fas fa-file-medical fa-2x"></i>
+                  </div>
+                  <div>
+                    <h3 class="card-title mb-1">{{claims().length}}</h3>
+                    <p class="card-text text-muted mb-0"><i class="fas fa-clipboard-list me-1"></i>Total Claims</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card h-100 shadow-sm" (click)="setActiveTab('customers')" style="cursor: pointer;">
+                <div class="card-body d-flex align-items-center">
+                  <div class="bg-secondary text-white rounded p-3 me-3">
+                    <i class="fas fa-user-friends fa-2x"></i>
+                  </div>
+                  <div>
+                    <h3 class="card-title mb-1">{{customers().length}}</h3>
+                    <p class="card-text text-muted mb-0"><i class="fas fa-users me-1"></i>Total Customers</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="stat-card claims-card" (click)="setActiveTab('claims')">
-            <div class="stat-icon">
-              <i class="fas fa-file-medical"></i>
+          
+          <!-- Quick Actions -->
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
             </div>
-            <div class="stat-info">
-              <h3>{{claims().length}}</h3>
-              <p><i class="fas fa-clipboard-list"></i> Total Claims</p>
-
+            <div class="card-body">
+              <div class="row g-2">
+                <div class="col-md-3">
+                  <button class="btn btn-success w-100" (click)="setActiveTab('agents'); toggleAgentForm()">
+                    <i class="fas fa-user-plus me-2"></i>Add Agent
+                  </button>
+                </div>
+                <div class="col-md-3">
+                  <button class="btn btn-info w-100" (click)="setActiveTab('policies'); togglePolicyForm()">
+                    <i class="fas fa-plus-circle me-2"></i>Create Policy
+                  </button>
+                </div>
+                <div class="col-md-3">
+                  <button class="btn btn-warning w-100" (click)="setActiveTab('claims')">
+                    <i class="fas fa-file-medical-alt me-2"></i>View Claims
+                  </button>
+                </div>
+                <div class="col-md-3">
+                  <button class="btn btn-secondary w-100" (click)="setActiveTab('customers')">
+                    <i class="fas fa-users-cog me-2"></i>Manage Customers
+                  </button>
+                </div>
+              </div>
             </div>
-            <div class="card-action">
-              <i class="fas fa-arrow-right"></i>
-            </div>
-          </div>
-          <div class="stat-card customers-card" (click)="setActiveTab('customers')">
-            <div class="stat-icon">
-              <i class="fas fa-user-friends"></i>
-            </div>
-            <div class="stat-info">
-              <h3>{{customers().length}}</h3>
-              <p><i class="fas fa-users"></i> Total Customers</p>
-
-            </div>
-            <div class="card-action">
-              <i class="fas fa-arrow-right"></i>
-            </div>
-          </div>
-          <div class="stat-card logs-card" (click)="setActiveTab('policy-logs')">
-            <div class="stat-icon">
-              <i class="fas fa-history"></i>
-            </div>
-            <div class="stat-info">
-              <h3>{{policyLogs().length}}</h3>
-              <p><i class="fas fa-clipboard-check"></i> Policy Logs</p>
-
-            </div>
-            <div class="card-action">
-              <i class="fas fa-arrow-right"></i>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Quick Actions -->
-        <div class="quick-actions">
-          <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
-          <div class="actions-grid">
-            <button class="action-btn" (click)="setActiveTab('agents'); toggleAgentForm()">
-              <i class="fas fa-user-plus"></i>
-              <span>Add Agent</span>
-            </button>
-            <button class="action-btn" (click)="setActiveTab('policies'); togglePolicyForm()">
-              <i class="fas fa-plus-circle"></i>
-              <span>Create Policy</span>
-            </button>
-            <button class="action-btn" (click)="setActiveTab('claims')">
-              <i class="fas fa-file-medical-alt"></i>
-              <span>View Claims</span>
-            </button>
-            <button class="action-btn" (click)="setActiveTab('customers')">
-              <i class="fas fa-users-cog"></i>
-              <span>Manage Customers</span>
-            </button>
           </div>
         </div>
-        
-        <!-- Recent Activity
-        <div class="recent-activity">
-          <h3><i class="fas fa-clock"></i> Recent Activity</h3>
-          <div class="activity-list">
-            <div class="activity-item">
-              <div class="activity-icon agents">
-                <i class="fas fa-user-plus"></i>
-              </div>
-              <div class="activity-content">
-                <p><strong>New Agent Registered</strong></p>
-                <span>{{agents().length > 0 ? 'Latest: ' + (agents()[agents().length-1]?.name || 'Unknown') : 'No agents yet'}}</span>
-              </div>
-              <div class="activity-time">Today</div>
-            </div>
-            <div class="activity-item">
-              <div class="activity-icon policies">
-                <i class="fas fa-file-contract"></i>
-              </div>
-              <div class="activity-content">
-                <p><strong>Policy Created</strong></p>
-                <span>{{policies().length > 0 ? 'Latest policy added' : 'No policies yet'}}</span>
-              </div>
-              <div class="activity-time">2 hours ago</div>
-            </div>
-            <div class="activity-item">
-              <div class="activity-icon claims">
-                <i class="fas fa-file-medical"></i>
-              </div>
-              <div class="activity-content">
-                <p><strong>Claim Processed</strong></p>
-                <span>{{claims().length > 0 ? 'Total claims: ' + claims().length : 'No claims yet'}}</span>
-              </div>
-              <div class="activity-time">5 hours ago</div>
-            </div>
-          </div>
-        </div> -->
-      </div>
+      }
 
       <!-- Agents Section -->
-      <div *ngIf="activeTab() === 'agents'" class="section">
-        <div class="section-header">
-          <h2>Agents Management</h2>
-          <button class="btn-primary" (click)="toggleAgentForm()">
-            <i class="fas fa-plus"></i>
-            Add Agent
-          </button>
-        </div>
-
-        <!-- Agent Form -->
-        <div *ngIf="showAgentForm()" class="form-card">
-          <div class="form-header">
-            <h3>Create New Agent</h3>
-            <button class="close-btn" (click)="toggleAgentForm()">
-              <i class="fas fa-times"></i>
+      @if (activeTab() === 'agents') {
+        <div class="container-fluid">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <h2>Agents Management</h2>
+              <p class="text-muted">Manage insurance agents</p>
+            </div>
+            <button class="btn btn-success" (click)="toggleAgentForm()">
+              <i class="fas fa-plus me-2"></i>Add Agent
             </button>
           </div>
-          
-          <form (ngSubmit)="createAgent()" class="agent-form">
-            <div class="form-grid">
-              <div class="form-group">
-                <label>Name</label>
-                <input [value]="agentForm().name" (input)="onInputChange($event, 'name')" placeholder="Agent Name" required>
-              </div>
-              <div class="form-group">
-                <label>Email</label>
-                <input [value]="agentForm().contactInfo" (input)="onInputChange($event, 'contactInfo')" type="email" placeholder="Email" required>
-              </div>
-              <div class="form-group">
-                <label>Password</label>
-                <input [value]="agentForm().password" (input)="onInputChange($event, 'password')" type="password" placeholder="Password" required>
-              </div>
-              <div class="form-group">
-                <label>Gender</label>
-                <select [value]="agentForm().gender" (change)="onInputChange($event, 'gender')">
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label>Aadhar Number</label>
-                <input [value]="agentForm().aadharnumber" (input)="onInputChange($event, 'aadharnumber')" type="number" placeholder="Aadhar Number" required>
-              </div>
-              <div class="form-group">
-                <label>Phone</label>
-                <input [value]="agentForm().phone" (input)="onInputChange($event, 'phone')" type="number" placeholder="Phone Number" required>
-              </div>
-              <div class="form-group">
-                <label>Organization Email</label>
-                <input [value]="agentForm().orgEmail" (input)="onInputChange($event, 'orgEmail')" type="email" placeholder="Organization Email" required>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Address</label>
-              <textarea [value]="agentForm().address" (input)="onInputChange($event, 'address')" placeholder="Address" required></textarea>
-            </div>
-            
-            <div class="form-actions">
-              <button type="button" class="btn-outline" (click)="toggleAgentForm()">Cancel</button>
-              <button type="submit" class="btn-primary">
-                <i class="fas fa-save"></i>
-                Create Agent
-              </button>
-            </div>
-          </form>
-        </div>
 
-        <!-- Update Agent Form -->
-        <div *ngIf="showUpdateForm()" class="form-card">
-          <div class="form-header">
-            <h3>Update Agent</h3>
-            <button class="close-btn" (click)="closeUpdateForm()">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-          
-          <form (ngSubmit)="updateAgent()" class="agent-form">
-            <div class="form-grid">
-              <div class="form-group">
-                <label>Name</label>
-                <input [value]="updateForm().name" (input)="onUpdateInputChange($event, 'name')" placeholder="Agent Name" required>
+          <!-- Agent Form -->
+          @if (showAgentForm()) {
+            <div class="card mb-4">
+              <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Create New Agent</h5>
+                <button type="button" class="btn-close btn-close-white" (click)="toggleAgentForm()"></button>
               </div>
-              <div class="form-group">
-                <label>Contact Info</label>
-                <input [value]="updateForm().contactInfo" (input)="onUpdateInputChange($event, 'contactInfo')" type="email" placeholder="Contact Info" required>
-              </div>
-              <div class="form-group">
-                <label>Gender</label>
-                <select [value]="updateForm().gender" (change)="onUpdateInputChange($event, 'gender')">
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label>Date</label>
-                <input [value]="updateForm().date" (input)="onUpdateInputChange($event, 'date')" type="datetime-local" required>
-              </div>
-              <div class="form-group">
-                <label>Aadhar Number</label>
-                <input [value]="updateForm().aadharnumber" (input)="onUpdateInputChange($event, 'aadharnumber')" type="number" placeholder="Aadhar Number" required>
-              </div>
-              <div class="form-group">
-                <label>Phone</label>
-                <input [value]="updateForm().phone" (input)="onUpdateInputChange($event, 'phone')" type="number" placeholder="Phone Number" required>
-              </div>
-              <div class="form-group">
-                <label>Organization Email</label>
-                <input [value]="updateForm().orgEmail" (input)="onUpdateInputChange($event, 'orgEmail')" type="email" placeholder="Organization Email" required>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Address</label>
-              <textarea [value]="updateForm().address" (input)="onUpdateInputChange($event, 'address')" placeholder="Address" required></textarea>
-            </div>
-            
-            <div class="form-actions">
-              <button type="button" class="btn-outline" (click)="closeUpdateForm()">Cancel</button>
-              <button type="submit" class="btn-primary">
-                <i class="fas fa-save"></i>
-                Update Agent
-              </button>
-            </div>
-          </form>
-        </div>
-
-        <!-- Agents Table -->
-        <div class="table-card">
-          <div class="table-container">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let agent of getFilteredAgents()">
-                  <td>{{agent.agentId || agent.id}}</td>
-                  <td>{{agent.name}}</td>
-                  <td>{{agent.contactInfo || agent.email}}</td>
-                  <td>{{agent.phone}}</td>
-                  <td>
-                    <button class="btn-primary btn-sm" (click)="openUpdateForm(agent)">
-                      <i class="fas fa-edit"></i>
-                      Update
+              <div class="card-body">
+                <form (ngSubmit)="createAgent()">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label class="form-label">Name</label>
+                      <input type="text" class="form-control" [value]="agentForm().name" (input)="onInputChange($event, 'name')" placeholder="Agent Name" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Email</label>
+                      <input type="email" class="form-control" [value]="agentForm().contactInfo" (input)="onInputChange($event, 'contactInfo')" placeholder="Email" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Password</label>
+                      <input type="password" class="form-control" [value]="agentForm().password" (input)="onInputChange($event, 'password')" placeholder="Password" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Gender</label>
+                      <select class="form-select" [value]="agentForm().gender" (change)="onInputChange($event, 'gender')">
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Aadhar Number</label>
+                      <input type="number" class="form-control" [value]="agentForm().aadharnumber" (input)="onInputChange($event, 'aadharnumber')" placeholder="Aadhar Number" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Phone</label>
+                      <input type="number" class="form-control" [value]="agentForm().phone" (input)="onInputChange($event, 'phone')" placeholder="Phone Number" required>
+                    </div>
+                    <div class="col-12">
+                      <label class="form-label">Organization Email</label>
+                      <input type="email" class="form-control" [value]="agentForm().orgEmail" (input)="onInputChange($event, 'orgEmail')" placeholder="Organization Email" required>
+                    </div>
+                    <div class="col-12">
+                      <label class="form-label">Address</label>
+                      <textarea class="form-control" [value]="agentForm().address" (input)="onInputChange($event, 'address')" placeholder="Address" rows="3" required></textarea>
+                    </div>
+                  </div>
+                  <div class="mt-3">
+                    <button type="button" class="btn btn-secondary me-2" (click)="toggleAgentForm()">Cancel</button>
+                    <button type="submit" class="btn btn-success">
+                      <i class="fas fa-save me-2"></i>Create Agent
                     </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                  </div>
+                </form>
+              </div>
+            </div>
+          }
+
+          <!-- Update Agent Form -->
+          @if (showUpdateForm()) {
+            <div class="card mb-4">
+              <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Update Agent</h5>
+                <button type="button" class="btn-close btn-close-white" (click)="closeUpdateForm()"></button>
+              </div>
+              <div class="card-body">
+                <form (ngSubmit)="updateAgent()">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label class="form-label">Name</label>
+                      <input type="text" class="form-control" [value]="updateForm().name" (input)="onUpdateInputChange($event, 'name')" placeholder="Agent Name" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Contact Info</label>
+                      <input type="email" class="form-control" [value]="updateForm().contactInfo" (input)="onUpdateInputChange($event, 'contactInfo')" placeholder="Contact Info" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Gender</label>
+                      <select class="form-select" [value]="updateForm().gender" (change)="onUpdateInputChange($event, 'gender')">
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Date</label>
+                      <input type="datetime-local" class="form-control" [value]="updateForm().date" (input)="onUpdateInputChange($event, 'date')" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Aadhar Number</label>
+                      <input type="number" class="form-control" [value]="updateForm().aadharnumber" (input)="onUpdateInputChange($event, 'aadharnumber')" placeholder="Aadhar Number" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Phone</label>
+                      <input type="number" class="form-control" [value]="updateForm().phone" (input)="onUpdateInputChange($event, 'phone')" placeholder="Phone Number" required>
+                    </div>
+                    <div class="col-12">
+                      <label class="form-label">Organization Email</label>
+                      <input type="email" class="form-control" [value]="updateForm().orgEmail" (input)="onUpdateInputChange($event, 'orgEmail')" placeholder="Organization Email" required>
+                    </div>
+                    <div class="col-12">
+                      <label class="form-label">Address</label>
+                      <textarea class="form-control" [value]="updateForm().address" (input)="onUpdateInputChange($event, 'address')" placeholder="Address" rows="3" required></textarea>
+                    </div>
+                  </div>
+                  <div class="mt-3">
+                    <button type="button" class="btn btn-secondary me-2" (click)="closeUpdateForm()">Cancel</button>
+                    <button type="submit" class="btn btn-success">
+                      <i class="fas fa-save me-2"></i>Update Agent
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          }
+
+          <!-- Agents Table -->
+          <div class="card">
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>ID</th>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Phone</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (agent of getFilteredAgents(); track agent.agentId || agent.id) {
+                      <tr>
+                        <td>{{agent.agentId || agent.id}}</td>
+                        <td>{{agent.name}}</td>
+                        <td>{{agent.contactInfo || agent.email}}</td>
+                        <td>{{agent.phone}}</td>
+                        <td>
+                          <button class="btn btn-sm btn-outline-success" (click)="openUpdateForm(agent)">
+                            <i class="fas fa-edit me-1"></i>Update
+                          </button>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      }
 
       <!-- Claims Section -->
-      <div *ngIf="activeTab() === 'claims'" class="section">
-        <div class="section-header">
-          <h2>Claims Management</h2>
-          <p>Monitor and manage insurance claims</p>
-        </div>
-        
-        <div class="table-card">
-          <div class="table-container">
-            <div *ngIf="claims().length === 0" class="no-data-message">
-              <i class="fas fa-file-medical"></i>
-              <p>No claims data available</p>
+      @if (activeTab() === 'claims') {
+        <div class="container-fluid">
+          <div class="row mb-4">
+            <div class="col">
+              <h2>Claims Management</h2>
+              <p class="text-muted">Monitor and manage insurance claims</p>
             </div>
-            <table *ngIf="claims().length > 0" class="data-table">
-              <thead>
-                <tr>
-                  <th>Claim ID</th>
-                  <th>Policy ID</th>
-                  <th>Customer ID</th>
-                  <th>Amount</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let claim of claims()">
-                  <td><span class="id-badge">{{claim.claimId || claim.claim_id || claim.id || 'N/A'}}</span></td>
-                  <td><span class="id-badge">{{claim.policyId || claim.policy_id || 'N/A'}}</span></td>
-                  <td><span class="id-badge">{{claim.customerId || claim.customer_id || claim.userId || 'N/A'}}</span></td>
-                  <td><span class="amount">₹{{(claim.claimAmount || claim.claim_amount || claim.amount || 0) | number}}</span></td>
-                  <td>
-                    <span class="status-badge" [class]="'status-' + (claim.status || 'pending').toLowerCase()">
-                      {{claim.status || claim.claimStatus || 'Pending'}}
-                    </span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- Customers Section -->
-      <div *ngIf="activeTab() === 'customers'" class="section">
-        <div class="section-header">
-          <h2>Customers Management</h2>
-          <p>View and manage customer information</p>
-        </div>
-        
-        <div class="table-card">
-          <div class="table-container">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Address</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let customer of customers()">
-                  <td>{{customer.customerId || customer.id}}</td>
-                  <td>{{customer.name}}</td>
-                  <td>{{customer.email}}</td>
-                  <td>{{customer.phone}}</td>
-                  <td>{{customer.address}}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- Policies Section -->
-      <div *ngIf="activeTab() === 'policies'" class="section">
-        <div class="section-header">
-          <h2><i class="fas fa-file-contract"></i> Policies Management</h2>
-          <div class="header-actions">
-            <select [(ngModel)]="selectedPolicyType" class="filter-select">
-              <option value="">All Types</option>
-              <option value="Health">Health</option>
-              <option value="Vehicle">Vehicle</option>
-              <option value="Life">Life</option>
-              <option value="Travel">Travel</option>
-              <option value="Home">Home</option>
-            </select>
-            <button class="btn-primary" (click)="togglePolicyForm()">
-              <i class="fas fa-plus"></i>
-              Add Policy
-            </button>
-          </div>
-        </div>
-
-        <!-- Policy Form -->
-        <div *ngIf="showPolicyForm()" class="form-card">
-          <div class="form-header">
-            <h3>Create New Policy</h3>
-            <button class="close-btn" (click)="togglePolicyForm()">
-              <i class="fas fa-times"></i>
-            </button>
           </div>
           
-          <form (ngSubmit)="createPolicy()" class="policy-form">
-            <div class="form-grid">
-              <div class="form-group">
-                <label>Policy Name</label>
-                <input [value]="policyForm().name" #nameInput (input)="updatePolicyForm('name', nameInput.value)" placeholder="Policy Name" required>
-              </div>
-              <div class="form-group">
-                <label>Policy Type</label>
-                <select [value]="policyForm().policyType" #typeSelect (change)="updatePolicyForm('policyType', typeSelect.value)" required>
-                  <option value="">Select Type</option>
-                  <option value="Health">Health</option>
-                  <option value="Vehicle">Vehicle</option>
-                  <option value="Life">Life</option>
-                  <option value="Travel">Travel</option>
-                  <option value="Home">Home</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label>Premium Amount</label>
-                <input [value]="policyForm().premiumAmount" #premiumInput (input)="updatePolicyForm('premiumAmount', premiumInput.value)" type="number" placeholder="Premium Amount" required>
-              </div>
-              <div class="form-group">
-                <label>Coverage Amount</label>
-                <input [value]="policyForm().coverageamount" #coverageInput (input)="updatePolicyForm('coverageamount', coverageInput.value)" type="number" placeholder="Coverage Amount" required>
+          <div class="card">
+            <div class="card-body p-0">
+              @if (claims().length === 0) {
+                <div class="text-center p-5">
+                  <i class="fas fa-file-medical fa-3x text-muted mb-3"></i>
+                  <p class="text-muted">No claims data available</p>
+                </div>
+              } @else {
+                <div class="table-responsive">
+                  <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                      <tr>
+                        <th>Claim ID</th>
+                        <th>Policy ID</th>
+                        <th>Customer ID</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (claim of claims(); track claim.claimId || claim.id) {
+                        <tr>
+                          <td><span class="badge bg-secondary">{{claim.claimId || claim.claim_id || claim.id || 'N/A'}}</span></td>
+                          <td><span class="badge bg-secondary">{{claim.policyId || claim.policy_id || 'N/A'}}</span></td>
+                          <td><span class="badge bg-secondary">{{claim.customerId || claim.customer_id || claim.userId || 'N/A'}}</span></td>
+                          <td><span class="fw-bold">₹{{(claim.claimAmount || claim.claim_amount || claim.amount || 0) | number}}</span></td>
+                          <td>
+                            <span class="badge bg-warning">{{claim.status || claim.claimStatus || 'Pending'}}</span>
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Customers Section -->
+      @if (activeTab() === 'customers') {
+        <div class="container-fluid">
+          <div class="row mb-4">
+            <div class="col">
+              <h2>Customers Management</h2>
+              <p class="text-muted">View and manage customer information</p>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>ID</th>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Phone</th>
+                      <th>Address</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (customer of customers(); track customer.customerId || customer.id) {
+                      <tr>
+                        <td>{{customer.customerId || customer.id}}</td>
+                        <td>{{customer.name}}</td>
+                        <td>{{customer.email}}</td>
+                        <td>{{customer.phone}}</td>
+                        <td>{{customer.address}}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
               </div>
             </div>
-            <div class="form-group">
-              <label>Coverage Details</label>
-              <textarea [value]="policyForm().coverageDetails" #detailsTextarea (input)="updatePolicyForm('coverageDetails', detailsTextarea.value)" placeholder="Coverage Details" required></textarea>
+          </div>
+        </div>
+      }
+
+      <!-- Policies Section -->
+      @if (activeTab() === 'policies') {
+        <div class="container-fluid">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <h2><i class="fas fa-file-contract me-2"></i>Policies Management</h2>
+              <p class="text-muted">Manage insurance policies</p>
             </div>
-            
-            <div class="form-actions">
-              <button type="button" class="btn-outline" (click)="togglePolicyForm()">Cancel</button>
-              <button type="submit" class="btn-primary">
-                <i class="fas fa-save"></i>
-                Create Policy
+            <div class="d-flex gap-2">
+              <select class="form-select" [(ngModel)]="selectedPolicyType" style="width: auto;">
+                <option value="">All Types</option>
+                <option value="Health">Health</option>
+                <option value="Vehicle">Vehicle</option>
+                <option value="Life">Life</option>
+                <option value="Travel">Travel</option>
+                <option value="Home">Home</option>
+              </select>
+              <button class="btn btn-info" (click)="togglePolicyForm()">
+                <i class="fas fa-plus me-2"></i>Add Policy
               </button>
             </div>
-          </form>
-        </div>
-        
-        <div class="table-card">
-          <div class="table-container">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Policy ID</th>
-                  <th>Name</th>
-                  <th>Type</th>
-                  <th>Premium Amount</th>
-                  <th>Coverage Amount</th>
-                  <th>Coverage Details</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let policy of getFilteredPolicies()">
-                  <td><span class="id-badge">{{policy[1] || policy.policy_id || policy.policyId || policy.id || 'N/A'}}</span></td>
-                  <td><strong>{{policy[4] || policy.name || 'No Name'}}</strong></td>
-                  <td><span class="type-badge">{{policy.policyType || policy[5] || policy.policy_type || policy.type || 'N/A'}}</span></td>
-                  <td><span class="amount">₹{{policy[2] || policy.premium_amount || policy.premiumAmount || policy.premium || 0 | number}}</span></td>
-                  <td><span class="amount">₹{{policy[0] || policy.coverageamount || policy.coverageAmount || policy.coverage || 0 | number}}</span></td>
-                  <td class="description-cell">{{policy[3] || policy.coverage_details || policy.coverageDetails || policy.description || 'No Description'}}</td>
-                  <td>
-                    <button class="btn-danger btn-sm" (click)="deletePolicy(policy[1] || policy.policy_id || policy.policyId || policy.id)">
-                      <i class="fas fa-trash"></i>
-                      Delete
+          </div>
+
+          <!-- Policy Form -->
+          @if (showPolicyForm()) {
+            <div class="card mb-4">
+              <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Create New Policy</h5>
+                <button type="button" class="btn-close btn-close-white" (click)="togglePolicyForm()"></button>
+              </div>
+              <div class="card-body">
+                <form (ngSubmit)="createPolicy()">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label class="form-label">Policy Name</label>
+                      <input type="text" class="form-control" [value]="policyForm().name" #nameInput (input)="updatePolicyForm('name', nameInput.value)" placeholder="Policy Name" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Policy Type</label>
+                      <select class="form-select" [value]="policyForm().policyType" #typeSelect (change)="updatePolicyForm('policyType', typeSelect.value)" required>
+                        <option value="">Select Type</option>
+                        <option value="Health">Health</option>
+                        <option value="Vehicle">Vehicle</option>
+                        <option value="Life">Life</option>
+                        <option value="Travel">Travel</option>
+                        <option value="Home">Home</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Premium Amount</label>
+                      <input type="number" class="form-control" [value]="policyForm().premiumAmount" #premiumInput (input)="updatePolicyForm('premiumAmount', premiumInput.value)" placeholder="Premium Amount" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Coverage Amount</label>
+                      <input type="number" class="form-control" [value]="policyForm().coverageamount" #coverageInput (input)="updatePolicyForm('coverageamount', coverageInput.value)" placeholder="Coverage Amount" required>
+                    </div>
+                    <div class="col-12">
+                      <label class="form-label">Coverage Details</label>
+                      <textarea class="form-control" [value]="policyForm().coverageDetails" #detailsTextarea (input)="updatePolicyForm('coverageDetails', detailsTextarea.value)" placeholder="Coverage Details" rows="3" required></textarea>
+                    </div>
+                  </div>
+                  <div class="mt-3">
+                    <button type="button" class="btn btn-secondary me-2" (click)="togglePolicyForm()">Cancel</button>
+                    <button type="submit" class="btn btn-info">
+                      <i class="fas fa-save me-2"></i>Create Policy
                     </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                  </div>
+                </form>
+              </div>
+            </div>
+          }
+          
+          <div class="card">
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Policy ID</th>
+                      <th>Name</th>
+                      <th>Type</th>
+                      <th>Premium Amount</th>
+                      <th>Coverage Amount</th>
+                      <th>Coverage Details</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (policy of getFilteredPolicies(); track policy[1] || policy.policyId || policy.id) {
+                      <tr>
+                        <td><span class="badge bg-secondary">{{policy[1] || policy.policy_id || policy.policyId || policy.id || 'N/A'}}</span></td>
+                        <td><strong>{{policy[4] || policy.name || 'No Name'}}</strong></td>
+                        <td><span class="badge bg-info">{{policy.policyType || policy[5] || policy.policy_type || policy.type || 'N/A'}}</span></td>
+                        <td><span class="fw-bold">₹{{policy[2] || policy.premium_amount || policy.premiumAmount || policy.premium || 0 | number}}</span></td>
+                        <td><span class="fw-bold">₹{{policy[0] || policy.coverageamount || policy.coverageAmount || policy.coverage || 0 | number}}</span></td>
+                        <td>{{policy[3] || policy.coverage_details || policy.coverageDetails || policy.description || 'No Description'}}</td>
+                        <td>
+                          <button class="btn btn-sm btn-outline-danger" (click)="deletePolicy(policy[1] || policy.policy_id || policy.policyId || policy.id)">
+                            <i class="fas fa-trash me-1"></i>Delete
+                          </button>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      }
 
       <!-- Policy Logs Section -->
-      <div *ngIf="activeTab() === 'policy-logs'" class="section">
-        <div class="section-header">
-          <h2><i class="fas fa-history"></i> Policy Logs</h2>
-          <p>View all policy transaction logs and history</p>
-        </div>
-        
-        <div class="table-card">
-          <div class="table-container">
-            <div *ngIf="policyLogs().length === 0" class="no-data-message">
-              <i class="fas fa-history"></i>
-              <p>No policy logs available</p>
+      @if (activeTab() === 'policy-logs') {
+        <div class="container-fluid">
+          <div class="row mb-4">
+            <div class="col">
+              <h2><i class="fas fa-history me-2"></i>Policy Logs</h2>
+              <p class="text-muted">View all policy transaction logs and history</p>
             </div>
-            <table *ngIf="policyLogs().length > 0" class="data-table professional-table">
-              <thead>
-                <tr>
-                  <th>Policy ID</th>
-                  <th>Customer ID</th>
-                  <th>Agent ID</th>
-                  <th>Status</th>
-                  <th>Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let log of policyLogs(); let i = index">
-                  <td><span class="simple-badge">{{log.policyId || log.policy_id || log.id || log.pId || ('P-' + (i + 1))}}</span></td>
-                  <td><span class="simple-badge">{{log.customerId || log.customer_id || log.userId || log.cId || ('C-' + (i + 1))}}</span></td>
-                  <td><span class="simple-badge">{{log.agentId || log.agent_id || log.createdBy || log.aId || ('A-' + (i + 1))}}</span></td>
-                  <td><span class="status-simple">{{log.status || log.policyStatus || 'ACTIVE'}}</span></td>
-                  <td><span class="date-simple">{{getFormattedDate(log)}}</span></td>
-                </tr>
-              </tbody>
-            </table>
+          </div>
+          
+          <div class="card">
+            <div class="card-body p-0">
+              @if (policyLogs().length === 0) {
+                <div class="text-center p-5">
+                  <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                  <p class="text-muted">No policy logs available</p>
+                </div>
+              } @else {
+                <div class="table-responsive">
+                  <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                      <tr>
+                        <th>Policy ID</th>
+                        <th>Customer ID</th>
+                        <th>Agent ID</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (log of policyLogs(); track log.id || $index; let i = $index) {
+                        <tr>
+                          <td><span class="badge bg-secondary">{{log.policyId || log.policy_id || log.id || log.pId || ('P-' + (i + 1))}}</span></td>
+                          <td><span class="badge bg-secondary">{{log.customerId || log.customer_id || log.userId || log.cId || ('C-' + (i + 1))}}</span></td>
+                          <td><span class="badge bg-secondary">{{log.agentId || log.agent_id || log.createdBy || log.aId || ('A-' + (i + 1))}}</span></td>
+                          <td><span class="badge bg-success">{{log.status || log.policyStatus || 'ACTIVE'}}</span></td>
+                          <td>{{getFormattedDate(log)}}</td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              }
+            </div>
           </div>
         </div>
-      </div>
+      }
     </div>
-  </main>
-  
-
+  </div>
 </div>
