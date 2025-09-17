@@ -1,10 +1,21 @@
-<div class="signup-container d-flex align-items-center justify-content-center">
-  <!-- Theme Toggle -->
-  <div class="theme-toggle-header">
-    <div class="theme-toggle" [class.dark]="isDarkMode" (click)="toggleTheme()">
-      <i class="fas" [class.fa-sun]="!isDarkMode" [class.fa-moon]="isDarkMode" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 12px; color: #667eea;"></i>
+<div class="min-vh-100" style="background: linear-gradient(135deg, #f0f4f8, #d6e7f0);">
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background: linear-gradient(135deg, #f8f9fa, #e9ecef);">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="#">
+        <i class="fas fa-shield-alt me-2" style="color: #2c5aa0;"></i>
+        <span style="color: #2c5aa0;">Insurance Management</span>
+      </a>
+      <div class="ms-auto">
+        <button class="btn" style="border: 2px solid #2c5aa0; color: #2c5aa0; background: transparent;" (click)="navigateToHome()">
+          <i class="fas fa-home me-1"></i>Back to Home
+        </button>
+      </div>
     </div>
-  </div>
+  </nav>
+
+  <div class="d-flex align-items-center justify-content-center" style="min-height: calc(100vh - 76px); padding: 2rem 0;">
+
   <!-- Notification -->
   @if (showNotification) {
     <div class="alert position-fixed top-0 end-0 m-3"
@@ -23,15 +34,15 @@
 
   <div class="container">
     <div class="row justify-content-center">
-      <div class="col-md-8 col-lg-6">
+      <div class="col-lg-10 col-xl-8">
         
-        <div class="card signup-card animate-fade-in">
-          <div class="card-header text-center">
+        <div class="card shadow-lg border-0 animate-fade-in" style="border-radius: 20px; overflow: hidden; max-width: 900px; margin: 0 auto;">
+          <div class="card-header text-center py-4" style="background: linear-gradient(135deg, #2c5aa0, #1e3d72); color: white;">
             <h2 class="mb-0">
-              <i class="fas fa-user-plus text-primary me-2"></i>
+              <i class="fas fa-user-plus me-2"></i>
               Create Account
             </h2>
-            <p class="mb-0 text-muted">Join our insurance management system</p>
+            <p class="mb-0" style="opacity: 0.9;">Join our insurance management system</p>
           </div>
           
           <div class="card-body p-3">
@@ -209,13 +220,10 @@
             </form>
           </div>
           
-          <div class="card-footer text-center">
+          <div class="card-footer text-center border-top" style="background: #f8f9fa;">
             <p class="mb-2">Already have an account?</p>
-            <button class="btn btn-link me-2" (click)="navigateToLogin()">
+            <button class="btn" style="color: #2c5aa0; text-decoration: none; background: none; border: none;" (click)="navigateToLogin()">
               <i class="fas fa-sign-in-alt me-1"></i>Sign In
-            </button>
-            <button class="btn btn-outline-primary btn-sm" (click)="navigateToHome()">
-              <i class="fas fa-home me-1"></i>Back to Home
             </button>
           </div>
         </div>
