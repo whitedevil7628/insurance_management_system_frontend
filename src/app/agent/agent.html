@@ -16,7 +16,7 @@
   }
 
   <!-- Sidebar -->
-  <div class="bg-white d-flex flex-column border-end" style="width: 280px; box-shadow: 2px 0 10px rgba(0,0,0,0.1);">
+  <div class="bg-white d-flex flex-column border-end" style="min-width: 280px; max-width: 280px; box-shadow: 2px 0 10px rgba(0,0,0,0.1);">
     <div class="p-3 border-bottom">
       <h5 class="mb-0 text-dark">
         <i class="fas fa-shield-alt text-dark me-2"></i>
@@ -33,7 +33,7 @@
         <li class="nav-item">
           <a class="nav-link text-dark" [class.bg-dark]="activeSection === 'notifications'" [class.text-white]="activeSection === 'notifications'" [class.shadow-sm]="activeSection === 'notifications'" (click)="setActiveSection('notifications')" style="cursor: pointer;">
             <i class="fas fa-bell me-2"></i>Notifications
-            <span class="badge bg-danger ms-2" [style.visibility]="notifications.length > 0 ? 'visible' : 'hidden'">{{ notifications.length || 0 }}</span>
+            <span class="badge bg-danger ms-2" [style.visibility]="notifications.length > 0 ? 'visible' : 'hidden'" style="min-width: 20px;">{{ notifications.length || 0 }}</span>
           </a>
         </li>
         <li class="nav-item">
@@ -101,23 +101,51 @@
             <div class="row g-3">
               @for (notification of notifications.slice().reverse(); track notification.id) {
                 <div class="col-12">
-                  <div class="card shadow-sm">
+                  <div class="card shadow-sm" style="cursor: pointer;" (click)="toggleNotificationExpand(notification)">
                     <div class="card-body">
                       <div class="d-flex align-items-start">
-                        <div class="bg-primary text-white rounded p-2 me-3">
-                          <i class="fas fa-bell"></i>
+                        <div class="text-white rounded p-2 me-3" [ngClass]="getNotificationIconClass(notification.type)">
+                          <i class="fas" [ngClass]="getNotificationIcon(notification.type)"></i>
                         </div>
                         <div class="flex-grow-1">
                           <div class="d-flex justify-content-between align-items-start mb-2">
-                            <h6 class="mb-0">{{ notification.title || 'System Notification' }}</h6>
-                            <button class="btn btn-sm btn-outline-success" (click)="markAsRead(notification, $event)">
-                              <i class="fas fa-check"></i>
-                            </button>
+                            <h6 class="mb-0">{{ notification.title || notification.type || 'General' }}</h6>
+                            <div class="d-flex gap-2">
+                              <button class="btn btn-sm btn-outline-primary" (click)="$event.stopPropagation()">
+                                <i class="fas" [class.fa-chevron-down]="!notification.expanded" [class.fa-chevron-up]="notification.expanded"></i>
+                              </button>
+                              <button class="btn btn-sm btn-outline-success" (click)="markAsRead(notification, $event)">
+                                <i class="fas fa-check"></i>
+                              </button>
+                            </div>
                           </div>
                           <p class="mb-2 text-dark">{{ notification.message || notification.content || 'New notification received' }}</p>
-                          <small class="text-muted">
-                            <i class="fas fa-clock me-1"></i>{{ notification.timestamp || 'Just now' }}
-                          </small>
+                          @if (notification.expanded) {
+                            <div class="mt-3 p-3 bg-light rounded">
+                              <h6 class="text-primary">Notification Details</h6>
+                              <div class="row g-2 small">
+                                <div class="col-12">
+                                  <strong>ID:</strong> {{ notification.id }}
+                                </div>
+                                <div class="col-12">
+                                  <strong>Type:</strong> {{ notification.type || 'General' }}
+                                </div>
+                                <div class="col-12">
+                                  <strong>Priority:</strong> {{ notification.priority || 'Normal' }}
+                                </div>
+                                @if (notification.details) {
+                                  <div class="col-12">
+                                    <strong>Additional Details:</strong> {{ notification.details }}
+                                  </div>
+                                }
+                              </div>
+                            </div>
+                          }
+                          @if (notification.timestamp) {
+                            <small class="text-muted">
+                              <i class="fas fa-clock me-1"></i>{{ notification.timestamp }}
+                            </small>
+                          }
                         </div>
                       </div>
                     </div>

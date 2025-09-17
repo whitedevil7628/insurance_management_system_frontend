@@ -41,8 +41,8 @@ export class SignupComponent {
       this.isLoading = true;
       const signupData = { ...this.signupForm.value, role: 'CUSTOMER' };
 
-      this.http.post('http://localhost:8763/auth/register', signupData).subscribe({
-        next: (response: any) => {
+      this.http.post('http://localhost:8763/auth/register', signupData, { responseType: 'text' }).subscribe({
+        next: (response: string) => {
           this.showNotificationMessage('Signup successful! Redirecting to login...', 'success');
           setTimeout(() => {
             this.router.navigate(['/login']);

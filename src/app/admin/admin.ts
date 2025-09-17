@@ -42,6 +42,9 @@ export class Admin implements OnInit {
   notificationMessage = signal('');
   notificationType = signal<'success' | 'error'>('success');
   
+  // Password toggle
+  showAgentPassword = false;
+  
 
   agentForm = signal({
     name: '', contactInfo: '', password: '', gender: 'male',
@@ -349,5 +352,7 @@ export class Admin implements OnInit {
     }, 3000);
   }
   
-
+  toggleAgentPassword() {
+    this.showAgentPassword = !this.showAgentPassword;
+  }
 }
