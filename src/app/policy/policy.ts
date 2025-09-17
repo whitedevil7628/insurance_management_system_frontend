@@ -33,8 +33,7 @@ export interface Customer {
 @Component({
   selector: 'app-policy',
   imports: [CommonModule, FormsModule],
-  templateUrl: './policy.html',
-  styleUrl: './policy.css'
+  templateUrl: './policy.html'
 })
 export class Policy {
   private apiUrl = 'http://localhost:8763/api/policies';

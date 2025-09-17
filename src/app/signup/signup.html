@@ -1,179 +1,219 @@
-<div class="signup-page">
+<div class="min-vh-100 d-flex align-items-center justify-content-center bg-white">
   <!-- Notification -->
-  <div class="notification" [class.show]="showNotification" [class.success]="notificationType === 'success'" [class.error]="notificationType === 'error'">
-    <div class="notification-content">
-      <i class="fas fa-check-circle" *ngIf="notificationType === 'success'"></i>
-      <i class="fas fa-exclamation-circle" *ngIf="notificationType === 'error'"></i>
-      <span>{{notificationMessage}}</span>
+  @if (showNotification) {
+    <div class="alert position-fixed top-0 end-0 m-3"
+         [class.alert-success]="notificationType === 'success'"
+         [class.alert-danger]="notificationType === 'error'"
+         style="z-index: 1050; min-width: 300px;">
+      @if (notificationType === 'success') {
+        <i class="fas fa-check-circle me-2"></i>
+      }
+      @if (notificationType === 'error') {
+        <i class="fas fa-exclamation-circle me-2"></i>
+      }
+      {{ notificationMessage }}
     </div>
-  </div>
-  
-  <!-- Header -->
-  <header class="signup-header">
-    <nav class="navbar">
-      <div class="nav-brand" (click)="navigateToHome()">
-        <i class="fas fa-shield-alt"></i>
-        <span>SecureLife Insurance</span>
-      </div>
-      <div class="nav-actions">
-        <button class="btn-outline" (click)="navigateToHome()">
-          <i class="fas fa-home"></i> Home
-        </button>
-        <button class="btn-secondary" (click)="navigateToLogin()">
-          <i class="fas fa-sign-in-alt"></i> Login
-        </button>
-      </div>
-    </nav>
-  </header>
+  }
 
-  <div class="signup-container">
-    <div class="signup-card">
-      <div class="signup-header-content">
-        <h1>Create Your Account</h1>
-        <p>Join SecureLife Insurance and protect your future today</p>
-      </div>
-
-      <form [formGroup]="signupForm" (ngSubmit)="onSubmitSignup()" class="signup-form">
-        <div class="form-row">
-          <div class="form-group">
-            <input 
-              type="text" 
-              placeholder="Full Name" 
-              formControlName="name" 
-              [class.error]="getFieldError('name')"
-              required 
-            />
-            <label>Full Name</label>
-            <div class="error-message" *ngIf="getFieldError('name')">
-              {{getFieldError('name')}}
-            </div>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6">
+        
+        <div class="card shadow-lg">
+          <div class="card-header bg-white text-center py-4 border-bottom">
+            <h2 class="mb-0">
+              <i class="fas fa-user-plus text-primary me-2"></i>
+              Create Account
+            </h2>
+            <p class="mb-0 text-muted">Join our insurance management system</p>
           </div>
-        </div>
+          
+          <div class="card-body p-4">
+            <form [formGroup]="signupForm" (ngSubmit)="onSubmitSignup()">
+              
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="name" class="form-label">Full Name</label>
+                  <div class="input-group">
+                    <span class="input-group-text">
+                      <i class="fas fa-user"></i>
+                    </span>
+                    <input
+                      type="text"
+                      id="name"
+                      class="form-control"
+                      formControlName="name"
+                      placeholder="Enter your full name"
+                      [class.is-invalid]="signupForm.get('name')?.invalid && signupForm.get('name')?.touched">
+                  </div>
+                  @if (getFieldError('name')) {
+                    <div class="invalid-feedback">
+                      {{ getFieldError('name') }}
+                    </div>
+                  }
+                </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <input 
-              type="email" 
-              placeholder="Email Address" 
-              formControlName="email" 
-              [class.error]="getFieldError('email')"
-              required 
-            />
-            <label>Email Address</label>
-            <div class="error-message" *ngIf="getFieldError('email')">
-              {{getFieldError('email')}}
-            </div>
+                <div class="col-md-6">
+                  <label for="email" class="form-label">Email Address</label>
+                  <div class="input-group">
+                    <span class="input-group-text">
+                      <i class="fas fa-envelope"></i>
+                    </span>
+                    <input
+                      type="email"
+                      id="email"
+                      class="form-control"
+                      formControlName="email"
+                      placeholder="Enter your email"
+                      [class.is-invalid]="signupForm.get('email')?.invalid && signupForm.get('email')?.touched">
+                  </div>
+                  <div class="invalid-feedback" *ngIf="getFieldError('email')">
+                    {{ getFieldError('email') }}
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="password" class="form-label">Password</label>
+                  <div class="input-group">
+                    <span class="input-group-text">
+                      <i class="fas fa-lock"></i>
+                    </span>
+                    <input
+                      [type]="showPassword ? 'text' : 'password'"
+                      id="password"
+                      class="form-control"
+                      formControlName="password"
+                      placeholder="Enter password (min 6 characters)"
+                      [class.is-invalid]="signupForm.get('password')?.invalid && signupForm.get('password')?.touched">
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary"
+                      (click)="togglePasswordVisibility()">
+                      <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                    </button>
+                  </div>
+                  <div class="invalid-feedback" *ngIf="getFieldError('password')">
+                    {{ getFieldError('password') }}
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="gender" class="form-label">Gender</label>
+                  <select
+                    id="gender"
+                    class="form-select"
+                    formControlName="gender"
+                    [class.is-invalid]="signupForm.get('gender')?.invalid && signupForm.get('gender')?.touched">
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  <div class="invalid-feedback" *ngIf="getFieldError('gender')">
+                    {{ getFieldError('gender') }}
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="date" class="form-label">Date of Birth</label>
+                  <div class="input-group">
+                    <span class="input-group-text">
+                      <i class="fas fa-calendar"></i>
+                    </span>
+                    <input
+                      type="date"
+                      id="date"
+                      class="form-control"
+                      formControlName="date"
+                      [class.is-invalid]="signupForm.get('date')?.invalid && signupForm.get('date')?.touched">
+                  </div>
+                  <div class="invalid-feedback" *ngIf="getFieldError('date')">
+                    {{ getFieldError('date') }}
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="phone" class="form-label">Phone Number</label>
+                  <div class="input-group">
+                    <span class="input-group-text">
+                      <i class="fas fa-phone"></i>
+                    </span>
+                    <input
+                      type="tel"
+                      id="phone"
+                      class="form-control"
+                      formControlName="phone"
+                      placeholder="Enter 10-digit phone number"
+                      [class.is-invalid]="signupForm.get('phone')?.invalid && signupForm.get('phone')?.touched">
+                  </div>
+                  <div class="invalid-feedback" *ngIf="getFieldError('phone')">
+                    {{ getFieldError('phone') }}
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <label for="aadharnumber" class="form-label">Aadhaar Number</label>
+                  <div class="input-group">
+                    <span class="input-group-text">
+                      <i class="fas fa-id-card"></i>
+                    </span>
+                    <input
+                      type="text"
+                      id="aadharnumber"
+                      class="form-control"
+                      formControlName="aadharnumber"
+                      placeholder="Enter 12-digit Aadhaar number"
+                      [class.is-invalid]="signupForm.get('aadharnumber')?.invalid && signupForm.get('aadharnumber')?.touched">
+                  </div>
+                  <div class="invalid-feedback" *ngIf="getFieldError('aadharnumber')">
+                    {{ getFieldError('aadharnumber') }}
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <label for="address" class="form-label">Address</label>
+                  <div class="input-group">
+                    <span class="input-group-text">
+                      <i class="fas fa-map-marker-alt"></i>
+                    </span>
+                    <textarea
+                      id="address"
+                      class="form-control"
+                      formControlName="address"
+                      placeholder="Enter your complete address"
+                      rows="3"
+                      [class.is-invalid]="signupForm.get('address')?.invalid && signupForm.get('address')?.touched"></textarea>
+                  </div>
+                  <div class="invalid-feedback" *ngIf="getFieldError('address')">
+                    {{ getFieldError('address') }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="d-grid gap-2 mt-4">
+                <button
+                  type="submit"
+                  class="btn btn-primary btn-lg"
+                  [disabled]="isLoading || signupForm.invalid">
+                  <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+                  <i *ngIf="!isLoading" class="fas fa-user-plus me-2"></i>
+                  {{ isLoading ? 'Creating Account...' : 'Create Account' }}
+                </button>
+              </div>
+            </form>
           </div>
-          <div class="form-group password-group">
-            <input 
-              [type]="showPassword ? 'text' : 'password'" 
-              placeholder="Password" 
-              formControlName="password" 
-              [class.error]="getFieldError('password')"
-              required 
-            />
-            <button type="button" class="password-toggle" (click)="togglePasswordVisibility()">
-              <i class="fas" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword"></i>
+          
+          <div class="card-footer text-center bg-white border-top">
+            <p class="mb-2">Already have an account?</p>
+            <button class="btn btn-link me-2" (click)="navigateToLogin()">
+              <i class="fas fa-sign-in-alt me-1"></i>Sign In
             </button>
-            <label>Password</label>
-            <div class="error-message" *ngIf="getFieldError('password')">
-              {{getFieldError('password')}}
-            </div>
+            <button class="btn btn-outline-primary btn-sm" (click)="navigateToHome()">
+              <i class="fas fa-home me-1"></i>Back to Home
+            </button>
           </div>
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <select formControlName="gender" [class.error]="getFieldError('gender')" required>
-              <option value="">Select Gender</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
-            </select>
-            <label>Gender</label>
-            <div class="error-message" *ngIf="getFieldError('gender')">
-              {{getFieldError('gender')}}
-            </div>
-          </div>
-          <div class="form-group">
-            <input 
-              type="date" 
-              formControlName="date" 
-              [class.error]="getFieldError('date')"
-              required 
-            />
-            <label>Date of Birth</label>
-            <div class="error-message" *ngIf="getFieldError('date')">
-              {{getFieldError('date')}}
-            </div>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <input 
-              type="number" 
-              placeholder="Aadhaar Number" 
-              formControlName="aadharnumber" 
-              [class.error]="getFieldError('aadharnumber')"
-              required 
-            />
-            <label>Aadhaar Number</label>
-            <div class="error-message" *ngIf="getFieldError('aadharnumber')">
-              {{getFieldError('aadharnumber')}}
-            </div>
-          </div>
-          <div class="form-group">
-            <input 
-              type="tel" 
-              placeholder="Phone Number" 
-              formControlName="phone" 
-              [class.error]="getFieldError('phone')"
-              required 
-            />
-            <label>Phone Number</label>
-            <div class="error-message" *ngIf="getFieldError('phone')">
-              {{getFieldError('phone')}}
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <textarea 
-            placeholder="Address" 
-            formControlName="address" 
-            [class.error]="getFieldError('address')"
-            required
-          ></textarea>
-          <label>Address</label>
-          <div class="error-message" *ngIf="getFieldError('address')">
-            {{getFieldError('address')}}
-          </div>
-        </div>
-
-
-
-        <button 
-          type="submit" 
-          class="signup-btn" 
-          [disabled]="signupForm.invalid || isLoading"
-          [class.loading]="isLoading"
-        >
-          <span *ngIf="!isLoading">
-            <i class="fas fa-user-plus"></i> Create Account
-          </span>
-          <span *ngIf="isLoading" class="loading-spinner">
-            <i class="fas fa-spinner fa-spin"></i> Creating Account...
-          </span>
-        </button>
-      </form>
-
-      <div class="signup-footer">
-        <p>Already have an account? 
-          <button type="button" class="link-btn" (click)="navigateToLogin()">
-            Sign In
-          </button>
-        </p>
       </div>
     </div>
   </div>

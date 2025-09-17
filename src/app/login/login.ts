@@ -6,9 +6,10 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { JwtService } from '../Services/jwt.service';
 @Component({
   selector: 'app-login',
+  standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './login.html',
-  styleUrl: './login.css',
+
 })
 export class Login {
   email = '';

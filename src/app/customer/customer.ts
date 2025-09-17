@@ -13,7 +13,7 @@ import { CustomerService } from '../Services/customer.service';
   imports: [CommonModule, ReactiveFormsModule, FormsModule, HttpClientModule],
   providers: [CustomerService],
   templateUrl: './customer.html',
-  styleUrl: './customer.css'
+  
 })
 export class Customer implements OnInit, OnDestroy {
   activeSection = 'policies';
@@ -263,7 +263,12 @@ export class Customer implements OnInit, OnDestroy {
   }
 
   submitClaim() {
-    if (this.claimForm.valid && this.selectedPolicy) {
+    if (!this.claimForm.get('claimAmount')?.value) {
+      this.showNotificationMessage('Please enter claim amount', 'error');
+      return;
+    }
+    
+    if (this.selectedPolicy) {
       const claimData = {
         policyId: this.selectedPolicy.policyId || this.selectedPolicy.id,
         customerId: this.customerId,
@@ -271,12 +276,16 @@ export class Customer implements OnInit, OnDestroy {
         claimAmount: this.claimForm.get('claimAmount')?.value
       };
 
+      console.log('Filing claim with data:', claimData);
       this.isClaimLoading = true;
+      
       this.customerService.fileClaim(claimData).subscribe({
         next: (response) => {
+          console.log('Claim filed successfully:', response);
           this.showNotificationMessage('Claim filed successfully!', 'success');
           this.closeClaimForm();
           this.loadClaims();
+          this.loadPolicies(); // Reload policies to update claim status
           this.isClaimLoading = false;
         },
         error: (error) => {

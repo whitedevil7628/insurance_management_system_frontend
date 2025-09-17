@@ -1,20 +1,35 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './home/home';
-import { Login } from './login/login';
-import { SignupComponent } from './signup/signup';
-import { Customer } from './customer/customer';
-import { Admin } from './admin/admin';
-import { Agent } from './agent/agent';
-import { GuestGuard } from './guards/guest.guard';
-import { RoleGuard } from './guards/role.guard';
+import { inject } from '@angular/core';
+import { JwtService } from './Services/jwt.service';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
-  { path: 'home', component: HomeComponent },
-  { path: 'login', component: Login, canActivate: [GuestGuard] },
-  { path: 'signup', component: SignupComponent, canActivate: [GuestGuard] },
-  { path: 'admin', component: Admin, canActivate: [RoleGuard], data: { role: 'ADMIN' } },
-  { path: 'customer', component: Customer, canActivate: [RoleGuard], data: { role: 'CUSTOMER' } },
-  { path: 'agent', component: Agent, canActivate: [RoleGuard], data: { role: 'AGENT' } },
+  { 
+    path: 'home', 
+    loadComponent: () => import('./home/home').then(c => c.HomeComponent)
+  },
+  { 
+    path: 'login', 
+    loadComponent: () => import('./login/login').then(c => c.Login)
+  },
+  { 
+    path: 'signup', 
+    loadComponent: () => import('./signup/signup').then(c => c.SignupComponent)
+  },
+  { 
+    path: 'admin', 
+    loadComponent: () => import('./admin/admin').then(c => c.Admin),
+    canActivate: [() => inject(JwtService).hasRole('ADMIN')]
+  },
+  { 
+    path: 'customer', 
+    loadComponent: () => import('./customer/customer').then(c => c.Customer),
+    canActivate: [() => inject(JwtService).hasRole('CUSTOMER')]
+  },
+  { 
+    path: 'agent', 
+    loadComponent: () => import('./agent/agent').then(c => c.Agent),
+    canActivate: [() => inject(JwtService).hasRole('AGENT')]
+  },
   { path: '**', redirectTo: '/home' }
 ];

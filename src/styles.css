@@ -1,1 +1,76 @@
-/* You can add global styles to this file, and also import other style files */
+/* Bootstrap CSS */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+/* Font Awesome */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');
+
+/* Light Cornflower Blue Theme - Minimal CSS */
+:root {
+  --bs-primary: #93CCEA;
+  --bs-primary-rgb: 147, 204, 234;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #F8FCFF;
+}
+
+/* Primary Elements */
+.bg-primary {
+  background: linear-gradient(135deg, #93CCEA, #6BB6FF) !important;
+  color: #333 !important;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #93CCEA, #6BB6FF);
+  border-color: #6BB6FF;
+  color: #333;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #6BB6FF, #4A90E2);
+  border-color: #4A90E2;
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* Navigation */
+.nav-pills .nav-link.active {
+  background: linear-gradient(135deg, #4A90E2, #6BB6FF) !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4) !important;
+  transform: translateX(8px) !important;
+}
+
+.nav-pills .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  transform: translateX(5px) !important;
+}
+
+/* Forms */
+.form-control:focus, .form-select:focus {
+  border-color: #6BB6FF;
+  box-shadow: 0 0 0 0.2rem rgba(107, 182, 255, 0.25);
+}
+
+.input-group-text {
+  background-color: #E8F4F8;
+  color: #6BB6FF;
+}
+
+/* Cards */
+.card {
+  box-shadow: 0 4px 12px rgba(147, 204, 234, 0.15);
+}
+
+.card-header.bg-primary {
+  background: linear-gradient(135deg, #93CCEA, #6BB6FF) !important;
+  color: #333 !important;
+}
+
+/* User Avatar */
+.bg-primary.text-white.rounded-circle {
+  background-color: white !important;
+  color: #6BB6FF !important;
+}
+

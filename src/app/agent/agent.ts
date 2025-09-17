@@ -9,7 +9,7 @@ import { AgentService } from '../Services/agent.service';
   selector: 'app-agent',
   imports: [CommonModule],
   templateUrl: './agent.html',
-  styleUrl: './agent.css'
+  
 })
 export class Agent implements OnInit, OnDestroy {
   activeSection = 'claims';

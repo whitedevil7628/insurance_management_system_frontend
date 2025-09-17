@@ -9,7 +9,7 @@ import { AdminService } from '../Services/admin.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './admin.html',
-  styleUrl: './admin.css'
+
 })
 export class Admin implements OnInit {
   activeTab = signal('dashboard');
