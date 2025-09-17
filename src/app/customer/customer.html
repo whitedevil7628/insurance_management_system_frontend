@@ -15,45 +15,83 @@
     </div>
   }
 
-  <!-- Sidebar -->
-  <div class="bg-white d-flex flex-column border-end" style="min-width: 280px; max-width: 280px; box-shadow: 2px 0 10px rgba(0,0,0,0.1);">
-    <div class="p-3 border-bottom">
-      <h5 class="mb-0 text-dark">
-        <i class="fas fa-shield-alt text-dark me-2"></i>
-        Customer Portal
-      </h5>
+  <!-- Enhanced Sidebar -->
+  <div class="sidebar d-flex flex-column" style="min-width: 300px; max-width: 300px;">
+    <div class="p-4 border-bottom">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <h4 class="mb-0 fw-bold">
+            <i class="fas fa-shield-alt me-2" style="background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+            Customer Portal
+          </h4>
+          <small class="text-muted">Insurance Management</small>
+        </div>
+
+      </div>
     </div>
-    <nav class="flex-grow-1 p-2">
-      <ul class="nav flex-column">
+    <nav class="flex-grow-1 p-3">
+      <ul class="nav flex-column gap-2">
         <li class="nav-item">
-          <a class="nav-link text-dark" [class.bg-dark]="activeSection === 'policies'" [class.text-white]="activeSection === 'policies'" [class.shadow-sm]="activeSection === 'policies'" (click)="setActiveSection('policies')" style="cursor: pointer;">
-            <i class="fas fa-list me-2"></i>All Policies
+          <a class="nav-link d-flex align-items-center" [class.active]="activeSection === 'policies'" (click)="setActiveSection('policies')" style="cursor: pointer;">
+            <div class="icon-wrapper me-3" style="width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: rgba(102, 126, 234, 0.1);">
+              <i class="fas fa-list" style="color: #667eea;"></i>
+            </div>
+            <div>
+              <div class="fw-semibold">All Policies</div>
+            </div>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-dark" [class.bg-dark]="activeSection === 'myPolicies'" [class.text-white]="activeSection === 'myPolicies'" [class.shadow-sm]="activeSection === 'myPolicies'" (click)="setActiveSection('myPolicies')" style="cursor: pointer;">
-            <i class="fas fa-user-shield me-2"></i>My Policies
+          <a class="nav-link d-flex align-items-center" [class.active]="activeSection === 'myPolicies'" (click)="setActiveSection('myPolicies')" style="cursor: pointer;">
+            <div class="icon-wrapper me-3" style="width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: rgba(102, 126, 234, 0.1);">
+              <i class="fas fa-user-shield" style="color: #667eea;"></i>
+            </div>
+            <div>
+              <div class="fw-semibold">My Policies</div>
+            </div>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-dark" [class.bg-dark]="activeSection === 'notifications'" [class.text-white]="activeSection === 'notifications'" [class.shadow-sm]="activeSection === 'notifications'" (click)="setActiveSection('notifications')" style="cursor: pointer;">
-            <i class="fas fa-bell me-2"></i>Notifications
-            <span class="badge bg-danger ms-2" [style.visibility]="notifications.length > 0 ? 'visible' : 'hidden'" style="min-width: 20px;">{{ notifications.length || 0 }}</span>
+          <a class="nav-link d-flex align-items-center" [class.active]="activeSection === 'notifications'" (click)="setActiveSection('notifications')" style="cursor: pointer;">
+            <div class="icon-wrapper me-3 position-relative" style="width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: rgba(102, 126, 234, 0.1);">
+              <i class="fas fa-bell" style="color: #667eea;"></i>
+              @if (notifications.length > 0) {
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 10px;">{{ notifications.length }}</span>
+              }
+            </div>
+            <div>
+              <div class="fw-semibold">Notifications</div>
+            </div>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-dark" [class.bg-dark]="activeSection === 'claims'" [class.text-white]="activeSection === 'claims'" [class.shadow-sm]="activeSection === 'claims'" (click)="setActiveSection('claims')" style="cursor: pointer;">
-            <i class="fas fa-file-medical me-2"></i>Claims
+          <a class="nav-link d-flex align-items-center" [class.active]="activeSection === 'claims'" (click)="setActiveSection('claims')" style="cursor: pointer;">
+            <div class="icon-wrapper me-3" style="width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: rgba(102, 126, 234, 0.1);">
+              <i class="fas fa-file-medical" style="color: #667eea;"></i>
+            </div>
+            <div>
+              <div class="fw-semibold">Claims</div>
+            </div>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-dark" [class.bg-dark]="activeSection === 'profile'" [class.text-white]="activeSection === 'profile'" [class.shadow-sm]="activeSection === 'profile'" (click)="setActiveSection('profile')" style="cursor: pointer;">
-            <i class="fas fa-user me-2"></i>Profile
+          <a class="nav-link d-flex align-items-center" [class.active]="activeSection === 'profile'" (click)="setActiveSection('profile')" style="cursor: pointer;">
+            <div class="icon-wrapper me-3" style="width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: rgba(102, 126, 234, 0.1);">
+              <i class="fas fa-user" style="color: #667eea;"></i>
+            </div>
+            <div>
+              <div class="fw-semibold">Profile</div>
+            </div>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-dark" [class.bg-dark]="activeSection === 'help'" [class.text-white]="activeSection === 'help'" [class.shadow-sm]="activeSection === 'help'" (click)="setActiveSection('help')" style="cursor: pointer;">
-            <i class="fas fa-question-circle me-2"></i>Help
+          <a class="nav-link d-flex align-items-center" [class.active]="activeSection === 'help'" (click)="setActiveSection('help')" style="cursor: pointer;">
+            <div class="icon-wrapper me-3" style="width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: rgba(102, 126, 234, 0.1);">
+              <i class="fas fa-question-circle" style="color: #667eea;"></i>
+            </div>
+            <div>
+              <div class="fw-semibold">Help</div>
+            </div>
           </a>
         </li>
       </ul>
@@ -62,41 +100,37 @@
 
   <!-- Main Content -->
   <div class="flex-grow-1 d-flex flex-column">
-    <!-- Top Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow">
+    <!-- Enhanced Top Navbar -->
+    <nav class="navbar navbar-expand-lg">
       <div class="container-fluid">
         <div class="d-flex align-items-center">
-          <div class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
-            {{ customerInitials }}
+          <div class="position-relative me-3">
+            <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background: var(--primary-gradient); color: white; font-weight: bold; font-size: 18px;">
+              {{ customerInitials }}
+            </div>
+            <div class="position-absolute bottom-0 end-0" style="width: 16px; height: 16px; background: #28a745; border: 2px solid white; border-radius: 50%;"></div>
           </div>
-          <span class="fw-bold">{{ customerName }}</span>
+          <div>
+            <div class="fw-bold fs-5">{{ customerName }}</div>
+            <small class="text-muted">Customer ID: {{ customerId }}</small>
+          </div>
         </div>
         
-        <div class="mx-auto" style="max-width: 400px;">
+        <div class="flex-grow-1 mx-4">
           <div class="input-group">
             <span class="input-group-text"><i class="fas fa-search"></i></span>
-            <input type="text" class="form-control" placeholder="Search policies..." [(ngModel)]="searchTerm">
+            <input type="text" class="form-control" placeholder="Search policies, claims, or help..." [(ngModel)]="searchTerm">
           </div>
         </div>
         
-        <div class="d-flex align-items-center gap-2">
-          <button class="btn btn-outline-dark position-relative" (click)="setActiveSection('notifications')">
-            <i class="fas fa-bell"></i>
-            @if (notifications.length > 0) {
-              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                {{ notifications.length }}
-              </span>
-            }
-          </button>
-          <button class="btn btn-dark" (click)="logout()">
-            <i class="fas fa-sign-out-alt me-2"></i>Logout
-          </button>
-        </div>
+        <button class="btn btn-primary" (click)="logout()">
+          <i class="fas fa-sign-out-alt me-2"></i>Logout
+        </button>
       </div>
     </nav>
 
-    <!-- Content Area -->
-    <div class="flex-grow-1 p-4 bg-white overflow-auto">
+    <!-- Enhanced Content Area -->
+    <div class="flex-grow-1 p-4 overflow-auto" style="background: var(--bg-primary);">
       <!-- Notifications Section -->
       @if (activeSection === 'notifications') {
         <div class="container-fluid">
@@ -129,7 +163,7 @@
                               </button>
                             </div>
                           </div>
-                          <p class="mb-2 text-dark">{{ notification.message || notification.content || 'New notification received' }}</p>
+                          <p class="mb-2" style="color: var(--text-primary);">{{ notification.message || notification.content || 'New notification received' }}</p>
                           @if (notification.expanded) {
                             <div class="mt-3 p-3 bg-light rounded">
                               <h6 class="text-primary">Notification Details</h6>

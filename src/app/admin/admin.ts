@@ -3,13 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { JwtService } from '../Services/jwt.service';
 import { AdminService } from '../Services/admin.service';
+import { ThemeService } from '../Services/theme.service';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './admin.html',
-
+  styleUrl: './admin.css'
 })
 export class Admin implements OnInit {
   activeTab = signal('dashboard');
@@ -45,6 +46,9 @@ export class Admin implements OnInit {
   // Password toggle
   showAgentPassword = false;
   
+  // Theme
+  isDarkMode = false;
+  
 
   agentForm = signal({
     name: '', contactInfo: '', password: '', gender: 'male',
@@ -58,12 +62,14 @@ export class Admin implements OnInit {
     name: '', policyType: '', premiumAmount: null, coverageamount: null, coverageDetails: ''
   });
 
-  constructor(private jwtService: JwtService, private adminService: AdminService) {}
+  constructor(private jwtService: JwtService, private adminService: AdminService, private themeService: ThemeService) {}
 
   ngOnInit() {
     this.loadUserData();
     this.loadData();
-
+    this.themeService.isDarkMode$.subscribe(isDark => {
+      this.isDarkMode = isDark;
+    });
   }
 
   loadUserData() {
@@ -354,5 +360,9 @@ export class Admin implements OnInit {
   
   toggleAgentPassword() {
     this.showAgentPassword = !this.showAgentPassword;
+  }
+  
+  toggleTheme() {
+    this.themeService.toggleTheme();
   }
 }

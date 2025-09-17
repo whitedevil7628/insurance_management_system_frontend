@@ -15,44 +15,80 @@
     </div>
   }
   
-  <!-- Sidebar -->
-  <div class="bg-white d-flex flex-column border-end" style="width: 280px; box-shadow: 2px 0 10px rgba(0,0,0,0.1);">
-    <div class="p-3 border-bottom">
-      <h5 class="mb-0 text-dark">
-        <i class="fas fa-shield-alt text-dark me-2"></i>
-        Admin Panel
-      </h5>
+  <!-- Enhanced Sidebar -->
+  <div class="sidebar d-flex flex-column" style="min-width: 300px; max-width: 300px;">
+    <div class="p-4 border-bottom">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <h4 class="mb-0 fw-bold">
+            <i class="fas fa-shield-alt me-2" style="background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+            Admin Panel
+          </h4>
+          <small class="text-muted">System Management</small>
+        </div>
+
+      </div>
     </div>
-    <nav class="flex-grow-1 p-2">
-      <ul class="nav flex-column">
+    <nav class="flex-grow-1 p-3">
+      <ul class="nav flex-column gap-2">
         <li class="nav-item">
-          <a class="nav-link text-dark" [class.bg-dark]="activeTab() === 'dashboard'" [class.text-white]="activeTab() === 'dashboard'" [class.shadow-sm]="activeTab() === 'dashboard'" (click)="setActiveTab('dashboard')" style="cursor: pointer;">
-            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+          <a class="nav-link d-flex align-items-center" [class.active]="activeTab() === 'dashboard'" (click)="setActiveTab('dashboard')" style="cursor: pointer;">
+            <div class="icon-wrapper me-3" style="width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: rgba(102, 126, 234, 0.1);">
+              <i class="fas fa-tachometer-alt" style="color: #667eea;"></i>
+            </div>
+            <div>
+              <div class="fw-semibold">Dashboard</div>
+            </div>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-dark" [class.bg-dark]="activeTab() === 'agents'" [class.text-white]="activeTab() === 'agents'" [class.shadow-sm]="activeTab() === 'agents'" (click)="setActiveTab('agents')" style="cursor: pointer;">
-            <i class="fas fa-users me-2"></i>Agents
+          <a class="nav-link d-flex align-items-center" [class.active]="activeTab() === 'agents'" (click)="setActiveTab('agents')" style="cursor: pointer;">
+            <div class="icon-wrapper me-3" style="width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: rgba(102, 126, 234, 0.1);">
+              <i class="fas fa-users" style="color: #667eea;"></i>
+            </div>
+            <div>
+              <div class="fw-semibold">Agents</div>
+            </div>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-dark" [class.bg-dark]="activeTab() === 'policies'" [class.text-white]="activeTab() === 'policies'" [class.shadow-sm]="activeTab() === 'policies'" (click)="setActiveTab('policies')" style="cursor: pointer;">
-            <i class="fas fa-file-contract me-2"></i>Policies
+          <a class="nav-link d-flex align-items-center" [class.active]="activeTab() === 'policies'" (click)="setActiveTab('policies')" style="cursor: pointer;">
+            <div class="icon-wrapper me-3" style="width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: rgba(102, 126, 234, 0.1);">
+              <i class="fas fa-file-contract" style="color: #667eea;"></i>
+            </div>
+            <div>
+              <div class="fw-semibold">Policies</div>
+            </div>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-dark" [class.bg-dark]="activeTab() === 'claims'" [class.text-white]="activeTab() === 'claims'" [class.shadow-sm]="activeTab() === 'claims'" (click)="setActiveTab('claims')" style="cursor: pointer;">
-            <i class="fas fa-file-medical me-2"></i>Claims
+          <a class="nav-link d-flex align-items-center" [class.active]="activeTab() === 'claims'" (click)="setActiveTab('claims')" style="cursor: pointer;">
+            <div class="icon-wrapper me-3" style="width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: rgba(102, 126, 234, 0.1);">
+              <i class="fas fa-file-medical" style="color: #667eea;"></i>
+            </div>
+            <div>
+              <div class="fw-semibold">Claims</div>
+            </div>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-dark" [class.bg-dark]="activeTab() === 'customers'" [class.text-white]="activeTab() === 'customers'" [class.shadow-sm]="activeTab() === 'customers'" (click)="setActiveTab('customers')" style="cursor: pointer;">
-            <i class="fas fa-user-friends me-2"></i>Customers
+          <a class="nav-link d-flex align-items-center" [class.active]="activeTab() === 'customers'" (click)="setActiveTab('customers')" style="cursor: pointer;">
+            <div class="icon-wrapper me-3" style="width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: rgba(102, 126, 234, 0.1);">
+              <i class="fas fa-user-friends" style="color: #667eea;"></i>
+            </div>
+            <div>
+              <div class="fw-semibold">Customers</div>
+            </div>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-dark" [class.bg-dark]="activeTab() === 'policy-logs'" [class.text-white]="activeTab() === 'policy-logs'" [class.shadow-sm]="activeTab() === 'policy-logs'" (click)="setActiveTab('policy-logs')" style="cursor: pointer;">
-            <i class="fas fa-history me-2"></i>Policy Logs
+          <a class="nav-link d-flex align-items-center" [class.active]="activeTab() === 'policy-logs'" (click)="setActiveTab('policy-logs')" style="cursor: pointer;">
+            <div class="icon-wrapper me-3" style="width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: rgba(102, 126, 234, 0.1);">
+              <i class="fas fa-history" style="color: #667eea;"></i>
+            </div>
+            <div>
+              <div class="fw-semibold">Policy Logs</div>
+            </div>
           </a>
         </li>
       </ul>
@@ -61,31 +97,37 @@
 
   <!-- Main Content -->
   <div class="flex-grow-1 d-flex flex-column">
-    <!-- Top Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow">
+    <!-- Enhanced Top Navbar -->
+    <nav class="navbar navbar-expand-lg">
       <div class="container-fluid">
         <div class="d-flex align-items-center">
-          <div class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
-            {{adminInitials()}}
+          <div class="position-relative me-3">
+            <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background: var(--primary-gradient); color: white; font-weight: bold; font-size: 18px;">
+              {{adminInitials()}}
+            </div>
+            <div class="position-absolute bottom-0 end-0" style="width: 16px; height: 16px; background: #28a745; border: 2px solid white; border-radius: 50%;"></div>
           </div>
-          <span class="fw-bold">{{adminName()}}</span>
+          <div>
+            <div class="fw-bold fs-5">{{adminName()}}</div>
+            <small class="text-muted">System Administrator</small>
+          </div>
         </div>
         
-        <div class="mx-auto" style="max-width: 400px;">
+        <div class="flex-grow-1 mx-4">
           <div class="input-group">
             <span class="input-group-text"><i class="fas fa-search"></i></span>
-            <input type="text" class="form-control" placeholder="Search..." [(ngModel)]="searchTerm">
+            <input type="text" class="form-control" placeholder="Search agents, policies, claims..." [(ngModel)]="searchTerm">
           </div>
         </div>
         
-        <button class="btn btn-dark" (click)="logout()">
+        <button class="btn btn-primary" (click)="logout()">
           <i class="fas fa-sign-out-alt me-2"></i>Logout
         </button>
       </div>
     </nav>
 
-    <!-- Content Area -->
-    <div class="flex-grow-1 p-4 bg-white overflow-auto">
+    <!-- Enhanced Content Area -->
+    <div class="flex-grow-1 p-4 overflow-auto" style="background: var(--bg-primary);">
       <!-- Dashboard Section -->
       @if (activeTab() === 'dashboard') {
         <div class="container-fluid">

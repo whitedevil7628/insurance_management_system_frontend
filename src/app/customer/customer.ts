@@ -6,6 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { JwtService } from '../Services/jwt.service';
 import { CustomerService } from '../Services/customer.service';
+import { ThemeService } from '../Services/theme.service';
 
 @Component({
   selector: 'app-customer',
@@ -13,7 +14,7 @@ import { CustomerService } from '../Services/customer.service';
   imports: [CommonModule, ReactiveFormsModule, FormsModule, HttpClientModule],
   providers: [CustomerService],
   templateUrl: './customer.html',
-  
+  styleUrl: './customer.css'
 })
 export class Customer implements OnInit, OnDestroy {
   activeSection = 'policies';
@@ -44,12 +45,16 @@ export class Customer implements OnInit, OnDestroy {
   notifications: any[] = [];
   showNotificationPanel = false;
   notificationInterval: any;
+  
+  // Theme
+  isDarkMode = false;
 
   constructor(
     private jwtService: JwtService,
     private customerService: CustomerService,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private themeService: ThemeService
   ) {
     this.profileForm = this.fb.group({
       name: ['', Validators.required],
@@ -90,6 +95,9 @@ export class Customer implements OnInit, OnDestroy {
     this.loadClaims();
     this.loadNotifications();
     this.startNotificationPolling();
+    this.themeService.isDarkMode$.subscribe(isDark => {
+      this.isDarkMode = isDark;
+    });
   }
   
   ngOnDestroy() {
@@ -505,5 +513,9 @@ export class Customer implements OnInit, OnDestroy {
       case 'update': return 'bg-primary';
       default: return 'bg-primary';
     }
+  }
+  
+  toggleTheme() {
+    this.themeService.toggleTheme();
   }
 }
