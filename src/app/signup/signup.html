@@ -1,4 +1,90 @@
-<div class="min-vh-100 d-flex align-items-center justify-content-center bg-white">
+<div class="min-vh-100 d-flex">
+  <style>
+    .image-section {
+      background: linear-gradient(135deg, #4169E1 0%, #1E3A8A 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .image-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      color: white;
+      text-align: center;
+      padding: 1.5rem;
+    }
+    .signup-section {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+    .signup-card {
+      transition: all 0.3s ease;
+      border: none;
+      border-radius: 15px;
+      width: 100%;
+      max-width: 650px;
+      backdrop-filter: blur(10px);
+      background: rgba(255,255,255,0.95);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      max-height: 95vh;
+    }
+    .form-control, .form-select {
+      border-radius: 8px;
+      border: 1px solid #dee2e6;
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+    .input-group-text {
+      border-radius: 8px 0 0 8px;
+      font-size: 14px;
+    }
+    .btn-outline-secondary {
+      border-radius: 0 8px 8px 0;
+    }
+    .form-label {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .btn-signup {
+      border-radius: 10px;
+      font-weight: 600;
+      padding: 10px 20px;
+    }
+    .floating-icon {
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+    .slide-in-left {
+      animation: slideInLeft 0.8s ease-out;
+    }
+    .slide-in-right {
+      animation: slideInRight 0.8s ease-out;
+    }
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-50px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(50px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+  </style>
+
   <!-- Notification -->
   @if (showNotification) {
     <div class="alert position-fixed top-0 end-0 m-3"
@@ -15,205 +101,125 @@
     </div>
   }
 
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-md-8 col-lg-6">
-        
-        <div class="card shadow-lg">
-          <div class="card-header bg-white text-center py-4 border-bottom">
-            <h2 class="mb-0">
-              <i class="fas fa-user-plus text-primary me-2"></i>
-              Create Account
-            </h2>
-            <p class="mb-0 text-muted">Join our insurance management system</p>
-          </div>
-          
-          <div class="card-body p-4">
-            <form [formGroup]="signupForm" (ngSubmit)="onSubmitSignup()">
-              
-              <div class="row g-3">
-                <div class="col-md-6">
-                  <label for="name" class="form-label">Full Name</label>
-                  <div class="input-group">
-                    <span class="input-group-text">
-                      <i class="fas fa-user"></i>
-                    </span>
-                    <input
-                      type="text"
-                      id="name"
-                      class="form-control"
-                      formControlName="name"
-                      placeholder="Enter your full name"
-                      [class.is-invalid]="signupForm.get('name')?.invalid && signupForm.get('name')?.touched">
-                  </div>
-                  @if (getFieldError('name')) {
-                    <div class="invalid-feedback">
-                      {{ getFieldError('name') }}
-                    </div>
-                  }
-                </div>
+  <!-- Left Image Section -->
+  <div class="col-md-4 image-section slide-in-left">
+    <div class="image-overlay">
+      <div class="floating-icon mb-3">
+        <i class="fas fa-user-plus" style="font-size: 3rem;"></i>
+      </div>
+      <h2 class="fw-bold mb-2">Join Our Family</h2>
+      <p class="mb-3">Create your account and get access to comprehensive insurance solutions.</p>
+      <div class="d-flex gap-3 justify-content-center">
+        <div class="text-center">
+          <i class="fas fa-rocket fa-lg mb-1"></i>
+          <p class="small mb-0">Quick Setup</p>
+        </div>
+        <div class="text-center">
+          <i class="fas fa-shield-check fa-lg mb-1"></i>
+          <p class="small mb-0">Secure</p>
+        </div>
+        <div class="text-center">
+          <i class="fas fa-headset fa-lg mb-1"></i>
+          <p class="small mb-0">24/7 Support</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
-                <div class="col-md-6">
-                  <label for="email" class="form-label">Email Address</label>
-                  <div class="input-group">
-                    <span class="input-group-text">
-                      <i class="fas fa-envelope"></i>
-                    </span>
-                    <input
-                      type="email"
-                      id="email"
-                      class="form-control"
-                      formControlName="email"
-                      placeholder="Enter your email"
-                      [class.is-invalid]="signupForm.get('email')?.invalid && signupForm.get('email')?.touched">
-                  </div>
-                  <div class="invalid-feedback" *ngIf="getFieldError('email')">
-                    {{ getFieldError('email') }}
-                  </div>
-                </div>
-
-                <div class="col-md-6">
-                  <label for="password" class="form-label">Password</label>
-                  <div class="input-group">
-                    <span class="input-group-text">
-                      <i class="fas fa-lock"></i>
-                    </span>
-                    <input
-                      [type]="showPassword ? 'text' : 'password'"
-                      id="password"
-                      class="form-control"
-                      formControlName="password"
-                      placeholder="Enter password (min 6 characters)"
-                      [class.is-invalid]="signupForm.get('password')?.invalid && signupForm.get('password')?.touched">
-                    <button
-                      type="button"
-                      class="btn btn-outline-secondary"
-                      (click)="togglePasswordVisibility()">
-                      <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
-                    </button>
-                  </div>
-                  <div class="invalid-feedback" *ngIf="getFieldError('password')">
-                    {{ getFieldError('password') }}
-                  </div>
-                </div>
-
-                <div class="col-md-6">
-                  <label for="gender" class="form-label">Gender</label>
-                  <select
-                    id="gender"
-                    class="form-select"
-                    formControlName="gender"
-                    [class.is-invalid]="signupForm.get('gender')?.invalid && signupForm.get('gender')?.touched">
-                    <option value="">Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                  </select>
-                  <div class="invalid-feedback" *ngIf="getFieldError('gender')">
-                    {{ getFieldError('gender') }}
-                  </div>
-                </div>
-
-                <div class="col-md-6">
-                  <label for="date" class="form-label">Date of Birth</label>
-                  <div class="input-group">
-                    <span class="input-group-text">
-                      <i class="fas fa-calendar"></i>
-                    </span>
-                    <input
-                      type="date"
-                      id="date"
-                      class="form-control"
-                      formControlName="date"
-                      [class.is-invalid]="signupForm.get('date')?.invalid && signupForm.get('date')?.touched">
-                  </div>
-                  <div class="invalid-feedback" *ngIf="getFieldError('date')">
-                    {{ getFieldError('date') }}
-                  </div>
-                </div>
-
-                <div class="col-md-6">
-                  <label for="phone" class="form-label">Phone Number</label>
-                  <div class="input-group">
-                    <span class="input-group-text">
-                      <i class="fas fa-phone"></i>
-                    </span>
-                    <input
-                      type="tel"
-                      id="phone"
-                      class="form-control"
-                      formControlName="phone"
-                      placeholder="Enter 10-digit phone number"
-                      [class.is-invalid]="signupForm.get('phone')?.invalid && signupForm.get('phone')?.touched">
-                  </div>
-                  <div class="invalid-feedback" *ngIf="getFieldError('phone')">
-                    {{ getFieldError('phone') }}
-                  </div>
-                </div>
-
-                <div class="col-12">
-                  <label for="aadharnumber" class="form-label">Aadhaar Number</label>
-                  <div class="input-group">
-                    <span class="input-group-text">
-                      <i class="fas fa-id-card"></i>
-                    </span>
-                    <input
-                      type="text"
-                      id="aadharnumber"
-                      class="form-control"
-                      formControlName="aadharnumber"
-                      placeholder="Enter 12-digit Aadhaar number"
-                      [class.is-invalid]="signupForm.get('aadharnumber')?.invalid && signupForm.get('aadharnumber')?.touched">
-                  </div>
-                  <div class="invalid-feedback" *ngIf="getFieldError('aadharnumber')">
-                    {{ getFieldError('aadharnumber') }}
-                  </div>
-                </div>
-
-                <div class="col-12">
-                  <label for="address" class="form-label">Address</label>
-                  <div class="input-group">
-                    <span class="input-group-text">
-                      <i class="fas fa-map-marker-alt"></i>
-                    </span>
-                    <textarea
-                      id="address"
-                      class="form-control"
-                      formControlName="address"
-                      placeholder="Enter your complete address"
-                      rows="3"
-                      [class.is-invalid]="signupForm.get('address')?.invalid && signupForm.get('address')?.touched"></textarea>
-                  </div>
-                  <div class="invalid-feedback" *ngIf="getFieldError('address')">
-                    {{ getFieldError('address') }}
-                  </div>
-                </div>
+  <!-- Right Signup Section -->
+  <div class="col-md-8 signup-section slide-in-right">
+    <div class="signup-card">
+      <div class="card-header text-white text-center py-3" style="background: linear-gradient(135deg, #4169E1, #1E3A8A);">
+        <h4 class="mb-0">
+          <i class="fas fa-user-plus me-2"></i>
+          Create Account
+        </h4>
+      </div>
+      
+      <div class="card-body p-3" style="max-height: 70vh; overflow-y: auto;">
+        <form [formGroup]="signupForm" (ngSubmit)="onSubmitSignup()">
+          <div class="row g-2">
+            <div class="col-md-6">
+              <label for="name" class="form-label">Full Name</label>
+              <div class="input-group input-group-sm">
+                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                <input type="text" id="name" class="form-control" formControlName="name" placeholder="Full name">
               </div>
-
-              <div class="d-grid gap-2 mt-4">
-                <button
-                  type="submit"
-                  class="btn btn-primary btn-lg"
-                  [disabled]="isLoading || signupForm.invalid">
-                  <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
-                  <i *ngIf="!isLoading" class="fas fa-user-plus me-2"></i>
-                  {{ isLoading ? 'Creating Account...' : 'Create Account' }}
+            </div>
+            <div class="col-md-6">
+              <label for="email" class="form-label">Email</label>
+              <div class="input-group input-group-sm">
+                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                <input type="email" id="email" class="form-control" formControlName="email" placeholder="Email">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label for="password" class="form-label">Password</label>
+              <div class="input-group input-group-sm">
+                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                <input [type]="showPassword ? 'text' : 'password'" id="password" class="form-control" formControlName="password" placeholder="Password">
+                <button type="button" class="btn btn-outline-secondary btn-sm" (click)="togglePasswordVisibility()">
+                  <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
                 </button>
               </div>
-            </form>
+            </div>
+            <div class="col-md-6">
+              <label for="gender" class="form-label">Gender</label>
+              <select id="gender" class="form-select form-select-sm" formControlName="gender">
+                <option value="">Select</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="date" class="form-label">Date of Birth</label>
+              <div class="input-group input-group-sm">
+                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                <input type="date" id="date" class="form-control" formControlName="date">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label for="phone" class="form-label">Phone</label>
+              <div class="input-group input-group-sm">
+                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                <input type="tel" id="phone" class="form-control" formControlName="phone" placeholder="10-digit number">
+              </div>
+            </div>
+            <div class="col-12">
+              <label for="aadharnumber" class="form-label">Aadhaar Number</label>
+              <div class="input-group input-group-sm">
+                <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                <input type="text" id="aadharnumber" class="form-control" formControlName="aadharnumber" placeholder="12-digit Aadhaar">
+              </div>
+            </div>
+            <div class="col-12">
+              <label for="address" class="form-label">Address</label>
+              <div class="input-group input-group-sm">
+                <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                <textarea id="address" class="form-control" formControlName="address" placeholder="Complete address" rows="2"></textarea>
+              </div>
+            </div>
           </div>
-          
-          <div class="card-footer text-center bg-white border-top">
-            <p class="mb-2">Already have an account?</p>
-            <button class="btn btn-link me-2" (click)="navigateToLogin()">
-              <i class="fas fa-sign-in-alt me-1"></i>Sign In
-            </button>
-            <button class="btn btn-outline-primary btn-sm" (click)="navigateToHome()">
-              <i class="fas fa-home me-1"></i>Back to Home
+          <div class="mt-3">
+            <button type="submit" class="btn w-100 btn-signup" style="background: linear-gradient(135deg, #4169E1, #1E3A8A); border: none; color: white;" [disabled]="isLoading || signupForm.invalid">
+              <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+              <i *ngIf="!isLoading" class="fas fa-user-plus me-2"></i>
+              {{ isLoading ? 'Creating...' : 'Create Account' }}
             </button>
           </div>
+        </form>
+      </div>
+      
+      <div class="card-footer text-center bg-light py-2">
+        <div class="d-flex gap-2 justify-content-center">
+          <button class="btn btn-success btn-sm btn-signup" (click)="navigateToLogin()">
+            <i class="fas fa-sign-in-alt me-1"></i>Sign In
+          </button>
+          <button class="btn btn-warning btn-sm btn-signup" (click)="navigateToHome()">
+            <i class="fas fa-home me-1"></i>Home
+          </button>
         </div>
-
       </div>
     </div>
   </div>
