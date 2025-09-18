@@ -436,6 +436,18 @@
                           <span>Phone:</span>
                           <strong>{{ claimDetails.customer.phone }}</strong>
                         </div>
+                        <div class="col-12 d-flex justify-content-between">
+                          <span>Gender:</span>
+                          <strong>{{ claimDetails.customer.gender }}</strong>
+                        </div>
+                        <div class="col-12 d-flex justify-content-between">
+                          <span>Aadhar:</span>
+                          <strong>{{ claimDetails.customer.aadharnumber }}</strong>
+                        </div>
+                        <div class="col-12 d-flex justify-content-between">
+                          <span>Address:</span>
+                          <strong>{{ claimDetails.customer.address }}</strong>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -461,6 +473,22 @@
                         <div class="col-12 d-flex justify-content-between">
                           <span>Premium:</span>
                           <strong>₹{{ claimDetails.policy.premiumAmount | number }}</strong>
+                        </div>
+                        <div class="col-12 d-flex justify-content-between">
+                          <span>Coverage Amount:</span>
+                          <strong>₹{{ claimDetails.policy.coverageAmount | number }}</strong>
+                        </div>
+                        <div class="col-12 d-flex justify-content-between">
+                          <span>Coverage Details:</span>
+                          <strong>{{ claimDetails.policy.coverageDetails }}</strong>
+                        </div>
+                        <div class="col-12 d-flex justify-content-between">
+                          <span>Entry Date:</span>
+                          <strong>{{ claimDetails.policy.entryDate | date:'dd/MM/yyyy' }}</strong>
+                        </div>
+                        <div class="col-12 d-flex justify-content-between">
+                          <span>Expiry Date:</span>
+                          <strong>{{ claimDetails.policy.expiryDate | date:'dd/MM/yyyy' }}</strong>
                         </div>
                         <div class="col-12 d-flex justify-content-between">
                           <span>Validity:</span>
