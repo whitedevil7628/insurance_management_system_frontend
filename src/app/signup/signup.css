@@ -118,3 +118,22 @@
     font-size: 1rem;
   }
 }
+
+.text-center{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.text-center h1{
+  font-weight: 700;
+  margin-left: 100px;
+  color:#667eea;
+  margin-bottom: 20px;
+}
+.text-center img{
+  width:500px;
+  height: 500px;
+  border-radius: 30px;
+  margin-left: 100px;
+}
