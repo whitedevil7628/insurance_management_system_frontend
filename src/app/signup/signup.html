@@ -8,16 +8,28 @@
     <i *ngIf="notificationType === 'error'" class="fas fa-exclamation-circle me-2"></i>
     {{ notificationMessage }}
   </div>
+   <nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background: linear-gradient(135deg, #f8f9fa, #e9ecef);">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="#">
+        <i class="fas fa-shield-alt me-2" style="color: #2c5aa0;"></i>
+        <span style="color: #2c5aa0;">Insurance Management</span>
+      </a>
+      <div class="ms-auto">
+        <button class="btn" style="border: 2px solid #2c5aa0; color: #2c5aa0; background: transparent;" (click)="navigateToHome()">
+          <i class="fas fa-home me-1"></i>Back to Home
+        </button>
+      </div>
+    </div>
+  </nav>
 
   <div class="container-fluid">
+    
     <div class="row min-vh-100">
       <!-- Left Side - Logo & Join Us -->
       <div class="col-md-5 d-flex flex-column align-items-center justify-content-center">
         <div class="text-center">
-          <div class="rounded-circle d-flex align-items-center justify-content-center mb-4" style="width: 120px; height: 120px; background: linear-gradient(135deg, #2c5aa0, #1e3d72); margin: 0 auto;">
-            <i class="fas fa-shield-alt" style="font-size: 3rem; color: white;"></i>
-          </div>
-          <h1 class="display-4 fw-bold" style="color: #2c5aa0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">Join Us</h1>
+          <h1>Signup!!!</h1>
+          <img src="https://img.freepik.com/free-vector/father-shaking-hands-with-insurance-agent_74855-4412.jpg" alt="">
         </div>
       </div>
 
