@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
-import { inject } from '@angular/core';
-import { JwtService } from './Services/jwt.service';
+import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -19,17 +18,24 @@ export const routes: Routes = [
   { 
     path: 'admin', 
     loadComponent: () => import('./admin/admin').then(c => c.Admin),
-    canActivate: [() => inject(JwtService).hasRole('ADMIN')]
+    canActivate: [AuthGuard],
+    data: { role: 'ADMIN' }
   },
   { 
     path: 'customer', 
     loadComponent: () => import('./customer/customer').then(c => c.Customer),
-    canActivate: [() => inject(JwtService).hasRole('CUSTOMER')]
+    canActivate: [AuthGuard],
+    data: { role: 'CUSTOMER' }
   },
   { 
     path: 'agent', 
     loadComponent: () => import('./agent/agent').then(c => c.Agent),
-    canActivate: [() => inject(JwtService).hasRole('AGENT')]
+    canActivate: [AuthGuard],
+    data: { role: 'AGENT' }
   },
-  { path: '**', redirectTo: '/home' }
+  { 
+    path: 'unauthorized', 
+    loadComponent: () => import('./unauthorized/unauthorized.component').then(c => c.UnauthorizedComponent)
+  },
+  { path: '**', redirectTo: '/unauthorized' }
 ];

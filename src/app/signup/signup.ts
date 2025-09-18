@@ -36,7 +36,7 @@ export class SignupComponent {
       date: ['', Validators.required],
       aadharnumber: ['', [Validators.required, Validators.pattern('^[0-9]{12}$')]],
       phone: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-      address: ['', Validators.required],
+
     });
     
     this.themeService.isDarkMode$.subscribe(isDark => {
@@ -49,11 +49,9 @@ export class SignupComponent {
       this.isLoading = true;
       const signupData = { ...this.signupForm.value, role: 'CUSTOMER' };
 
-
       this.http.post('http://localhost:8763/auth/register', signupData, { responseType: 'text' }).subscribe({
         next: (response: string) => {
-
-          this.showNotificationMessage('Signup successful! Redirecting to login...', 'success');
+          this.showNotificationMessage('Account created successfully! Redirecting to login...', 'success');
           setTimeout(() => {
             this.router.navigate(['/login']);
           }, 2000);
@@ -61,16 +59,33 @@ export class SignupComponent {
         },
         error: (error: any) => {
           console.error('Signup error:', error);
-          let errorMessage = 'Signup failed! Please try again.';
+          let errorMessage = 'Registration failed! Please try again.';
 
-          if (error.status === 409 || error.status === 500) {
-            const errorText = error.error;
-            if (typeof errorText === 'string') {
-              if (errorText.includes('Customer already exist With this email ID')) {
-                errorMessage = 'This email is already registered. Please use a different email address.';
-              } else if (errorText.includes('Customer already exist With this Aadhar number')) {
-                errorMessage = 'This Aadhaar number is already registered. Please verify your Aadhaar number.';
-              }
+          if (error.status === 409 || error.status === 400 || error.status === 500) {
+            const errorText = (error.error || error.message || '').toLowerCase();
+            console.log('Full error object:', error);
+            console.log('Error text for matching:', errorText);
+            
+            if (errorText.includes('customer with this email already exists') || 
+                errorText.includes('customer already exist with this email id') ||
+                errorText.includes('email already exists') ||
+                errorText.includes('email')) {
+              errorMessage = 'Email Already Registered! This email address is already in use. Please use a different email address or sign in if you already have an account.';
+            } 
+            else if (errorText.includes('customer with this aadhaar number already exists') || 
+                     errorText.includes('customer already exist with this aadhar number') ||
+                     errorText.includes('aadhaar number already exists') ||
+                     errorText.includes('aadhar already exists') ||
+                     errorText.includes('aadhaar') ||
+                     errorText.includes('aadhar')) {
+              errorMessage = 'Aadhaar Already Registered! This Aadhaar number is already registered. Please verify your 12-digit Aadhaar number.';
+            }
+            else if (errorText.includes('aadhaar number must be a 12-digit number') ||
+                     errorText.includes('invalid aadhaar')) {
+              errorMessage = 'Invalid Aadhaar Number! Please enter a valid 12-digit Aadhaar number without spaces or special characters.';
+            }
+            else if (errorText.includes('invalid email')) {
+              errorMessage = 'Invalid Email Format! Please enter a valid email address.';
             }
           }
 
@@ -109,15 +124,44 @@ export class SignupComponent {
   getFieldError(fieldName: string): string {
     const field = this.signupForm.get(fieldName);
     if (field?.errors && field.touched) {
-      if (field.errors['required']) return `${fieldName} is required`;
-      if (field.errors['email']) return 'Invalid email format';
-      if (field.errors['minlength']) return `Minimum ${field.errors['minlength'].requiredLength} characters required`;
+      if (field.errors['required']) {
+        const fieldLabels: { [key: string]: string } = {
+          'name': 'Full Name',
+          'email': 'Email Address', 
+          'password': 'Password',
+          'gender': 'Gender',
+          'date': 'Date of Birth',
+          'phone': 'Phone Number',
+          'aadharnumber': 'Aadhaar Number'
+        };
+        return `${fieldLabels[fieldName] || fieldName} is required`;
+      }
+      if (field.errors['email']) return 'Please enter a valid email address';
+      if (field.errors['minlength']) {
+        if (fieldName === 'password') return 'Password must be at least 6 characters';
+        return `Minimum ${field.errors['minlength'].requiredLength} characters required`;
+      }
       if (field.errors['pattern']) {
-        if (fieldName === 'phone') return 'Enter valid 10-digit phone number';
-        if (fieldName === 'aadharnumber') return 'Enter valid 12-digit Aadhaar number';
+        if (fieldName === 'phone') return 'Please enter a valid 10-digit phone number';
+        if (fieldName === 'aadharnumber') return 'Please enter a valid 12-digit Aadhaar number';
       }
     }
     return '';
+  }
+
+  // Real-time validation for email and Aadhaar
+  onEmailBlur() {
+    const email = this.signupForm.get('email')?.value;
+    if (email && this.signupForm.get('email')?.valid) {
+      // Optional: Add real-time email check here if needed
+    }
+  }
+
+  onAadhaarBlur() {
+    const aadhaar = this.signupForm.get('aadharnumber')?.value;
+    if (aadhaar && this.signupForm.get('aadharnumber')?.valid) {
+      // Optional: Add real-time Aadhaar check here if needed
+    }
   }
   
   toggleTheme() {

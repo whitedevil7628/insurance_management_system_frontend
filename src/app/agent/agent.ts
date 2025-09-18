@@ -89,20 +89,30 @@ export class Agent implements OnInit, OnDestroy {
       'Content-Type': 'application/json'
     });
 
-    console.log('Loading claims...');
-    this.http.get('http://localhost:8763/agents/claims/all', { headers })
+    // Get agent ID from JWT token (stored as customerId)
+    const agentId = this.jwtService.getCustomerId();
+    console.log('Loading claims for agent ID:', agentId);
+    
+    if (!agentId) {
+      console.error('No agent ID found in token');
+      this.claims = [];
+      return;
+    }
+    
+    this.http.get(`http://localhost:8763/api/claims/agent/${agentId}`, { headers })
       .subscribe({
-        next: (response: any) => {
-          console.log('Claims response:', response);
-          const claims = response.claim || [];
+        next: (claims: any) => {
+          console.log('Agent-specific claims response:', claims);
+          const claimsArray = Array.isArray(claims) ? claims : [];
           
           // Load updated status for each claim
-          this.loadClaimsWithUpdatedStatus(claims, headers);
+          this.loadClaimsWithUpdatedStatus(claimsArray, headers);
         },
         error: (error) => {
-          console.error('Error loading claims:', error);
+          console.error('Error loading agent claims:', error);
           console.error('Error status:', error.status);
           console.error('Error message:', error.message);
+          this.claims = [];
         }
       });
   }
@@ -113,31 +123,9 @@ export class Agent implements OnInit, OnDestroy {
       return;
     }
 
-    let completedRequests = 0;
-    const updatedClaims = [...claims];
-
-    claims.forEach((claim, index) => {
-      this.http.get(`http://localhost:8763/api/claims/${claim.claimId}`, { headers })
-        .subscribe({
-          next: (claimData: any) => {
-            updatedClaims[index] = { ...claim, status: claimData.status };
-            completedRequests++;
-            
-            if (completedRequests === claims.length) {
-              this.claims = updatedClaims;
-              console.log('Updated claims with current status:', this.claims);
-            }
-          },
-          error: (error) => {
-            console.error(`Error loading status for claim ${claim.claimId}:`, error);
-            completedRequests++;
-            
-            if (completedRequests === claims.length) {
-              this.claims = updatedClaims;
-            }
-          }
-        });
-    });
+    // Since we're getting claims from agent-specific endpoint, they should already have current status
+    this.claims = claims;
+    console.log('Agent claims loaded:', this.claims);
   }
 
   openClaimModal(claim: any) {
@@ -266,8 +254,8 @@ export class Agent implements OnInit, OnDestroy {
   }
 
   loadNotifications() {
-    // Use agent ID from agent data or fallback
-    let agentId = this.agentData?.agentId || 17;
+    // Use agent ID from JWT token (stored as customerId)
+    let agentId = this.jwtService.getCustomerId() || this.agentData?.agentId || 17;
     
     console.log('Loading notifications for agent ID:', agentId);
     console.log('Agent data:', this.agentData);
