@@ -383,6 +383,11 @@ export class Agent implements OnInit, OnDestroy {
     // You can add additional form closing logic here
   }
 
+  clearSearch() {
+    this.searchQuery = '';
+    this.filteredClaims = this.claims;
+  }
+
   onSearch() {
     if (!this.searchQuery.trim()) {
       this.filteredClaims = this.claims;
