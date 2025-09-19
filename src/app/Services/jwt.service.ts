@@ -39,7 +39,18 @@ export class JwtService {
     const token = this.getToken();
     if (token) {
       const decoded = this.decodeToken(token);
-      return decoded?.sub || 'User';
+      // Try to get actual name first, fallback to sub (email)
+      return decoded?.name || decoded?.fullName || decoded?.username || decoded?.sub || 'User';
+    }
+    return null;
+  }
+
+  getActualName(): string | null {
+    const token = this.getToken();
+    if (token) {
+      const decoded = this.decodeToken(token);
+      // Only return actual name fields, not email
+      return decoded?.name || decoded?.fullName || decoded?.username || null;
     }
     return null;
   }

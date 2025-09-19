@@ -136,6 +136,8 @@
   border-radius: 3px;
 }
 
+
+
 /* Enhanced Responsive Design */
 @media (max-width: 768px) {
   .sidebar {
@@ -150,5 +152,15 @@
   .icon-wrapper {
     width: 35px !important;
     height: 35px !important;
+  }
+  
+  .search-input {
+    padding: 10px 40px 10px 35px;
+    font-size: 13px;
+  }
+  
+  .search-icon {
+    left: 12px;
+    font-size: 14px;
   }
 }
