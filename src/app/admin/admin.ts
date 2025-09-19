@@ -14,9 +14,11 @@ import { ThemeService } from '../Services/theme.service';
 })
 export class Admin implements OnInit {
   activeTab = signal('dashboard');
-  searchTerm = signal('');
   adminName = signal('');
   adminInitials = signal('');
+  
+  // Search functionality
+  searchTerm = '';
   
   // Data
   agents = signal<any[]>([]);
@@ -286,10 +288,29 @@ export class Admin implements OnInit {
   }
 
   getFilteredPolicies() {
-    if (!this.selectedPolicyType()) return this.policies();
-    return this.policies().filter(policy => 
-      (policy.policyType || policy[5] || policy.policy_type || policy.type) === this.selectedPolicyType()
-    );
+    let filtered = this.policies();
+    
+    // Filter by search term
+    if (this.searchTerm) {
+      const term = this.searchTerm.toLowerCase();
+      filtered = filtered.filter(policy => 
+        (policy[4] || policy.name)?.toLowerCase().includes(term) ||
+        (policy.policyType || policy[5] || policy.policy_type || policy.type)?.toLowerCase().includes(term) ||
+        (policy[1] || policy.policy_id || policy.policyId || policy.id)?.toString().includes(term) ||
+        (policy[2] || policy.premium_amount || policy.premiumAmount || policy.premium)?.toString().includes(term) ||
+        (policy[0] || policy.coverageamount || policy.coverageAmount || policy.coverage)?.toString().includes(term) ||
+        (policy[3] || policy.coverage_details || policy.coverageDetails || policy.description)?.toLowerCase().includes(term)
+      );
+    }
+    
+    // Filter by policy type
+    if (this.selectedPolicyType()) {
+      filtered = filtered.filter(policy => 
+        (policy.policyType || policy[5] || policy.policy_type || policy.type) === this.selectedPolicyType()
+      );
+    }
+    
+    return filtered;
   }
 
   updateAgentForm(field: string, value: any) {
@@ -311,10 +332,54 @@ export class Admin implements OnInit {
   }
 
   getFilteredAgents() {
-    if (!this.searchTerm()) return this.agents();
+    if (!this.searchTerm) return this.agents();
+    const term = this.searchTerm.toLowerCase();
     return this.agents().filter(agent => 
-      agent.name?.toLowerCase().includes(this.searchTerm().toLowerCase())
+      agent.name?.toLowerCase().includes(term) ||
+      agent.contactInfo?.toLowerCase().includes(term) ||
+      agent.email?.toLowerCase().includes(term) ||
+      agent.phone?.toString().includes(term) ||
+      (agent.agentId || agent.id)?.toString().includes(term)
     );
+  }
+
+  getFilteredClaims() {
+    if (!this.searchTerm) return this.claims();
+    const term = this.searchTerm.toLowerCase();
+    return this.claims().filter(claim => 
+      (claim.claimId || claim.claim_id || claim.id)?.toString().includes(term) ||
+      (claim.policyId || claim.policy_id)?.toString().includes(term) ||
+      (claim.customerId || claim.customer_id || claim.userId)?.toString().includes(term) ||
+      (claim.status || claim.claimStatus)?.toLowerCase().includes(term) ||
+      (claim.claimAmount || claim.claim_amount || claim.amount)?.toString().includes(term)
+    );
+  }
+
+  getFilteredCustomers() {
+    if (!this.searchTerm) return this.customers();
+    const term = this.searchTerm.toLowerCase();
+    return this.customers().filter(customer => 
+      customer.name?.toLowerCase().includes(term) ||
+      customer.email?.toLowerCase().includes(term) ||
+      customer.phone?.toString().includes(term) ||
+      customer.address?.toLowerCase().includes(term) ||
+      (customer.customerId || customer.id)?.toString().includes(term)
+    );
+  }
+
+  getFilteredPolicyLogs() {
+    if (!this.searchTerm) return this.policyLogs();
+    const term = this.searchTerm.toLowerCase();
+    return this.policyLogs().filter(log => 
+      (log.policyId || log.policy_id || log.id || log.pId)?.toString().includes(term) ||
+      (log.customerId || log.customer_id || log.userId || log.cId)?.toString().includes(term) ||
+      (log.agentId || log.agent_id || log.createdBy || log.aId)?.toString().includes(term) ||
+      (log.status || log.policyStatus)?.toLowerCase().includes(term)
+    );
+  }
+
+  clearSearch() {
+    this.searchTerm = '';
   }
 
   getFormattedDate(log: any): string {
