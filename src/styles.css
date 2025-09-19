@@ -8,11 +8,11 @@
 :root {
   /* Light Theme */
   --primary-gradient:#2c5aa0;
-  --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  --info-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-  --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-  --danger-gradient: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+ --secondary-gradient: grey;
+  --success-gradient: linear-gradient(135deg, #000000 0%, #000000 100%);
+  --info-gradient: linear-gradient(135deg, #3498db 0%, #0199ff 100%);
+  --warning-gradient: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%);
+  --danger-gradient: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
   
   --bg-primary: #f8f9fa;
   --bg-secondary: #ffffff;
