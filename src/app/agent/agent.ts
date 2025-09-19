@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { JwtService } from '../Services/jwt.service';
@@ -8,7 +9,7 @@ import { ThemeService } from '../Services/theme.service';
 
 @Component({
   selector: 'app-agent',
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './agent.html',
   styleUrl: './agent.css'
 })
@@ -16,6 +17,8 @@ export class Agent implements OnInit, OnDestroy {
   activeSection = 'claims';
   agentData: any = {};
   claims: any[] = [];
+  filteredClaims: any[] = [];
+  searchQuery: string = '';
   isLoading = false;
   selectedClaim: any = null;
   showClaimModal = false;
@@ -120,12 +123,39 @@ export class Agent implements OnInit, OnDestroy {
   loadClaimsWithUpdatedStatus(claims: any[], headers: HttpHeaders) {
     if (claims.length === 0) {
       this.claims = [];
+      this.filteredClaims = [];
       return;
     }
 
     // Since we're getting claims from agent-specific endpoint, they should already have current status
     this.claims = claims;
+    this.filteredClaims = claims; // Initialize filtered claims
+    
+    // Load customer details for better search
+    this.loadCustomerDetailsForClaims(claims, headers);
+    
     console.log('Agent claims loaded:', this.claims);
+  }
+
+  private loadCustomerDetailsForClaims(claims: any[], headers: HttpHeaders) {
+    // Load customer details for each claim to enable better search
+    claims.forEach(claim => {
+      if (claim.customerId && !claim.customerDetails) {
+        this.http.get(`http://localhost:8763/customer/getCustomer/${claim.customerId}`, { headers })
+          .subscribe({
+            next: (customer: any) => {
+              claim.customerDetails = customer;
+              // Update filtered claims if search is active
+              if (this.searchQuery.trim()) {
+                this.onSearch();
+              }
+            },
+            error: (error) => {
+              console.error('Error loading customer details for search:', error);
+            }
+          });
+      }
+    });
   }
 
   openClaimModal(claim: any) {
@@ -344,5 +374,111 @@ export class Agent implements OnInit, OnDestroy {
   
   toggleTheme() {
     this.themeService.toggleTheme();
+  }
+
+  closeClaimForm() {
+    // Close any open forms or modals
+    this.selectedClaim = null;
+    this.showClaimModal = false;
+    // You can add additional form closing logic here
+  }
+
+  onSearch() {
+    if (!this.searchQuery.trim()) {
+      this.filteredClaims = this.claims;
+      return;
+    }
+
+    const query = this.searchQuery.toLowerCase().trim();
+    this.filteredClaims = this.claims.filter(claim => {
+      // Basic claim fields
+      const basicMatch = (
+        claim.claimId?.toString().toLowerCase().includes(query) ||
+        claim.customerId?.toString().toLowerCase().includes(query) ||
+        claim.policyId?.toString().toLowerCase().includes(query) ||
+        claim.status?.toLowerCase().includes(query) ||
+        claim.claimAmount?.toString().includes(query)
+      );
+
+      // Fuzzy search for partial matches
+      const fuzzyMatch = (
+        this.fuzzySearch(claim.claimId?.toString(), query) ||
+        this.fuzzySearch(claim.customerId?.toString(), query) ||
+        this.fuzzySearch(claim.policyId?.toString(), query) ||
+        this.fuzzySearch(claim.status, query)
+      );
+
+      // Search in loaded claim details if available
+      let detailsMatch = false;
+      if (this.claimDetails.customer) {
+        detailsMatch = (
+          this.claimDetails.customer.name?.toLowerCase().includes(query) ||
+          this.claimDetails.customer.email?.toLowerCase().includes(query) ||
+          this.claimDetails.customer.phone?.toLowerCase().includes(query)
+        );
+      }
+
+      // Search through all claims for customer details (if we have them)
+      const customerMatch = this.searchInCustomerData(claim, query);
+
+      return basicMatch || fuzzyMatch || detailsMatch || customerMatch;
+    });
+  }
+
+  private fuzzySearch(text: string, query: string): boolean {
+    if (!text || !query) return false;
+    
+    text = text.toLowerCase();
+    query = query.toLowerCase();
+    
+    // Allow for 1-2 character differences
+    if (Math.abs(text.length - query.length) > 2) {
+      return text.includes(query) || query.includes(text);
+    }
+    
+    // Simple fuzzy matching
+    let textIndex = 0;
+    for (let i = 0; i < query.length; i++) {
+      const char = query[i];
+      const found = text.indexOf(char, textIndex);
+      if (found === -1) return false;
+      textIndex = found + 1;
+    }
+    return true;
+  }
+
+  private searchInCustomerData(claim: any, query: string): boolean {
+    // Search through customer details if loaded
+    if (claim.customerDetails) {
+      const customer = claim.customerDetails;
+      const customerSearchText = [
+        customer.name,
+        customer.email,
+        customer.phone,
+        customer.address,
+        customer.aadharnumber,
+        customer.gender
+      ].filter(field => field).join(' ').toLowerCase();
+      
+      if (customerSearchText.includes(query)) {
+        return true;
+      }
+      
+      // Fuzzy search on customer name
+      if (customer.name && this.fuzzySearch(customer.name, query)) {
+        return true;
+      }
+    }
+    
+    // Fallback to basic search
+    const searchableText = [
+      claim.claimId,
+      claim.customerId,
+      claim.policyId,
+      claim.status,
+      claim.claimAmount?.toString()
+    ].join(' ').toLowerCase();
+    
+    return searchableText.includes(query);
   }
 }

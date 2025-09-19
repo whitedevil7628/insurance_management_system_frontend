@@ -99,7 +99,7 @@
         <div class="flex-grow-1 mx-4">
           <div class="input-group">
             <span class="input-group-text"><i class="fas fa-search"></i></span>
-            <input type="text" class="form-control" placeholder="Search claims, customers, policies...">
+            <input type="text" class="form-control" placeholder="Search claims, customers, policies..." [(ngModel)]="searchQuery" (input)="onSearch()">
           </div>
         </div>
         
@@ -197,9 +197,9 @@
             </div>
           </div>
           
-          @if (claims.length > 0) {
+          @if (filteredClaims.length > 0) {
             <div class="row g-3">
-              @for (claim of claims; track claim.claimId) {
+              @for (claim of filteredClaims; track claim.claimId) {
                 <div class="col-md-6 col-lg-4">
                   <div class="card h-100 shadow-sm border-0" (click)="openClaimModal(claim)" style="cursor: pointer;">
                     <div class="card-body p-4">
@@ -275,13 +275,13 @@
           <div class="row justify-content-center">
             <div class="col-md-8">
               <div class="card shadow-sm">
-                <div class="card-header bg-dark text-white">
+                <div class="card-header text-white" style="background-color: #4459b4;">
                   <div class="d-flex align-items-center">
                     <div class="bg-light text-dark rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
                       {{ getAgentInitials() }}
                     </div>
                     <div>
-                      <h5 class="mb-0">{{ agentData?.name || 'Agent Name' }}</h5>
+                      <h5 style="color:white !important">{{ agentData?.name || 'Agent Name' }}</h5>
                       <small>Agent ID: {{ agentData?.agentId || 'N/A' }}</small>
                     </div>
                   </div>
@@ -290,7 +290,7 @@
                   <div class="row g-3">
                     <div class="col-md-6">
                       <label class="form-label">Full Name</label>
-                      <input type="text" class="form-control" [value]="agentData?.name || ''" readonly>
+                      <input type="text" class="form-control" [value]="agentData?.name || ''" readonly  >
                     </div>
                     <div class="col-md-6">
                       <label class="form-label">Email Address</label>
