@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './home.html',
+  styleUrl: './home.css',
   
 })
 export class HomeComponent {

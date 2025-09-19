@@ -9,6 +9,7 @@ import { JwtService } from '../Services/jwt.service';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './login.html',
+  styleUrl:'./login.css',
 
 })
 export class Login {

@@ -1,0 +1,31 @@
+/* Original styling with minimal interactive enhancements */
+
+/* Interactive button hover effects */
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+/* Card hover effects */
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+/* Navbar interactive effects */
+.nav-link:hover {
+  color: #2c5aa0 !important;
+  transition: color 0.3s ease;
+}
+
+/* Form focus effects */
+.form-control:focus,
+.form-select:focus {
+  border-color: #2c5aa0;
+  box-shadow: 0 0 0 0.2rem rgba(44, 90, 160, 0.25);
+}
+
+/* Smooth transitions */
+* {
+  transition: all 0.3s ease;
+}

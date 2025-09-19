@@ -1,165 +1,131 @@
-<div class="min-vh-100" style="background: linear-gradient(135deg, #f0f4f8, #d6e7f0);">
-  <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background: linear-gradient(135deg, #f8f9fa, #e9ecef);">
-    <div class="container">
-      <a class="navbar-brand fw-bold" href="#">
-        <i class="fas fa-shield-alt me-2" style="color: #2c5aa0;"></i>
-        <span style="color: #2c5aa0;">Insurance Management</span>
-      </a>
-      <div class="ms-auto">
-        <button class="btn" style="border: 2px solid #2c5aa0; color: #2c5aa0; background: transparent;" (click)="navigateToHome()">
-          <i class="fas fa-home me-1"></i>Back to Home
-        </button>
-      </div>
-    </div>
-  </nav>
-
-  <div class="d-flex align-items-center justify-content-center" style="min-height: calc(100vh - 76px);">
+<div class="login-container">
   <!-- Notification -->
-  @if (showNotification) {
-    <div class="alert position-fixed top-0 end-0 m-3"
-         [class.alert-success]="notificationType === 'success'"
-         [class.alert-danger]="notificationType === 'error'"
-         style="z-index: 1050; min-width: 300px;">
-      @if (notificationType === 'success') {
-        <i class="fas fa-check-circle me-2"></i>
-      }
-      @if (notificationType === 'error') {
-        <i class="fas fa-exclamation-circle me-2"></i>
-      }
-      {{ notificationMessage }}
+  <div class="notification" [class.show]="showNotification" [class.success]="notificationType === 'success'" [class.error]="notificationType === 'error'">
+    <div class="notification-content">
+      <i class="fas fa-check-circle" *ngIf="notificationType === 'success'"></i>
+      <i class="fas fa-exclamation-circle" *ngIf="notificationType === 'error'"></i>
+      <span>{{notificationMessage}}</span>
     </div>
-  }
+  </div>
+  
+  <div class="login-wrapper">
+    <!-- Header -->
+    <header class="login-header">
+      <div class="brand" (click)="navigateToHome()">
+        <i class="fas fa-shield-alt"></i>
+        <span>Insurance Management</span>
+      </div>
+    </header>
 
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-md-8 col-lg-6">
+    <!-- Login Content -->
+    <div class="login-content">
+      <div class="login-form-container">
+        <div class="login-form">
         
-        <!-- Login Type Selection -->
-        @if (!showForm) {
-          <div class="card shadow-lg border-0" style="border-radius: 20px; overflow: hidden;">
-            <div class="card-header text-center py-4 border-bottom" style="background: linear-gradient(135deg, #2c5aa0, #1e3d72); color: white;">
-              <h2 class="mb-0">
-                <i class="fas fa-shield-alt me-2"></i>
-                Insurance Login
-              </h2>
-              <p class="mb-0" style="opacity: 0.9;">Choose your login type</p>
+          <div class="form-header">
+            <div class="redirect-buttons" *ngIf="!showForm">
+              <button 
+                type="button" 
+                class="redirect-btn customer-redirect" 
+                (click)="goToCustomerLogin()">
+                <i class="fas fa-user"></i>
+                Customer Login
+              </button>
+              <button 
+                type="button" 
+                class="redirect-btn agent-redirect" 
+                (click)="goToAgentLogin()">
+                <i class="fas fa-user-tie"></i>
+                Agent Login
+              </button>
             </div>
-            <div class="card-body p-4">
-              <div class="d-grid gap-3">
-                <button class="btn btn-lg" style="background: linear-gradient(135deg, #4A90E2, #6BB6FF); color: white; border: none;" (click)="goToCustomerLogin()">
-                  <i class="fas fa-user me-2"></i>
-                  Customer Login
-                </button>
-                <button class="btn btn-lg" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; border: none;" (click)="goToAgentLogin()">
-                  <i class="fas fa-user-tie me-2"></i>
-                  Agent Login
+            <h1>Welcome Back</h1>
+            <p>Sign in to your Insurance Management account</p>
+          </div>
+
+          <form *ngIf="showForm" (ngSubmit)="onLogin()">
+            <div class="form-group">
+              <label for="email">
+                <i class="fas fa-envelope"></i>
+                {{ loginType === 'agent' ? 'Agent Email' : 'Customer Email' }}
+              </label>
+              <input 
+                type="email" 
+                id="email" 
+                [(ngModel)]="email"
+                name="email"
+                [placeholder]="loginType === 'agent' ? 'Enter your agent email' : 'Enter your customer email'"
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="password">
+                <i class="fas fa-lock"></i>
+                {{ loginType === 'agent' ? 'Agent Password' : 'Customer Password' }}
+              </label>
+              <div class="password-input">
+                <input 
+                  [type]="showPassword ? 'text' : 'password'"
+                  id="password" 
+                  [(ngModel)]="password"
+                  name="password"
+                  [placeholder]="loginType === 'agent' ? 'Enter your agent password' : 'Enter your customer password'"
+                  required
+                >
+                <button type="button" class="password-toggle" (click)="togglePassword()">
+                  <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
                 </button>
               </div>
-              <hr class="my-4">
-              <div class="text-center">
-                <p class="mb-2">Don't have an account?</p>
-                <button class="btn btn-link" (click)="navigateToSignup()">
-                  <i class="fas fa-user-plus me-1"></i>Sign Up
-                </button>
-              </div>
             </div>
-            <div class="card-footer text-center border-top" style="background: #f8f9fa;">
-              <small class="text-muted">Secure login for insurance management</small>
+
+            <div class="form-options">
+              <label class="checkbox-container">
+                <input type="checkbox">
+                <span class="checkmark"></span>
+                Remember me
+              </label>
+              <a href="#" class="forgot-password">Forgot Password?</a>
+            </div>
+
+            <button 
+              type="submit" 
+              class="login-btn"
+              [disabled]="isLoading"
+            >
+              <i [class]="isLoading ? 'fas fa-spinner fa-spin' : 'fas fa-sign-in-alt'"></i>
+              {{ isLoading ? 'Signing In...' : 'Sign In as ' + (loginType === 'agent' ? 'Agent' : 'Customer') }}
+            </button>
+          </form>
+
+          <div class="signup-link">
+            <p>Don't have an account? <a (click)="navigateToSignup()">Sign up here</a></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="login-image">
+        <div class="image-content">
+          <div class="security-icon">
+            <i class="fa-solid fa-user-shield"></i>
+          </div>
+          <h2>Secure & Trusted</h2>
+          <p>Your data is protected with enterprise-grade security. Login safely to access your insurance dashboard.</p>
+          <div class="features">
+            <div class="feature">
+              <i class="fas fa-check-circle"></i>
+              <span>256-bit SSL Encryption</span>
+            </div>
+            <div class="feature">
+              <i class="fas fa-check-circle"></i>
+              <span>Two-Factor Authentication</span>
+            </div>
+            <div class="feature">
+              <i class="fas fa-check-circle"></i>
+              <span>24/7 Account Monitoring</span>
             </div>
           </div>
-        }
-
-        <!-- Login Form -->
-        @if (showForm) {
-          <div class="card shadow-lg border-0" style="border-radius: 20px; overflow: hidden;">
-            <div class="card-header text-center py-4 border-bottom" style="background: linear-gradient(135deg, #2c5aa0, #1e3d72); color: white;">
-              <h3 class="mb-0">
-                @if (loginType === 'agent') {
-                  <i class="fas fa-user-tie me-2"></i>
-                }
-                @if (loginType === 'customer') {
-                  <i class="fas fa-user me-2"></i>
-                }
-                {{ loginType === 'agent' ? 'Agent' : 'Customer' }} Login
-              </h3>
-            </div>
-            <div class="card-body p-5">
-              <form (ngSubmit)="onLogin()">
-                <div class="mb-4">
-                  <label for="email" class="form-label fw-bold">Email Address</label>
-                  <div class="input-group input-group-lg">
-                    <span class="input-group-text">
-                      <i class="fas fa-envelope"></i>
-                    </span>
-                    <input
-                      type="email"
-                      id="email"
-                      class="form-control"
-                      [(ngModel)]="email"
-                      name="email"
-                      placeholder="Enter your email"
-                      required>
-                  </div>
-                </div>
-
-                <div class="mb-5">
-                  <label for="password" class="form-label fw-bold">Password</label>
-                  <div class="input-group input-group-lg">
-                    <span class="input-group-text">
-                      <i class="fas fa-lock"></i>
-                    </span>
-                    <input
-                      [type]="showPassword ? 'text' : 'password'"
-                      id="password"
-                      class="form-control"
-                      [(ngModel)]="password"
-                      name="password"
-                      placeholder="Enter your password"
-                      required>
-                    <button
-                      type="button"
-                      class="btn btn-outline-secondary"
-                      (click)="togglePassword()">
-                      <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
-                    </button>
-                  </div>
-                </div>
-
-                <div class="d-grid gap-2">
-                  <button
-                    type="submit"
-                    class="btn btn-lg"
-                    [style.background]="loginType === 'agent' ? 'linear-gradient(135deg, #28a745, #20c997)' : 'linear-gradient(135deg, #4A90E2, #6BB6FF)'"
-                    [style.color]="'white'"
-                    [style.border]="'none'"
-                    [disabled]="isLoading">
-                    @if (isLoading) {
-                      <span class="spinner-border spinner-border-sm me-2"></span>
-                    } @else {
-                      <i class="fas fa-sign-in-alt me-2"></i>
-                    }
-                    {{ isLoading ? 'Signing In...' : 'Sign In' }}
-                  </button>
-                  
-                  <button
-                    type="button"
-                    class="btn btn-outline-secondary"
-                    (click)="showForm = false">
-                    <i class="fas fa-arrow-left me-2"></i>
-                    Back to Login Options
-                  </button>
-                </div>
-              </form>
-            </div>
-            <div class="card-footer text-center border-top" style="background: #f8f9fa;">
-              <small class="text-muted">
-                Logging in as {{ loginType === 'agent' ? 'Agent' : 'Customer' }}
-              </small>
-            </div>
-          </div>
-        }
-
+        </div>
       </div>
     </div>
   </div>
