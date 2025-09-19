@@ -249,3 +249,54 @@
     font-size: 0.875rem;
   }
 }
+
+/* Agent Profile Info Display */
+.info-item {
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+  transition: all 0.3s ease;
+}
+
+.info-item:hover {
+  background: #e9ecef;
+  transform: translateX(2px);
+}
+
+.info-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #667eea;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-label i {
+  color: #667eea;
+  width: 16px;
+}
+
+.info-value {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+  line-height: 1.4;
+}
+
+/* Responsive adjustments for info display */
+@media (max-width: 768px) {
+  .info-item {
+    padding: 0.75rem;
+  }
+  
+  .info-label {
+    font-size: 0.8rem;
+  }
+  
+  .info-value {
+    font-size: 0.95rem;
+  }
+}
