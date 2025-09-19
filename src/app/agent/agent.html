@@ -370,11 +370,11 @@
     <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.5);" (click)="closeClaimModal()">
       <div class="modal-dialog modal-lg" (click)="$event.stopPropagation()">
         <div class="modal-content">
-          <div class="modal-header bg-dark text-white">
+          <div class="modal-header bg-blue text-white">
             <div class="d-flex align-items-center gap-3">
               <div class="d-flex align-items-center gap-2">
                 <i class="fas fa-file-medical"></i>
-                <span class="fw-bold">Claim #{{ selectedClaim.claimId }}</span>
+                <span class="fw-bold" style="color: white !important">Claim #{{ selectedClaim.claimId }}</span>
               </div>
               <span class="badge"
                     [class.bg-success]="selectedClaim.status === 'APPROVED'"
@@ -391,12 +391,12 @@
           
           <div class="modal-body">
             <!-- Claim Summary -->
-            <div class="card mb-3 bg-dark text-white">
+            <div class="card mb-3 text-white" style="background-color: rgb(45, 79, 181) !important;">
               <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
-                  <h5 class="mb-0">Claim Summary</h5>
+                  <h5 class="mb-0" style="color: white !important">Claim Summary</h5>
                   <div class="text-end">
-                    <div class="h4 mb-0">₹{{ selectedClaim.claimAmount | number }}</div>
+                    <div class="h4 text-white mb-0">₹{{ selectedClaim.claimAmount | number }}</div>
                   </div>
                 </div>
                 <div class="d-flex gap-3 mt-2">
