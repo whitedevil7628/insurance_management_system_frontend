@@ -70,7 +70,7 @@ export class SignupComponent {
                 errorText.includes('customer already exist with this email id') ||
                 errorText.includes('email already exists') ||
                 errorText.includes('email')) {
-              errorMessage = 'Email Already Registered! This email address is already in use. Please use a different email address or sign in if you already have an account.';
+              errorMessage = 'Email Already Registered!';
             } 
             else if (errorText.includes('customer with this aadhaar number already exists') || 
                      errorText.includes('customer already exist with this aadhar number') ||
@@ -78,14 +78,14 @@ export class SignupComponent {
                      errorText.includes('aadhar already exists') ||
                      errorText.includes('aadhaar') ||
                      errorText.includes('aadhar')) {
-              errorMessage = 'Aadhaar Already Registered! This Aadhaar number is already registered. Please verify your 12-digit Aadhaar number.';
+              errorMessage = 'Aadhaar Already Registered!';
             }
             else if (errorText.includes('aadhaar number must be a 12-digit number') ||
                      errorText.includes('invalid aadhaar')) {
-              errorMessage = 'Invalid Aadhaar Number! Please enter a valid 12-digit Aadhaar number without spaces or special characters.';
+              errorMessage = 'Please enter a valid 12-digit Aadhaar number';
             }
             else if (errorText.includes('invalid email')) {
-              errorMessage = 'Invalid Email Format! Please enter a valid email address.';
+              errorMessage = 'Invalid Email Format!.';
             }
           }
 
