@@ -101,8 +101,14 @@
   <!-- Main Content -->
   <div class="flex-grow-1 d-flex flex-column">
     <!-- Enhanced Top Navbar -->
-    <nav class="navbar navbar-expand-lg">
+    <nav class="navbar navbar-expand-lg" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 1rem 0; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
       <div class="container-fluid">
+        <!-- Mobile Menu Button -->
+        <button class="btn btn-link text-white d-lg-none me-3" (click)="toggleMobileMenu()" style="border: none; font-size: 1.2rem;">
+          <i class="fas fa-bars"></i>
+        </button>
+        
+        <!-- User Profile Section -->
         <div class="d-flex align-items-center">
           <div class="position-relative me-3">
             <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background: var(--primary-gradient); color: white; font-weight: bold; font-size: 18px;">
@@ -116,10 +122,25 @@
           </div>
         </div>
         
-        <div class="flex-grow-1 mx-4">
-          <div class="input-group">
-            <span class="input-group-text"><i class="fas fa-search"></i></span>
-            <input type="text" class="form-control" placeholder="Search policies, claims, or help..." [(ngModel)]="searchTerm">
+        <!-- Search Bar -->
+        <div class="flex-grow-1 mx-3 mx-md-4">
+          <div class="input-group" style="border-radius: 25px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <span class="input-group-text" style="background: white; border: none; color: #667eea;">
+              <i class="fas fa-search"></i>
+            </span>
+            <input type="text" 
+                   class="form-control" 
+                   [placeholder]="getSearchPlaceholder()"
+                   [(ngModel)]="searchTerm"
+                   style="border: none; padding: 12px 16px; font-size: 0.9rem;"
+                   #searchInput>
+            @if (searchTerm) {
+              <button class="btn" 
+                      style="background: white; border: none; color: #dc3545;"
+                      (click)="clearSearch(); searchInput.focus()">
+                <i class="fas fa-times"></i>
+              </button>
+            }
           </div>
         </div>
         
@@ -141,9 +162,9 @@
             </div>
           </div>
           
-          @if (notifications.length > 0) {
+          @if (getFilteredNotifications().length > 0) {
             <div class="row g-3">
-              @for (notification of notifications.slice().reverse(); track notification.id) {
+              @for (notification of getFilteredNotifications().slice().reverse(); track notification.id) {
                 <div class="col-12">
                   <div class="card shadow-sm" style="cursor: pointer;" (click)="toggleNotificationExpand(notification)">
                     <div class="card-body">
@@ -282,9 +303,9 @@
             </div>
           </div>
           
-          @if (myPolicies.length > 0) {
+          @if (getFilteredMyPolicies().length > 0) {
             <div class="row g-3">
-              @for (policy of myPolicies; track policy.policyId) {
+              @for (policy of getFilteredMyPolicies(); track policy.policyId) {
                 <div class="col-md-6 col-lg-4">
                   <div class="card h-100 shadow-sm border-0" style="border-radius: 12px; transition: transform 0.2s ease;">
                     <div class="card-body" style="padding: 1.25rem;">
@@ -321,7 +342,7 @@
                       
                       <!-- Description -->
                       <div class="mb-3">
-                        <p class="text-muted mb-0" style="font-size: 0.8rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ policy.coverageDetails || 'Comprehensive insurance coverage with full benefits and protection.' }}</p>
+                        <p class="text-muted mb-0" style="font-size: 0.8rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">Description: {{ policy.coverageDetails || 'Comprehensive insurance coverage with full benefits and protection.' }}</p>
                       </div>
                       
                       <!-- Action Button -->
@@ -332,7 +353,10 @@
                                 (click)="openClaimForm(policy)" 
                                 [disabled]="isPolicyClaimed(policy)"
                                 style="font-size: 0.85rem; padding: 8px 16px; border-radius: 8px;">
-                          <i class="fas" [class.fa-file-medical]="!isPolicyClaimed(policy)" [class.fa-check-circle]="isPolicyClaimed(policy)" class="me-2" style="font-size: 0.8rem;"></i>
+                          <i class="fas me-2" 
+                             [class.fa-file-medical]="!isPolicyClaimed(policy)" 
+                             [class.fa-check-circle]="isPolicyClaimed(policy)" 
+                             style="font-size: 0.8rem;"></i>
                           {{ isPolicyClaimed(policy) ? 'Already Claimed' : 'File Claim' }}
                         </button>
                       </div>
@@ -364,25 +388,78 @@
             </div>
           </div>
           
-          @if (customerClaims.length > 0) {
+          @if (getFilteredClaims().length > 0) {
             <div class="row g-3">
-              @for (claim of customerClaims; track claim.claimId) {
+              @for (claim of getFilteredClaims(); track claim.claimId) {
                 <div class="col-md-6 col-lg-4">
-                  <div class="card shadow-sm" 
-                       [style.background-color]="claim.status === 'APPROVED' ? '#d4edda' : claim.status === 'REJECTED' ? '#f8d7da' : 'white'">
-                    <div class="card-body">
-                      <h6 class="text-dark">Claim #{{ claim.claimId }}</h6>
-                      <p class="small text-muted">Policy ID: {{ claim.policyId }}</p>
-                      <div class="d-flex justify-content-between">
-                        <span class="text-muted">Amount:</span>
-                        <strong class="text-dark">₹{{ claim.claimAmount | number }}</strong>
+                  <div class="card h-100 shadow-sm border-0 claim-card" style="border-radius: 12px;">
+                    <div class="card-body" style="padding: 1.25rem;">
+                      <!-- Header -->
+                      <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center me-3" 
+                             style="width: 40px; height: 40px;"
+                             [style.background]="claim.status === 'APPROVED' ? 'linear-gradient(135deg, #28a745, #20c997)' : claim.status === 'REJECTED' ? 'linear-gradient(135deg, #dc3545, #e74c3c)' : 'linear-gradient(135deg, #007bff, #0056b3)'">
+                          <i class="fas text-white" 
+                             [class.fa-check-circle]="claim.status === 'APPROVED'"
+                             [class.fa-times-circle]="claim.status === 'REJECTED'"
+                             [class.fa-clock]="claim.status === 'FILED'"
+                             style="font-size: 0.9rem;"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                          <h6 class="mb-1 fw-bold text-dark" style="font-size: 0.95rem; line-height: 1.3;">Claim #{{ claim.claimId }}</h6>
+                          <small class="text-muted" style="font-size: 0.75rem;">Policy ID: {{ claim.policyId }}</small>
+                        </div>
+                        <div class="text-end">
+                          <span class="badge" style="font-size: 0.7rem; padding: 4px 8px;"
+                                [class.bg-success]="claim.status === 'APPROVED'"
+                                [class.bg-danger]="claim.status === 'REJECTED'"
+                                [class.bg-primary]="claim.status === 'FILED'">
+                            {{ claim.status }}
+                          </span>
+                        </div>
                       </div>
-                      <span class="badge mt-2"
-                            [class.bg-success]="claim.status === 'APPROVED'"
-                            [class.bg-danger]="claim.status === 'REJECTED'"
-                            [class.bg-primary]="claim.status === 'FILED'">
-                        {{ claim.status }}
-                      </span>
+                      
+                      <!-- Claim Amount -->
+                      <div class="mb-4">
+                        <div class="p-2" 
+                             [style.background]="claim.status === 'APPROVED' ? '#d4edda' : claim.status === 'REJECTED' ? '#f8d7da' : '#e3f2fd'"
+                             style="border-radius: 8px;">
+                          <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                              <i class="fas fa-rupee-sign me-2" 
+                                 [class.text-success]="claim.status === 'APPROVED'"
+                                 [class.text-danger]="claim.status === 'REJECTED'"
+                                 [class.text-primary]="claim.status === 'FILED'"
+                                 style="font-size: 0.8rem;"></i>
+                              <small class="text-muted" style="font-size: 0.7rem;">Claim Amount</small>
+                            </div>
+                            <div class="fw-bold" style="font-size: 0.9rem; color: #2c3e50;">₹{{ claim.claimAmount | number }}</div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <!-- Action Button -->
+                      <div class="d-grid">
+                        <button class="btn" 
+                                [class.btn-success]="claim.status === 'APPROVED'"
+                                [class.btn-danger]="claim.status === 'REJECTED'"
+                                [class.btn-primary]="claim.status === 'FILED'"
+                                style="font-size: 0.85rem; padding: 8px 16px; border-radius: 8px;"
+                                [disabled]="true">
+                          <i class="fas me-2" 
+                             [class.fa-check]="claim.status === 'APPROVED'"
+                             [class.fa-times]="claim.status === 'REJECTED'"
+                             [class.fa-hourglass-half]="claim.status === 'FILED'"
+                             style="font-size: 0.8rem;"></i>
+                          @if (claim.status === 'APPROVED') {
+                            Claim Approved
+                          } @else if (claim.status === 'REJECTED') {
+                            Claim Rejected
+                          } @else {
+                            Under Review
+                          }
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>

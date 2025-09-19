@@ -240,10 +240,63 @@ export class Customer implements OnInit, OnDestroy {
       return [];
     }
     
+    if (!this.searchTerm.trim()) {
+      return this.policies;
+    }
+    
     console.log('Filtering policies:', this.policies);
     return this.policies.filter(policy => {
-      const name = policy.name || policy[4] || 'No Name';
-      return name.toLowerCase().includes(this.searchTerm.toLowerCase());
+      const name = (policy.name || policy[4] || '').toLowerCase();
+      const type = (policy[5] || policy.policyType || '').toLowerCase();
+      return name.includes(this.searchTerm.toLowerCase()) || type.includes(this.searchTerm.toLowerCase());
+    });
+  }
+
+  getFilteredMyPolicies() {
+    if (!this.myPolicies || this.myPolicies.length === 0) {
+      return [];
+    }
+    
+    if (!this.searchTerm.trim()) {
+      return this.myPolicies;
+    }
+    
+    return this.myPolicies.filter(policy => {
+      const name = (policy.name || '').toLowerCase();
+      const type = (policy.policyType || '').toLowerCase();
+      return name.includes(this.searchTerm.toLowerCase()) || type.includes(this.searchTerm.toLowerCase());
+    });
+  }
+
+  getFilteredClaims() {
+    if (!this.customerClaims || this.customerClaims.length === 0) {
+      return [];
+    }
+    
+    if (!this.searchTerm.trim()) {
+      return this.customerClaims;
+    }
+    
+    return this.customerClaims.filter(claim => {
+      const claimId = (claim.claimId?.toString() || '').toLowerCase();
+      const status = (claim.status || '').toLowerCase();
+      return claimId.includes(this.searchTerm.toLowerCase()) || status.includes(this.searchTerm.toLowerCase());
+    });
+  }
+
+  getFilteredNotifications() {
+    if (!this.notifications || this.notifications.length === 0) {
+      return [];
+    }
+    
+    if (!this.searchTerm.trim()) {
+      return this.notifications;
+    }
+    
+    return this.notifications.filter(notification => {
+      const title = (notification.title || notification.type || '').toLowerCase();
+      const message = (notification.message || notification.content || '').toLowerCase();
+      return title.includes(this.searchTerm.toLowerCase()) || message.includes(this.searchTerm.toLowerCase());
     });
   }
 
@@ -517,5 +570,28 @@ export class Customer implements OnInit, OnDestroy {
   
   toggleTheme() {
     this.themeService.toggleTheme();
+  }
+
+  // Search Functionality
+  showMobileMenu = false;
+
+  getSearchPlaceholder(): string {
+    switch (this.activeSection) {
+      case 'policies': return 'Search available policies...';
+      case 'myPolicies': return 'Search your policies...';
+      case 'claims': return 'Search your claims...';
+      case 'notifications': return 'Search notifications...';
+      case 'profile': return 'Search profile settings...';
+      case 'help': return 'Search help topics...';
+      default: return 'Search policies, claims, or help...';
+    }
+  }
+
+  clearSearch() {
+    this.searchTerm = '';
+  }
+
+  toggleMobileMenu() {
+    this.showMobileMenu = !this.showMobileMenu;
   }
 }
