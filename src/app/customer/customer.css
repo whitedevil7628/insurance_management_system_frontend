@@ -38,6 +38,12 @@
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  cursor: pointer;
+}
+
+.claim-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
 }
 
 .claim-card::after {
@@ -166,6 +172,81 @@
   100% {
     background-position: 200% 0;
   }
+}
+
+/* Enhanced Navbar Animations */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-3px);
+  }
+  60% {
+    transform: translateY(-1px);
+  }
+}
+
+/* Search Results Dropdown */
+.search-dropdown {
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Navbar Interactive Elements */
+.navbar-avatar {
+  transition: all 0.3s ease;
+}
+
+.navbar-avatar:hover {
+  transform: scale(1.05);
+}
+
+.search-result-item {
+  transition: background 0.2s ease;
+}
+
+.search-result-item:hover {
+  background: #f8f9fa !important;
+}
+
+.navbar-bell-btn {
+  transition: all 0.3s ease;
+}
+
+.navbar-bell-btn:hover {
+  background: rgba(255,255,255,0.1) !important;
+}
+
+.navbar-logout-btn {
+  transition: all 0.3s ease;
+}
+
+.navbar-logout-btn:hover {
+  background: rgba(255,255,255,0.2) !important;
+  transform: translateY(-1px);
 }
 
 /* Enhanced Scrollbar */
