@@ -37,6 +37,7 @@ export class CustomerService {
 
   getCustomerProfile(): Observable<any> {
     const customerId = this.jwtService.getCustomerId();
+    console.log('Fetching profile for customer ID:', customerId);
     return this.http.get(`${this.apiUrl}/customer/getCustomer/${customerId}`, { headers: this.getHeaders() });
   }
 

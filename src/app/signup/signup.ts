@@ -35,7 +35,7 @@ export class SignupComponent {
       date: ['', Validators.required],
       aadharnumber: ['', [Validators.required, Validators.pattern('^[0-9]{12}$')]],
       phone: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-
+      address: ['', Validators.required]
     });
     
 
@@ -129,7 +129,8 @@ export class SignupComponent {
           'gender': 'Gender',
           'date': 'Date of Birth',
           'phone': 'Phone Number',
-          'aadharnumber': 'Aadhaar Number'
+          'aadharnumber': 'Aadhaar Number',
+          'address': 'Address'
         };
         return `${fieldLabels[fieldName] || fieldName} is required`;
       }

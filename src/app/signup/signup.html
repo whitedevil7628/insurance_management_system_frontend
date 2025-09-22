@@ -148,6 +148,20 @@
                     {{ getFieldError('aadharnumber') }}
                   </div>
                 </div>
+
+                <div class="col-12">
+                  <label for="address" class="form-label small fw-semibold" style="color: #2c5aa0;">Address</label>
+                  <textarea
+                    id="address"
+                    class="form-control form-control-sm"
+                    formControlName="address"
+                    placeholder="Enter your complete address"
+                    rows="2"
+                    [class.is-invalid]="signupForm.get('address')?.invalid && signupForm.get('address')?.touched"></textarea>
+                  <div *ngIf="getFieldError('address')" class="invalid-feedback">
+                    {{ getFieldError('address') }}
+                  </div>
+                </div>
               </div>
  
               <div class="mt-3">

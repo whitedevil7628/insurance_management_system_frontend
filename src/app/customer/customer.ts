@@ -107,12 +107,14 @@ export class Customer implements OnInit, OnDestroy {
       return;
     }
     this.loadUserData();
-    this.loadPolicies();
-    this.loadProfile();
-    this.loadClaims();
-    this.loadNotifications();
-    this.startNotificationPolling();
-
+    // Load profile first, then other data
+    setTimeout(() => {
+      this.loadProfile();
+      this.loadPolicies();
+      this.loadClaims();
+      this.loadNotifications();
+      this.startNotificationPolling();
+    }, 100);
   }
 
   ngOnDestroy() {
@@ -211,30 +213,72 @@ export class Customer implements OnInit, OnDestroy {
   }
 
   loadProfile() {
+    if (!this.customerId) {
+      this.showNotificationMessage('Customer ID not found. Please login again.', 'error');
+      return;
+    }
+
+    console.log('Loading profile for customer ID:', this.customerId);
+    this.isProfileLoading = true;
     this.customerService.getCustomerProfile().subscribe({
       next: (data) => {
-        this.profileForm.patchValue({
-          name: data.name,
-          email: data.email,
-          gender: data.gender,
-          date: data.date,
-          aadharnumber: data.aadharnumber,
-          phone: data.phone,
-          address: data.address,
-        });
+        console.log('Profile data received:', data);
+        if (data && (data.name || data.email)) {
+          this.profileForm.patchValue({
+            name: data.name || '',
+            email: data.email || '',
+            gender: data.gender || '',
+            date: data.date || data.dateOfBirth || '',
+            aadharnumber: data.aadharnumber || data.aadharNumber || data.aadhaarNumber || '',
+            phone: data.phone || data.phoneNumber || '',
+            address: data.address || '',
+          });
 
-        // Update navbar display name from profile data
-        if (data.name) {
-          this.customerName = data.name;
-          this.customerInitials = this.jwtService.getInitials(data.name);
+          // Update navbar display name from profile data
+          if (data.name) {
+            this.customerName = data.name;
+            this.customerInitials = this.jwtService.getInitials(data.name);
+          }
+        } else {
+          // Set default values from JWT if API data is empty
+          const jwtName = this.jwtService.getUserName();
+          if (jwtName) {
+            this.profileForm.patchValue({
+              name: jwtName,
+              email: '',
+              gender: '',
+              date: '',
+              aadharnumber: '',
+              phone: '',
+              address: '',
+            });
+          }
         }
+        this.isProfileLoading = false;
       },
       error: (error) => {
-        console.log('Failed to load profile');
-        const errorMsg = error.error?.message || error.message;
-        if (errorMsg && errorMsg.includes('not found')) {
-          this.showNotificationMessage('Profile not found', 'error');
+        console.error('Failed to load profile:', error);
+        // Set default values from JWT on error
+        const jwtName = this.jwtService.getUserName();
+        if (jwtName) {
+          this.profileForm.patchValue({
+            name: jwtName,
+            email: '',
+            gender: '',
+            date: '',
+            aadharnumber: '',
+            phone: '',
+            address: '',
+          });
         }
+        const errorMsg = error.error?.message || error.message || 'Unknown error';
+        if (error.status === 401) {
+          this.showNotificationMessage('Session expired. Please login again.', 'error');
+          this.router.navigate(['/login']);
+        } else {
+          console.log('Profile API error, using default values');
+        }
+        this.isProfileLoading = false;
       },
     });
   }
