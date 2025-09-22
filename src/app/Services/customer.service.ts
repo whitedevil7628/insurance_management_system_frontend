@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { JwtService } from './jwt.service';
 
@@ -21,7 +21,14 @@ export class CustomerService {
     if (!customerId) {
       return of([]);
     }
-    return this.http.get(`${this.apiUrl}/api/policies/getCustomerPolicyDetails/${customerId}`);
+    
+    const token = localStorage.getItem('jwt');
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    };
+    
+    return this.http.get(`${this.apiUrl}/api/policies/getCustomerPolicyDetails/${customerId}`, { headers });
   }
 
   getPolicyById(policyId: number): Observable<any> {
@@ -30,7 +37,15 @@ export class CustomerService {
 
   getCustomerProfile(): Observable<any> {
     const customerId = this.jwtService.getCustomerId();
-    return this.http.get(`${this.apiUrl}/customer/getCustomer/${customerId}`);
+    const token = localStorage.getItem('jwt');
+    
+    // Temporary manual headers for testing
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    };
+    
+    return this.http.get(`${this.apiUrl}/customer/getCustomer/${customerId}`, { headers });
   }
 
   updateProfile(customerData: any): Observable<any> {
@@ -54,7 +69,15 @@ export class CustomerService {
 
   getCustomerClaims(): Observable<any> {
     const customerId = this.jwtService.getCustomerId();
-    return this.http.get(`${this.apiUrl}/api/claims/customer/${customerId}`);
+    const token = localStorage.getItem('jwt');
+    
+    // Temporary manual headers for testing
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    };
+    
+    return this.http.get(`${this.apiUrl}/api/claims/customer/${customerId}`, { headers });
   }
 
   buyPolicy(policyData: any): Observable<any> {
@@ -62,7 +85,15 @@ export class CustomerService {
   }
   
   getNotifications(customerId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/notify/customer/${customerId}`);
+    const token = localStorage.getItem('jwt');
+    
+    // Temporary manual headers for testing
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    };
+    
+    return this.http.get(`${this.apiUrl}/notify/customer/${customerId}`, { headers });
   }
   
   deleteNotification(notificationId: number): Observable<any> {
