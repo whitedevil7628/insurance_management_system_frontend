@@ -4,7 +4,7 @@
     <div class="alert position-fixed top-0 end-0 m-3"
          [class.alert-success]="notificationType === 'success'"
          [class.alert-danger]="notificationType === 'error'"
-         style="z-index: 1050; min-width: 300px;">
+         style="z-index: 9999; min-width: 300px; max-width: 400px;">
       @if (notificationType === 'success') {
         <i class="fas fa-check-circle me-2"></i>
       }
@@ -610,8 +610,29 @@
                 <input type="text" class="form-control" formControlName="customerName" readonly>
               </div>
               <div class="mb-3">
+                <label class="form-label">Maximum Coverage Amount</label>
+                <div class="input-group">
+                  <span class="input-group-text">₹</span>
+                  <input type="text" class="form-control" formControlName="coverageAmount" readonly style="background-color: #e9ecef;">
+                </div>
+                <small class="form-text text-muted">Your claim amount cannot exceed this coverage limit</small>
+              </div>
+              <div class="mb-3">
                 <label class="form-label">Claim Amount *</label>
-                <input type="number" class="form-control" formControlName="claimAmount" placeholder="Enter claim amount" required>
+                <div class="input-group">
+                  <span class="input-group-text">₹</span>
+                  <input type="number" 
+                         class="form-control" 
+                         formControlName="claimAmount" 
+                         placeholder="Enter claim amount" 
+                         required 
+                         min="1" 
+                         [max]="claimForm.get('coverageAmount')?.value"
+                         step="0.01">
+                </div>
+                <small class="form-text text-muted">
+                  Maximum allowed: ₹{{ claimForm.get('coverageAmount')?.value | number }}
+                </small>
               </div>
             </form>
           </div>
