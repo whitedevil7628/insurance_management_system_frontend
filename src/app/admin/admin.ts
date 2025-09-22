@@ -1,14 +1,14 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { JwtService } from '../Services/jwt.service';
 import { AdminService } from '../Services/admin.service';
-import { ThemeService } from '../Services/theme.service';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './admin.html',
   styleUrl: './admin.css'
 })
@@ -48,30 +48,51 @@ export class Admin implements OnInit {
   // Password toggle
   showAgentPassword = false;
   
-  // Theme
-  isDarkMode = false;
+  // REACTIVE FORMS - Better validation and type safety
+  agentForm!: FormGroup;  // Reactive Form for Agent Creation
+  policyForm!: FormGroup; // Reactive Form for Policy Creation
   
-
-  agentForm = signal({
-    name: '', contactInfo: '', password: '', gender: 'male',
-    aadharnumber: null, phone: null, address: '', role: 'AGENT', orgEmail: ''
-  });
-  updateForm = signal({
+  // TEMPLATE-DRIVEN FORM - For learning comparison (Update Agent Form)
+  updateFormData = signal({
     name: '', contactInfo: '', gender: 'male', date: '',
     aadharnumber: null, phone: null, address: '', orgEmail: ''
   });
-  policyForm = signal({
-    name: '', policyType: '', premiumAmount: null, coverageamount: null, coverageDetails: ''
-  });
 
-  constructor(private jwtService: JwtService, private adminService: AdminService, private themeService: ThemeService) {}
+  constructor(
+    private jwtService: JwtService, 
+    private adminService: AdminService,
+    private fb: FormBuilder
+  ) {
+    this.initializeForms();
+  }
+  
+  // Initialize Reactive Forms
+  initializeForms() {
+    // Agent Creation Form - Reactive
+    this.agentForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(2)]],
+      contactInfo: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      gender: ['male', Validators.required],
+      aadharnumber: ['', [Validators.required, Validators.pattern(/^\d{12}$/)]],
+      phone: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
+      address: ['', Validators.required],
+      orgEmail: ['', [Validators.required, Validators.email]]
+    });
+    
+    // Policy Creation Form - Reactive
+    this.policyForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(3)]],
+      policyType: ['', Validators.required],
+      premiumAmount: ['', [Validators.required, Validators.min(1)]],
+      coverageamount: ['', [Validators.required, Validators.min(1)]],
+      coverageDetails: ['', [Validators.required, Validators.minLength(10)]]
+    });
+  }
 
   ngOnInit() {
     this.loadUserData();
     this.loadData();
-    this.themeService.isDarkMode$.subscribe(isDark => {
-      this.isDarkMode = isDark;
-    });
   }
 
   loadUserData() {
@@ -123,54 +144,74 @@ export class Admin implements OnInit {
   }
 
   createAgent() {
-    const form = this.agentForm();
-    
-    // Check for duplicate contact info
-    const existingContactInfo = this.agents().find(agent => 
-      agent.contactInfo === form.contactInfo || agent.email === form.contactInfo
-    );
-    
-    if (existingContactInfo) {
-      this.showNotificationMessage('Contact info already exists', 'error');
+    // Check if form is valid
+    if (this.agentForm.invalid) {
+      this.agentForm.markAllAsTouched();
+      this.showNotificationMessage('Please fill all fields correctly', 'error');
       return;
     }
     
-    // Check for duplicate organizational email
-    const existingOrgEmail = this.agents().find(agent => 
-      agent.orgEmail === form.orgEmail
-    );
+    const formValue = this.agentForm.value;
     
+    // Frontend validation for duplicates
+    const existingContactInfo = this.agents().find(agent => 
+      agent.contactInfo === formValue.contactInfo || agent.email === formValue.contactInfo
+    );
+    if (existingContactInfo) {
+      this.showNotificationMessage('Email info already exists', 'error');
+      return;
+    }
+    
+    const existingOrgEmail = this.agents().find(agent => 
+      agent.orgEmail === formValue.orgEmail
+    );
     if (existingOrgEmail) {
-      this.showNotificationMessage('Organisational Email already exists', 'error');
+      this.showNotificationMessage('Organisation email already exists', 'error');
       return;
     }
     
     const agentData = {
-      ...form,
+      ...formValue,
+      role: 'AGENT',
       date: new Date().toISOString()
     };
+    
+    this.isCreatingAgent.set(true);
     
     this.adminService.createAgent(agentData).subscribe({
       next: () => {
         this.showNotificationMessage('Agent created successfully!', 'success');
-        // Only reload agents data for faster response
-        this.adminService.getAllAgents().subscribe({
-          next: data => this.agents.set(data || []),
-          error: () => this.agents.set([])
-        });
+        this.loadData(); // Reload all data
         this.showAgentForm.set(false);
-        this.resetAgentForm();
+        this.agentForm.reset({ gender: 'male' }); // Reset with default gender
+        this.isCreatingAgent.set(false);
       },
       error: (error) => {
         console.error('Create agent error:', error);
-        this.showNotificationMessage('Failed to create agent', 'error');
+        
+        // Handle backend validation messages
+        let errorMessage = 'Failed to create agent';
+        if (error.error && typeof error.error === 'string') {
+          const errorText = error.error.toLowerCase();
+          
+          if (errorText.includes('email info already exists') || errorText.includes('contactinfo')) {
+            errorMessage = 'Email info already exists';
+          } else if (errorText.includes('organisation email already exists') || errorText.includes('orgemail')) {
+            errorMessage = 'Organisation email already exists';
+          } else if (errorText.includes('adharcard is already exists') || errorText.includes('aadhaar')) {
+            errorMessage = 'This Aadhaar Card already exists';
+          }
+        }
+        
+        this.showNotificationMessage(errorMessage, 'error');
+        this.isCreatingAgent.set(false);
       }
     });
   }
 
   openUpdateForm(agent: any) {
     this.selectedAgent.set(agent);
-    this.updateForm.set({
+    this.updateFormData.set({
       name: agent.name || '',
       contactInfo: agent.contactInfo || agent.email || '',
       gender: agent.gender || 'male',
@@ -190,7 +231,7 @@ export class Admin implements OnInit {
       return;
     }
 
-    this.adminService.updateAgent(agentId, this.updateForm()).subscribe({
+    this.adminService.updateAgent(agentId, this.updateFormData()).subscribe({
       next: () => {
         this.showNotificationMessage('Agent updated successfully!', 'success');
         this.adminService.getAllAgents().subscribe({
@@ -211,12 +252,7 @@ export class Admin implements OnInit {
     this.selectedAgent.set(null);
   }
 
-  resetAgentForm() {
-    this.agentForm.set({
-      name: '', contactInfo: '', password: '', gender: 'male',
-      aadharnumber: null, phone: null, address: '', role: 'AGENT', orgEmail: ''
-    });
-  }
+
 
   // Policy methods
   togglePolicyForm() {
@@ -224,32 +260,38 @@ export class Admin implements OnInit {
   }
 
   createPolicy() {
-    const form = this.policyForm();
-    
-    // Validation
-    if (!form.name || !form.policyType || !form.premiumAmount || !form.coverageamount || !form.coverageDetails) {
-      this.showNotificationMessage('Please fill all required fields', 'error');
+    // Check if form is valid
+    if (this.policyForm.invalid) {
+      this.policyForm.markAllAsTouched();
+      this.showNotificationMessage('Please fill all fields correctly', 'error');
       return;
     }
     
-    // Convert to exact backend format
+    const formValue = this.policyForm.value;
+    
     const policyData = {
-      name: form.name,
-      policyType: form.policyType,
-      premiumAmount: Number(form.premiumAmount),
-      coverageamount: Number(form.coverageamount),
-      coverageDetails: form.coverageDetails
+      name: formValue.name,
+      policyType: formValue.policyType,
+      premiumAmount: Number(formValue.premiumAmount),
+      coverageamount: Number(formValue.coverageamount),
+      coverageDetails: formValue.coverageDetails
     };
     
-    this.adminService.createPolicyList(policyData).subscribe(() => {
-      this.showNotificationMessage('Policy created successfully!', 'success');
-      // Only reload policies data for faster response
-      this.adminService.getAllPolicyList().subscribe({
-        next: data => this.policies.set(data || []),
-        error: () => this.policies.set([])
-      });
-      this.showPolicyForm.set(false);
-      this.resetPolicyForm();
+    this.isCreatingPolicy.set(true);
+    
+    this.adminService.createPolicyList(policyData).subscribe({
+      next: () => {
+        this.showNotificationMessage('Policy created successfully!', 'success');
+        this.loadData(); // Reload all data
+        this.showPolicyForm.set(false);
+        this.policyForm.reset(); // Reset form
+        this.isCreatingPolicy.set(false);
+      },
+      error: (error) => {
+        console.error('Create policy error:', error);
+        this.showNotificationMessage('Failed to create policy', 'error');
+        this.isCreatingPolicy.set(false);
+      }
     });
   }
 
@@ -270,22 +312,7 @@ export class Admin implements OnInit {
     }
   }
 
-  resetPolicyForm() {
-    this.policyForm.set({
-      name: '', policyType: '', premiumAmount: null, coverageamount: null, coverageDetails: ''
-    });
-  }
 
-  updatePolicyForm(field: string, value: any) {
-    let processedValue = value;
-    
-    // Convert numeric fields to numbers
-    if (field === 'premiumAmount' || field === 'coverageamount') {
-      processedValue = value ? Number(value) : null;
-    }
-    
-    this.policyForm.update(form => ({ ...form, [field]: processedValue }));
-  }
 
   getFilteredPolicies() {
     let filtered = this.policies();
@@ -313,12 +340,9 @@ export class Admin implements OnInit {
     return filtered;
   }
 
-  updateAgentForm(field: string, value: any) {
-    this.agentForm.update(form => ({ ...form, [field]: value }));
-  }
-
+  // Template-driven form helper for update form
   updateFormField(field: string, value: any) {
-    this.updateForm.update(form => ({ ...form, [field]: value }));
+    this.updateFormData.update(form => ({ ...form, [field]: value }));
   }
 
   onUpdateInputChange(event: Event, field: string) {
@@ -326,10 +350,7 @@ export class Admin implements OnInit {
     this.updateFormField(field, target.value);
   }
 
-  onInputChange(event: Event, field: string) {
-    const target = event.target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
-    this.updateAgentForm(field, target.value);
-  }
+
 
   getFilteredAgents() {
     if (!this.searchTerm) return this.agents();
@@ -427,7 +448,22 @@ export class Admin implements OnInit {
     this.showAgentPassword = !this.showAgentPassword;
   }
   
-  toggleTheme() {
-    this.themeService.toggleTheme();
+  // Helper method to get form field errors
+  getFieldError(form: FormGroup, fieldName: string): string {
+    const field = form.get(fieldName);
+    if (field?.errors && field.touched) {
+      if (field.errors['required']) return `${fieldName} is required`;
+      if (field.errors['email']) return 'Please enter a valid email';
+      if (field.errors['minlength']) {
+        const requiredLength = field.errors['minlength'].requiredLength;
+        return `Minimum ${requiredLength} characters required`;
+      }
+      if (field.errors['pattern']) {
+        if (fieldName === 'phone') return 'Please enter a valid 10-digit phone number';
+        if (fieldName === 'aadharnumber') return 'Please enter a valid 12-digit Aadhaar number';
+      }
+      if (field.errors['min']) return 'Value must be greater than 0';
+    }
+    return '';
   }
 }

@@ -232,22 +232,29 @@
         </div>
 
         <div class="flex-grow-1 mx-3 mx-md-4">
-          <div class="input-group" style="border-radius: 25px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-            <span class="input-group-text" style="background: white; border: none; color: #667eea;">
+          <div
+            class="input-group"
+            style="border-radius: 25px; overflow: hidden; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1)"
+          >
+            <span class="input-group-text" style="background: white; border: none; color: #667eea">
               <i class="fas fa-search"></i>
             </span>
-            <input type="text" 
-                   class="form-control" 
-                   placeholder="Search agents, policies, claims, customers..."
-                   [(ngModel)]="searchTerm"
-                   style="border: none; padding: 12px 16px; font-size: 0.9rem;"
-                   #searchInput>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Search agents, policies, claims, customers..."
+              [(ngModel)]="searchTerm"
+              style="border: none; padding: 12px 16px; font-size: 0.9rem"
+              #searchInput
+            />
             @if (searchTerm) {
-              <button class="btn" 
-                      style="background: white; border: none; color: #dc3545;"
-                      (click)="clearSearch()">
-                <i class="fas fa-times"></i>
-              </button>
+            <button
+              class="btn"
+              style="background: white; border: none; color: #dc3545"
+              (click)="clearSearch()"
+            >
+              <i class="fas fa-times"></i>
+            </button>
             }
           </div>
         </div>
@@ -428,13 +435,13 @@
           </button>
         </div>
 
-        <!-- Agent Form -->
+        <!-- REACTIVE FORM - Agent Creation Form -->
         @if (showAgentForm()) {
         <div class="card mb-2">
           <div
-            class="card-header bg-light text-white d-flex justify-content-between align-items-center"
+            class="card-header bg-primary text-white d-flex justify-content-between align-items-center"
           >
-            <h5 class="mb-0">Create New Agent</h5>
+            <h5 class="mb-0"><i class="fas fa-user-plus me-2"></i>Create New Agent</h5>
             <button
               type="button"
               class="btn-close btn-close-white"
@@ -442,40 +449,45 @@
             ></button>
           </div>
           <div class="card-body">
-            <form (ngSubmit)="createAgent()">
+            <form [formGroup]="agentForm" (ngSubmit)="createAgent()">
               <div class="row g-3">
                 <div class="col-md-6">
-                  <label class="form-label">Name</label>
+                  <label class="form-label">Name *</label>
                   <input
                     type="text"
                     class="form-control"
-                    [value]="agentForm().name"
-                    (input)="onInputChange($event, 'name')"
+                    formControlName="name"
                     placeholder="Agent Name"
-                    required
+                    [class.is-invalid]="
+                      agentForm.get('name')?.invalid && agentForm.get('name')?.touched
+                    "
                   />
+                  <div class="invalid-feedback">{{ getFieldError(agentForm, 'name') }}</div>
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label">Email</label>
+                  <label class="form-label">Email *</label>
                   <input
                     type="email"
                     class="form-control"
-                    [value]="agentForm().contactInfo"
-                    (input)="onInputChange($event, 'contactInfo')"
-                    placeholder="Email"
-                    required
+                    formControlName="contactInfo"
+                    placeholder="Email Address"
+                    [class.is-invalid]="
+                      agentForm.get('contactInfo')?.invalid && agentForm.get('contactInfo')?.touched
+                    "
                   />
+                  <div class="invalid-feedback">{{ getFieldError(agentForm, 'contactInfo') }}</div>
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label">Password</label>
+                  <label class="form-label">Password *</label>
                   <div class="input-group">
                     <input
                       [type]="showAgentPassword ? 'text' : 'password'"
                       class="form-control"
-                      [value]="agentForm().password"
-                      (input)="onInputChange($event, 'password')"
-                      placeholder="Password"
-                      required
+                      formControlName="password"
+                      placeholder="Password (min 6 characters)"
+                      [class.is-invalid]="
+                        agentForm.get('password')?.invalid && agentForm.get('password')?.touched
+                      "
                     />
                     <button
                       type="button"
@@ -485,61 +497,77 @@
                       <i [class]="showAgentPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
                     </button>
                   </div>
+                  <div class="invalid-feedback d-block">
+                    {{ getFieldError(agentForm, 'password') }}
+                  </div>
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label">Gender</label>
+                  <label class="form-label">Gender *</label>
                   <select
                     class="form-select"
-                    [value]="agentForm().gender"
-                    (change)="onInputChange($event, 'gender')"
+                    formControlName="gender"
+                    [class.is-invalid]="
+                      agentForm.get('gender')?.invalid && agentForm.get('gender')?.touched
+                    "
                   >
+                    <option value="">Select</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
                   </select>
+                  <div class="invalid-feedback">{{ getFieldError(agentForm, 'gender') }}</div>
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label">Aadhar Number</label>
+                  <label class="form-label">Aadhaar Number *</label>
                   <input
-                    type="number"
+                    type="text"
                     class="form-control"
-                    [value]="agentForm().aadharnumber"
-                    (input)="onInputChange($event, 'aadharnumber')"
-                    placeholder="Aadhar Number"
-                    required
+                    formControlName="aadharnumber"
+                    placeholder="12-digit Aadhaar Number"
+                    [class.is-invalid]="
+                      agentForm.get('aadharnumber')?.invalid &&
+                      agentForm.get('aadharnumber')?.touched
+                    "
                   />
+                  <div class="invalid-feedback">{{ getFieldError(agentForm, 'aadharnumber') }}</div>
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label">Phone</label>
+                  <label class="form-label">Phone *</label>
                   <input
-                    type="number"
+                    type="text"
                     class="form-control"
-                    [value]="agentForm().phone"
-                    (input)="onInputChange($event, 'phone')"
-                    placeholder="Phone Number"
-                    required
+                    formControlName="phone"
+                    placeholder="10-digit Phone Number"
+                    [class.is-invalid]="
+                      agentForm.get('phone')?.invalid && agentForm.get('phone')?.touched
+                    "
                   />
+                  <div class="invalid-feedback">{{ getFieldError(agentForm, 'phone') }}</div>
                 </div>
                 <div class="col-12">
-                  <label class="form-label">Organization Email</label>
+                  <label class="form-label">Organization Email *</label>
                   <input
                     type="email"
                     class="form-control"
-                    [value]="agentForm().orgEmail"
-                    (input)="onInputChange($event, 'orgEmail')"
-                    placeholder="Organization Email"
-                    required
+                    formControlName="orgEmail"
+                    placeholder="Organization Email Address"
+                    [class.is-invalid]="
+                      agentForm.get('orgEmail')?.invalid && agentForm.get('orgEmail')?.touched
+                    "
                   />
+                  <div class="invalid-feedback">{{ getFieldError(agentForm, 'orgEmail') }}</div>
                 </div>
                 <div class="col-12">
-                  <label class="form-label">Address</label>
+                  <label class="form-label">Address *</label>
                   <textarea
                     class="form-control"
-                    [value]="agentForm().address"
-                    (input)="onInputChange($event, 'address')"
-                    placeholder="Address"
+                    formControlName="address"
+                    placeholder="Complete Address"
                     rows="3"
-                    required
+                    [class.is-invalid]="
+                      agentForm.get('address')?.invalid && agentForm.get('address')?.touched
+                    "
                   ></textarea>
+                  <div class="invalid-feedback">{{ getFieldError(agentForm, 'address') }}</div>
                 </div>
               </div>
               <div class="mt-3">
@@ -550,8 +578,17 @@
                 >
                   Cancel
                 </button>
-                <button type="submit" class="btn btn-outline-success">
-                  <i class="fas fa-save me-2"></i>Create Agent
+                <button
+                  type="submit"
+                  class="btn btn-success"
+                  [disabled]="agentForm.invalid || isCreatingAgent()"
+                >
+                  @if (isCreatingAgent()) {
+                  <span class="spinner-border spinner-border-sm me-2"></span>
+                  } @else {
+                  <i class="fas fa-save me-2"></i>
+                  }
+                  {{ isCreatingAgent() ? 'Creating...' : 'Create Agent' }}
                 </button>
               </div>
             </form>
@@ -559,13 +596,15 @@
         </div>
         }
 
-        <!-- Update Agent Form -->
+        <!-- TEMPLATE-DRIVEN FORM - Update Agent Form (For Learning Comparison) -->
         @if (showUpdateForm()) {
         <div class="card mb-4">
           <div
             class="card-header bg-success text-white d-flex justify-content-between align-items-center"
           >
-            <h5 class="mb-0">Update Agent</h5>
+            <h5 class="mb-0">
+              <i class="fas fa-edit me-2"></i>Update Agent
+            </h5>
             <button
               type="button"
               class="btn-close btn-close-white"
@@ -573,6 +612,7 @@
             ></button>
           </div>
           <div class="card-body">
+            <!-- Note: This uses template-driven approach with signals for comparison -->
             <form (ngSubmit)="updateAgent()">
               <div class="row g-3">
                 <div class="col-md-6">
@@ -580,7 +620,7 @@
                   <input
                     type="text"
                     class="form-control"
-                    [value]="updateForm().name"
+                    [value]="updateFormData().name"
                     (input)="onUpdateInputChange($event, 'name')"
                     placeholder="Agent Name"
                     required
@@ -591,7 +631,7 @@
                   <input
                     type="email"
                     class="form-control"
-                    [value]="updateForm().contactInfo"
+                    [value]="updateFormData().contactInfo"
                     (input)="onUpdateInputChange($event, 'contactInfo')"
                     placeholder="Contact Info"
                     required
@@ -601,7 +641,7 @@
                   <label class="form-label">Gender</label>
                   <select
                     class="form-select"
-                    [value]="updateForm().gender"
+                    [value]="updateFormData().gender"
                     (change)="onUpdateInputChange($event, 'gender')"
                   >
                     <option value="Male">Male</option>
@@ -613,28 +653,28 @@
                   <input
                     type="datetime-local"
                     class="form-control"
-                    [value]="updateForm().date"
+                    [value]="updateFormData().date"
                     (input)="onUpdateInputChange($event, 'date')"
                     required
                   />
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label">Aadhar Number</label>
+                  <label class="form-label">Aadhaar Number</label>
                   <input
-                    type="number"
+                    type="text"
                     class="form-control"
-                    [value]="updateForm().aadharnumber"
+                    [value]="updateFormData().aadharnumber"
                     (input)="onUpdateInputChange($event, 'aadharnumber')"
-                    placeholder="Aadhar Number"
+                    placeholder="Aadhaar Number"
                     required
                   />
                 </div>
                 <div class="col-md-6">
                   <label class="form-label">Phone</label>
                   <input
-                    type="number"
+                    type="text"
                     class="form-control"
-                    [value]="updateForm().phone"
+                    [value]="updateFormData().phone"
                     (input)="onUpdateInputChange($event, 'phone')"
                     placeholder="Phone Number"
                     required
@@ -645,7 +685,7 @@
                   <input
                     type="email"
                     class="form-control"
-                    [value]="updateForm().orgEmail"
+                    [value]="updateFormData().orgEmail"
                     (input)="onUpdateInputChange($event, 'orgEmail')"
                     placeholder="Organization Email"
                     required
@@ -655,7 +695,7 @@
                   <label class="form-label">Address</label>
                   <textarea
                     class="form-control"
-                    [value]="updateForm().address"
+                    [value]="updateFormData().address"
                     (input)="onUpdateInputChange($event, 'address')"
                     placeholder="Address"
                     rows="3"
@@ -686,6 +726,8 @@
                     <th>ID</th>
                     <th>Name</th>
                     <th>Phone</th>
+                    <th>Organization Email</th>
+                    <th>Aadhaar Number</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -695,6 +737,8 @@
                     <td>{{ agent.agentId || agent.id }}</td>
                     <td>{{ agent.name }}</td>
                     <td>{{ agent.phone }}</td>
+                    <td>{{ agent.orgEmail }}</td>
+                    <td>{{ agent.aadharnumber }}</td>
                     <td>
                       <button
                         class="btn btn-sm btn-outline-success"
@@ -824,7 +868,8 @@
                   </tr>
                 </thead>
                 <tbody>
-                  @for (customer of getFilteredCustomers(); track customer.customerId || customer.id) {
+                  @for (customer of getFilteredCustomers(); track customer.customerId ||
+                  customer.id) {
                   <tr>
                     <td>{{ customer.customerId || customer.id }}</td>
                     <td>{{ customer.name }}</td>
@@ -873,13 +918,15 @@
           </div>
         </div>
 
-        <!-- Policy Form -->
+        <!-- REACTIVE FORM - Policy Creation Form -->
         @if (showPolicyForm()) {
         <div class="card mb-4">
           <div
-            class="card-header bg-light text-white d-flex justify-content-between align-items-center"
+            class="card-header bg-primary text-white d-flex justify-content-between align-items-center"
           >
-            <h5 class="mb-0">Create New Policy</h5>
+            <h5 class="mb-0">
+              <i class="fas fa-plus-circle me-2"></i>Create New Policy (Reactive Form)
+            </h5>
             <button
               type="button"
               class="btn-close btn-close-white"
@@ -887,28 +934,29 @@
             ></button>
           </div>
           <div class="card-body">
-            <form (ngSubmit)="createPolicy()">
+            <form [formGroup]="policyForm" (ngSubmit)="createPolicy()">
               <div class="row g-3">
                 <div class="col-md-6">
-                  <label class="form-label">Policy Name</label>
+                  <label class="form-label">Policy Name *</label>
                   <input
                     type="text"
                     class="form-control"
-                    [value]="policyForm().name"
-                    #nameInput
-                    (input)="updatePolicyForm('name', nameInput.value)"
+                    formControlName="name"
                     placeholder="Policy Name"
-                    required
+                    [class.is-invalid]="
+                      policyForm.get('name')?.invalid && policyForm.get('name')?.touched
+                    "
                   />
+                  <div class="invalid-feedback">{{ getFieldError(policyForm, 'name') }}</div>
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label">Policy Type</label>
+                  <label class="form-label">Policy Type *</label>
                   <select
                     class="form-select"
-                    [value]="policyForm().policyType"
-                    #typeSelect
-                    (change)="updatePolicyForm('policyType', typeSelect.value)"
-                    required
+                    formControlName="policyType"
+                    [class.is-invalid]="
+                      policyForm.get('policyType')?.invalid && policyForm.get('policyType')?.touched
+                    "
                   >
                     <option value="">Select Type</option>
                     <option value="Health">Health</option>
@@ -917,54 +965,76 @@
                     <option value="Travel">Travel</option>
                     <option value="Home">Home</option>
                   </select>
+                  <div class="invalid-feedback">{{ getFieldError(policyForm, 'policyType') }}</div>
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label">Premium Amount</label>
+                  <label class="form-label">Premium Amount *</label>
                   <input
                     type="number"
                     class="form-control"
-                    [value]="policyForm().premiumAmount"
-                    #premiumInput
-                    (input)="updatePolicyForm('premiumAmount', premiumInput.value)"
+                    formControlName="premiumAmount"
                     placeholder="Premium Amount"
-                    required
+                    [class.is-invalid]="
+                      policyForm.get('premiumAmount')?.invalid &&
+                      policyForm.get('premiumAmount')?.touched
+                    "
                   />
+                  <div class="invalid-feedback">
+                    {{ getFieldError(policyForm, 'premiumAmount') }}
+                  </div>
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label">Coverage Amount</label>
+                  <label class="form-label">Coverage Amount *</label>
                   <input
                     type="number"
                     class="form-control"
-                    [value]="policyForm().coverageamount"
-                    #coverageInput
-                    (input)="updatePolicyForm('coverageamount', coverageInput.value)"
+                    formControlName="coverageamount"
                     placeholder="Coverage Amount"
-                    required
+                    [class.is-invalid]="
+                      policyForm.get('coverageamount')?.invalid &&
+                      policyForm.get('coverageamount')?.touched
+                    "
                   />
+                  <div class="invalid-feedback">
+                    {{ getFieldError(policyForm, 'coverageamount') }}
+                  </div>
                 </div>
                 <div class="col-12">
-                  <label class="form-label">Coverage Details</label>
+                  <label class="form-label">Coverage Details *</label>
                   <textarea
                     class="form-control"
-                    [value]="policyForm().coverageDetails"
-                    #detailsTextarea
-                    (input)="updatePolicyForm('coverageDetails', detailsTextarea.value)"
-                    placeholder="Coverage Details"
+                    formControlName="coverageDetails"
+                    placeholder="Coverage Details (minimum 10 characters)"
                     rows="3"
-                    required
+                    [class.is-invalid]="
+                      policyForm.get('coverageDetails')?.invalid &&
+                      policyForm.get('coverageDetails')?.touched
+                    "
                   ></textarea>
+                  <div class="invalid-feedback">
+                    {{ getFieldError(policyForm, 'coverageDetails') }}
+                  </div>
                 </div>
               </div>
               <div class="mt-3">
                 <button
                   type="button"
-                  class="btn btn-outline-danger border-3 me-2"
+                  class="btn btn-outline-danger me-2"
                   (click)="togglePolicyForm()"
                 >
                   Cancel
                 </button>
-                <button type="submit" class="btn btn-outline-success border-3">
-                  <i class="fas fa-save me-2"></i>Create Policy
+                <button
+                  type="submit"
+                  class="btn btn-success"
+                  [disabled]="policyForm.invalid || isCreatingPolicy()"
+                >
+                  @if (isCreatingPolicy()) {
+                  <span class="spinner-border spinner-border-sm me-2"></span>
+                  } @else {
+                  <i class="fas fa-save me-2"></i>
+                  }
+                  {{ isCreatingPolicy() ? 'Creating...' : 'Create Policy' }}
                 </button>
               </div>
             </form>
@@ -1074,8 +1144,7 @@
               <i class="fas fa-history fa-3x text-muted mb-3"></i>
               <p class="text-muted">No policy logs available</p>
             </div>
-            } @else {
-            @if (getFilteredPolicyLogs().length === 0 && policyLogs().length > 0) {
+            } @else { @if (getFilteredPolicyLogs().length === 0 && policyLogs().length > 0) {
             <div class="text-center p-5">
               <i class="fas fa-search fa-3x text-muted mb-3"></i>
               <p class="text-muted">No policy logs match your search</p>
@@ -1124,8 +1193,7 @@
                 </tbody>
               </table>
             </div>
-            }
-            }
+            } }
           </div>
         </div>
       </div>
