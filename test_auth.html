@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Auth</title>
+</head>
+<body>
+    <h3>JWT Token Test</h3>
+    <button onclick="testToken()">Test Current Token</button>
+    <button onclick="testManualRequest()">Test Manual Request</button>
+    <div id="result"></div>
+
+    <script>
+        function testToken() {
+            const token = localStorage.getItem('jwt');
+            const result = document.getElementById('result');
+            
+            if (!token) {
+                result.innerHTML = '<p style="color: red;">No JWT token found</p>';
+                return;
+            }
+            
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                const now = Math.floor(Date.now() / 1000);
+                
+                result.innerHTML = `
+                    <h4>Token Analysis:</h4>
+                    <p><strong>Customer ID:</strong> ${payload.customerId}</p>
+                    <p><strong>Role:</strong> ${payload.role}</p>
+                    <p><strong>Email:</strong> ${payload.sub}</p>
+                    <p><strong>Issued:</strong> ${new Date(payload.iat * 1000)}</p>
+                    <p><strong>Expires:</strong> ${new Date(payload.exp * 1000)}</p>
+                    <p><strong>Current Time:</strong> ${new Date()}</p>
+                    <p><strong>Valid:</strong> ${payload.exp > now ? 'Yes' : 'No'}</p>
+                    <p><strong>Token Length:</strong> ${token.length}</p>
+                `;
+            } catch (error) {
+                result.innerHTML = `<p style="color: red;">Error parsing token: ${error.message}</p>`;
+            }
+        }
+        
+        async function testManualRequest() {
+            const token = localStorage.getItem('jwt');
+            const result = document.getElementById('result');
+            
+            if (!token) {
+                result.innerHTML = '<p style="color: red;">No JWT token found</p>';
+                return;
+            }
+            
+            try {
+                const response = await fetch('http://localhost:8763/customer/getCustomer/1', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                result.innerHTML = `
+                    <h4>Manual Request Test:</h4>
+                    <p><strong>Status:</strong> ${response.status}</p>
+                    <p><strong>Status Text:</strong> ${response.statusText}</p>
+                    <p><strong>Headers:</strong> ${JSON.stringify([...response.headers])}</p>
+                `;
+                
+                if (response.ok) {
+                    const data = await response.text();
+                    result.innerHTML += `<p><strong>Response:</strong> ${data}</p>`;
+                } else {
+                    result.innerHTML += `<p style="color: red;"><strong>Error:</strong> ${response.status} ${response.statusText}</p>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<p style="color: red;">Request failed: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
