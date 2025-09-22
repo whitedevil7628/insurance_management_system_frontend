@@ -53,8 +53,7 @@ export class Agent implements OnInit, OnDestroy {
 
   loadAgentData() {
     console.log('Loading agent data...');
-    // Interceptor automatically adds JWT token
-    this.http.get('http://localhost:8763/agents/claims/all')
+    this.agentService.getAgentData()
       .subscribe({
         next: (response: any) => {
           console.log('Agent data response:', response);
@@ -78,8 +77,7 @@ export class Agent implements OnInit, OnDestroy {
       return;
     }
     
-    // Interceptor automatically adds JWT token
-    this.http.get(`http://localhost:8763/api/claims/agent/${agentId}`)
+    this.agentService.getAgentClaims(agentId)
       .subscribe({
         next: (claims: any) => {
           console.log('Agent-specific claims response:', claims);
@@ -109,8 +107,7 @@ export class Agent implements OnInit, OnDestroy {
   private loadCustomerDetailsForClaims(claims: any[]) {
     claims.forEach(claim => {
       if (claim.customerId && !claim.customerDetails) {
-        // Interceptor automatically adds JWT token
-        this.http.get(`http://localhost:8763/customer/getCustomer/${claim.customerId}`)
+        this.agentService.getCustomerDetails(claim.customerId)
           .subscribe({
             next: (customer: any) => {
               claim.customerDetails = customer;
@@ -141,8 +138,8 @@ export class Agent implements OnInit, OnDestroy {
   loadClaimDetails(claim: any) {
     console.log('Loading claim details for:', claim);
 
-    // Load customer details - Interceptor automatically adds JWT token
-    this.http.get(`http://localhost:8763/customer/getCustomer/${claim.customerId}`)
+    // Load customer details
+    this.agentService.getCustomerDetails(claim.customerId)
       .subscribe({
         next: (customer: any) => {
           console.log('Customer response:', customer);
@@ -153,8 +150,8 @@ export class Agent implements OnInit, OnDestroy {
         }
       });
 
-    // Load policy details - Interceptor automatically adds JWT token
-    this.http.get(`http://localhost:8763/api/policies/${claim.policyId}`)
+    // Load policy details
+    this.agentService.getPolicyDetails(claim.policyId)
       .subscribe({
         next: (response: any) => {
           console.log('Policy response:', response);
@@ -168,8 +165,7 @@ export class Agent implements OnInit, OnDestroy {
 
   approveClaim(claimId: number) {
     console.log('Approving claim:', claimId);
-    // Interceptor automatically adds JWT token
-    this.http.put(`http://localhost:8763/agents/approve-claim/${claimId}`, {}, { responseType: 'text' })
+    this.agentService.approveClaim(claimId)
       .subscribe({
         next: (response) => {
           console.log('Claim approved successfully:', response);
@@ -186,8 +182,7 @@ export class Agent implements OnInit, OnDestroy {
 
   rejectClaim(claimId: number) {
     console.log('Rejecting claim:', claimId);
-    // Interceptor automatically adds JWT token
-    this.http.put(`http://localhost:8763/agents/reject-claim/${claimId}`, {}, { responseType: 'text' })
+    this.agentService.rejectClaim(claimId)
       .subscribe({
         next: (response) => {
           console.log('Claim rejected successfully:', response);

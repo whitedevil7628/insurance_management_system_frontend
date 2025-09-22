@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -9,67 +9,74 @@ export class AdminService {
   private baseUrl = 'http://localhost:8763';
 
   constructor(private http: HttpClient) {}
-  // Interceptor automatically adds JWT token to all requests
+
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('jwt');
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+  }
 
   // Agent operations
   createAgent(agentData: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/auth/registeragent`, agentData, { responseType: 'text' });
+    return this.http.post(`${this.baseUrl}/auth/registeragent`, agentData, { headers: this.getHeaders(), responseType: 'text' });
   }
 
   getAllAgents(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/agents/all`);
+    return this.http.get(`${this.baseUrl}/agents/all`, { headers: this.getHeaders() });
   }
 
   deleteAgent(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/agents/delete/${id}`);
+    return this.http.delete(`${this.baseUrl}/agents/delete/${id}`, { headers: this.getHeaders() });
   }
 
   updateAgent(id: number, agentData: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}/agents/update/${id}`, agentData, { responseType: 'text' });
+    return this.http.put(`${this.baseUrl}/agents/update/${id}`, agentData, { headers: this.getHeaders(), responseType: 'text' });
   }
 
   // Claims operations
   getAllClaims(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/api/claims/claims/all`);
+    return this.http.get(`${this.baseUrl}/api/claims/claims/all`, { headers: this.getHeaders() });
   }
 
   // Customer operations
   getAllCustomers(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/customer/getAllCustomer`);
+    return this.http.get(`${this.baseUrl}/customer/getAllCustomer`, { headers: this.getHeaders() });
   }
 
   // Policy operations
   getAllPolicyList(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/api/policylist`);
+    return this.http.get(`${this.baseUrl}/api/policylist`, { headers: this.getHeaders() });
   }
 
   deletePolicyList(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/api/policylist/${id}`);
+    return this.http.delete(`${this.baseUrl}/api/policylist/${id}`, { headers: this.getHeaders() });
   }
 
   createPolicyList(policyData: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/api/policylist`, policyData);
+    return this.http.post(`${this.baseUrl}/api/policylist`, policyData, { headers: this.getHeaders() });
   }
 
   // Policy logs
   getAllPolicies(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/api/policies`);
+    return this.http.get(`${this.baseUrl}/api/policies`, { headers: this.getHeaders() });
   }
 
   // Communication
   sendCustomMail(mailData: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/api/mail/send`, mailData);
+    return this.http.post(`${this.baseUrl}/api/mail/send`, mailData, { headers: this.getHeaders() });
   }
 
   sendCustomSMS(smsData: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/api/sms/send`, smsData);
+    return this.http.post(`${this.baseUrl}/api/sms/send`, smsData, { headers: this.getHeaders() });
   }
   
   getNotifications(agentId: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/notify/agent/${agentId}`);
+    return this.http.get(`${this.baseUrl}/notify/agent/${agentId}`, { headers: this.getHeaders() });
   }
   
   deleteNotification(notificationId: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/notify/delete/${notificationId}`, { responseType: 'text' });
+    return this.http.delete(`${this.baseUrl}/notify/delete/${notificationId}`, { headers: this.getHeaders(), responseType: 'text' });
   }
 }

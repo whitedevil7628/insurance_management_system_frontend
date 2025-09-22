@@ -4,13 +4,10 @@ import { HttpInterceptorFn } from '@angular/common/http';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const token = localStorage.getItem('jwt');
   
-  if (token) {
-    // Add both Authorization formats for compatibility
+  if (token && token.trim()) {
     const authReq = req.clone({
       setHeaders: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Authorization': `Bearer ${token}`
       }
     });
     return next(authReq);
