@@ -72,7 +72,24 @@ export class Customer implements OnInit, OnDestroy {
       policyName: [{value: '', disabled: true}],
       customerId: [{value: '', disabled: true}],
       customerName: [{value: '', disabled: true}],
+      coverageAmount: [{value: '', disabled: true}],
       claimAmount: ['', [Validators.required, Validators.min(1)]]
+    });
+    
+    // Add real-time validation for claim amount
+    this.claimForm.get('claimAmount')?.valueChanges.subscribe(value => {
+      if (value && this.selectedPolicy) {
+        const coverageAmount = this.selectedPolicy.coverageAmount || 
+                             this.selectedPolicy.coverage || 
+                             parseFloat(this.selectedPolicy[0]) || 0;
+        
+        if (parseFloat(value) > coverageAmount) {
+          this.showNotificationMessage(
+            `Claim amount cannot exceed coverage limit of ₹${coverageAmount}`, 
+            'error'
+          );
+        }
+      }
     });
     
     this.queryForm = this.fb.group({
@@ -312,11 +329,14 @@ export class Customer implements OnInit, OnDestroy {
     }
     
     this.selectedPolicy = policy;
+    const coverageAmount = policy.coverageAmount || policy.coverage || parseFloat(policy[0]) || 0;
+    
     this.claimForm.patchValue({
       policyId: policy.policyId || policy.id,
       policyName: policy.name || 'No Name',
       customerId: this.customerId,
       customerName: this.customerName,
+      coverageAmount: coverageAmount,
       claimAmount: ''
     });
     this.showClaimForm = true;
@@ -329,17 +349,33 @@ export class Customer implements OnInit, OnDestroy {
   }
 
   submitClaim() {
-    if (!this.claimForm.get('claimAmount')?.value) {
+    const claimAmount = this.claimForm.get('claimAmount')?.value;
+    
+    if (!claimAmount) {
       this.showNotificationMessage('Please enter claim amount', 'error');
       return;
     }
     
     if (this.selectedPolicy) {
+      // Get coverage amount from policy
+      const coverageAmount = this.selectedPolicy.coverageAmount || 
+                           this.selectedPolicy.coverage || 
+                           parseFloat(this.selectedPolicy[0]) || 0;
+      
+      // Validate claim amount against coverage amount
+      if (parseFloat(claimAmount) > coverageAmount) {
+        this.showNotificationMessage(
+          `Claim amount (₹${claimAmount}) cannot exceed policy coverage amount (₹${coverageAmount})`, 
+          'error'
+        );
+        return;
+      }
+      
       const claimData = {
         policyId: this.selectedPolicy.policyId || this.selectedPolicy.id,
         customerId: this.customerId,
         agentId: this.selectedPolicy.agentId || 17,
-        claimAmount: this.claimForm.get('claimAmount')?.value
+        claimAmount: claimAmount
       };
 
       console.log('Filing claim with data:', claimData);
