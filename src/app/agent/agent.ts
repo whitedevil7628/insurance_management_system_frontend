@@ -1,11 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { JwtService } from '../Services/jwt.service';
 import { AgentService } from '../Services/agent.service';
-import { ThemeService } from '../Services/theme.service';
 
 @Component({
   selector: 'app-agent',
@@ -32,10 +30,9 @@ export class Agent implements OnInit, OnDestroy {
   notificationMessage = '';
   notificationType: 'success' | 'error' = 'success';
   
-  // Theme
-  isDarkMode = false;
 
-  constructor(private router: Router, private jwtService: JwtService, private http: HttpClient, private agentService: AgentService, private themeService: ThemeService) {}
+
+  constructor(private router: Router, private jwtService: JwtService, private http: HttpClient, private agentService: AgentService) {}
 
   ngOnInit() {
     if (!this.jwtService.getToken() || this.jwtService.getUserRole() !== 'AGENT') {
@@ -46,9 +43,6 @@ export class Agent implements OnInit, OnDestroy {
     this.loadAgentData();
     this.loadClaims();
     this.startNotificationPolling();
-    this.themeService.isDarkMode$.subscribe(isDark => {
-      this.isDarkMode = isDark;
-    });
   }
   
   ngOnDestroy() {
@@ -58,41 +52,23 @@ export class Agent implements OnInit, OnDestroy {
   }
 
   loadAgentData() {
-    const token = this.jwtService.getToken();
-    console.log('JWT Token:', token);
-    
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-
     console.log('Loading agent data...');
-    this.http.get('http://localhost:8763/agents/claims/all', { headers })
+    // Interceptor automatically adds JWT token
+    this.http.get('http://localhost:8763/agents/claims/all')
       .subscribe({
         next: (response: any) => {
           console.log('Agent data response:', response);
           this.agentData = response.agent;
-          // Load notifications after we have agent data
           this.loadNotifications();
         },
         error: (error) => {
           console.error('Error loading agent data:', error);
-          console.error('Error status:', error.status);
-          console.error('Error message:', error.message);
-          // Still try to load notifications with fallback ID
           this.loadNotifications();
         }
       });
   }
 
   loadClaims() {
-    const token = this.jwtService.getToken();
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-
-    // Get agent ID from JWT token (stored as customerId)
     const agentId = this.jwtService.getCustomerId();
     console.log('Loading claims for agent ID:', agentId);
     
@@ -102,50 +78,42 @@ export class Agent implements OnInit, OnDestroy {
       return;
     }
     
-    this.http.get(`http://localhost:8763/api/claims/agent/${agentId}`, { headers })
+    // Interceptor automatically adds JWT token
+    this.http.get(`http://localhost:8763/api/claims/agent/${agentId}`)
       .subscribe({
         next: (claims: any) => {
           console.log('Agent-specific claims response:', claims);
           const claimsArray = Array.isArray(claims) ? claims : [];
-          
-          // Load updated status for each claim
-          this.loadClaimsWithUpdatedStatus(claimsArray, headers);
+          this.loadClaimsWithUpdatedStatus(claimsArray);
         },
         error: (error) => {
           console.error('Error loading agent claims:', error);
-          console.error('Error status:', error.status);
-          console.error('Error message:', error.message);
           this.claims = [];
         }
       });
   }
 
-  loadClaimsWithUpdatedStatus(claims: any[], headers: HttpHeaders) {
+  loadClaimsWithUpdatedStatus(claims: any[]) {
     if (claims.length === 0) {
       this.claims = [];
       this.filteredClaims = [];
       return;
     }
 
-    // Since we're getting claims from agent-specific endpoint, they should already have current status
     this.claims = claims;
-    this.filteredClaims = claims; // Initialize filtered claims
-    
-    // Load customer details for better search
-    this.loadCustomerDetailsForClaims(claims, headers);
-    
+    this.filteredClaims = claims;
+    this.loadCustomerDetailsForClaims(claims);
     console.log('Agent claims loaded:', this.claims);
   }
 
-  private loadCustomerDetailsForClaims(claims: any[], headers: HttpHeaders) {
-    // Load customer details for each claim to enable better search
+  private loadCustomerDetailsForClaims(claims: any[]) {
     claims.forEach(claim => {
       if (claim.customerId && !claim.customerDetails) {
-        this.http.get(`http://localhost:8763/customer/getCustomer/${claim.customerId}`, { headers })
+        // Interceptor automatically adds JWT token
+        this.http.get(`http://localhost:8763/customer/getCustomer/${claim.customerId}`)
           .subscribe({
             next: (customer: any) => {
               claim.customerDetails = customer;
-              // Update filtered claims if search is active
               if (this.searchQuery.trim()) {
                 this.onSearch();
               }
@@ -171,20 +139,10 @@ export class Agent implements OnInit, OnDestroy {
   }
 
   loadClaimDetails(claim: any) {
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.jwtService.getToken()}`,
-      'Content-Type': 'application/json'
-    });
-
     console.log('Loading claim details for:', claim);
-    console.log('Customer ID:', claim.customerId);
-    console.log('Policy ID:', claim.policyId);
 
-    // Load customer details
-    const customerUrl = `http://localhost:8763/customer/getCustomer/${claim.customerId}`;
-    console.log('Fetching customer from:', customerUrl);
-    
-    this.http.get(customerUrl, { headers })
+    // Load customer details - Interceptor automatically adds JWT token
+    this.http.get(`http://localhost:8763/customer/getCustomer/${claim.customerId}`)
       .subscribe({
         next: (customer: any) => {
           console.log('Customer response:', customer);
@@ -192,44 +150,30 @@ export class Agent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error loading customer:', error);
-          console.error('Customer error status:', error.status);
-          console.error('Customer error message:', error.message);
         }
       });
 
-    // Load policy details
-    const policyUrl = `http://localhost:8763/api/policies/${claim.policyId}`;
-    console.log('Fetching policy from:', policyUrl);
-    
-    this.http.get(policyUrl, { headers })
+    // Load policy details - Interceptor automatically adds JWT token
+    this.http.get(`http://localhost:8763/api/policies/${claim.policyId}`)
       .subscribe({
         next: (response: any) => {
           console.log('Policy response:', response);
           this.claimDetails.policy = response;
-          console.log('Extracted policy:', this.claimDetails.policy);
         },
         error: (error) => {
           console.error('Error loading policy:', error);
-          console.error('Policy error status:', error.status);
-          console.error('Policy error message:', error.message);
         }
       });
   }
 
   approveClaim(claimId: number) {
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.jwtService.getToken()}`,
-      'Content-Type': 'application/json'
-    });
-
     console.log('Approving claim:', claimId);
-    this.http.put(`http://localhost:8763/agents/approve-claim/${claimId}`, {}, { headers, responseType: 'text' })
+    // Interceptor automatically adds JWT token
+    this.http.put(`http://localhost:8763/agents/approve-claim/${claimId}`, {}, { responseType: 'text' })
       .subscribe({
         next: (response) => {
           console.log('Claim approved successfully:', response);
           this.showNotificationMessage('Claim approved successfully!', 'success');
-          
-          // Reload claims to get updated status from backend
           this.loadClaims();
           this.closeClaimModal();
         },
@@ -241,19 +185,13 @@ export class Agent implements OnInit, OnDestroy {
   }
 
   rejectClaim(claimId: number) {
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.jwtService.getToken()}`,
-      'Content-Type': 'application/json'
-    });
-
     console.log('Rejecting claim:', claimId);
-    this.http.put(`http://localhost:8763/agents/reject-claim/${claimId}`, {}, { headers, responseType: 'text' })
+    // Interceptor automatically adds JWT token
+    this.http.put(`http://localhost:8763/agents/reject-claim/${claimId}`, {}, { responseType: 'text' })
       .subscribe({
         next: (response) => {
           console.log('Claim rejected successfully:', response);
           this.showNotificationMessage('Claim rejected successfully!', 'success');
-          
-          // Reload claims to get updated status from backend
           this.loadClaims();
           this.closeClaimModal();
         },
@@ -372,9 +310,7 @@ export class Agent implements OnInit, OnDestroy {
     }
   }
   
-  toggleTheme() {
-    this.themeService.toggleTheme();
-  }
+
 
   closeClaimForm() {
     // Close any open forms or modals

@@ -14,7 +14,7 @@ import { ThemeService } from '../Services/theme.service';
   imports: [CommonModule, ReactiveFormsModule, FormsModule, HttpClientModule],
   providers: [CustomerService],
   templateUrl: './customer.html',
-  styleUrl: './customer.css'
+  styleUrl: './customer.css',
 })
 export class Customer implements OnInit, OnDestroy {
   activeSection = 'policies';
@@ -40,12 +40,12 @@ export class Customer implements OnInit, OnDestroy {
   queryForm: FormGroup;
   customerClaims: any[] = [];
   isQueryLoading = false;
-  
+
   // Notifications
   notifications: any[] = [];
   showNotificationPanel = false;
   notificationInterval: any;
-  
+
   // Theme
   isDarkMode = false;
 
@@ -64,39 +64,41 @@ export class Customer implements OnInit, OnDestroy {
       date: ['', Validators.required],
       aadharnumber: ['', [Validators.required, Validators.pattern('^[0-9]{12}$')]],
       phone: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-      address: ['', Validators.required]
+      address: ['', Validators.required],
     });
-    
+
     this.claimForm = this.fb.group({
-      policyId: [{value: '', disabled: true}],
-      policyName: [{value: '', disabled: true}],
-      customerId: [{value: '', disabled: true}],
-      customerName: [{value: '', disabled: true}],
-      coverageAmount: [{value: '', disabled: true}],
-      claimAmount: ['', [Validators.required, Validators.min(1)]]
+      policyId: [{ value: '', disabled: true }],
+      policyName: [{ value: '', disabled: true }],
+      customerId: [{ value: '', disabled: true }],
+      customerName: [{ value: '', disabled: true }],
+      coverageAmount: [{ value: '', disabled: true }],
+      claimAmount: ['', [Validators.required, Validators.min(1)]],
     });
-    
+
     // Add real-time validation for claim amount
-    this.claimForm.get('claimAmount')?.valueChanges.subscribe(value => {
+    this.claimForm.get('claimAmount')?.valueChanges.subscribe((value) => {
       if (value && this.selectedPolicy) {
-        const coverageAmount = this.selectedPolicy.coverageAmount || 
-                             this.selectedPolicy.coverage || 
-                             parseFloat(this.selectedPolicy[0]) || 0;
-        
+        const coverageAmount =
+          this.selectedPolicy.coverageAmount ||
+          this.selectedPolicy.coverage ||
+          parseFloat(this.selectedPolicy[0]) ||
+          0;
+
         if (parseFloat(value) > coverageAmount) {
           this.showNotificationMessage(
-            `Claim amount cannot exceed coverage limit of ₹${coverageAmount}`, 
+            `Claim amount cannot exceed coverage limit of ₹${coverageAmount}`,
             'error'
           );
         }
       }
     });
-    
+
     this.queryForm = this.fb.group({
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       service: ['', Validators.required],
-      message: ['', Validators.required]
+      message: ['', Validators.required],
     });
   }
 
@@ -112,11 +114,11 @@ export class Customer implements OnInit, OnDestroy {
     this.loadClaims();
     this.loadNotifications();
     this.startNotificationPolling();
-    this.themeService.isDarkMode$.subscribe(isDark => {
+    this.themeService.isDarkMode$.subscribe((isDark) => {
       this.isDarkMode = isDark;
     });
   }
-  
+
   ngOnDestroy() {
     if (this.notificationInterval) {
       clearInterval(this.notificationInterval);
@@ -146,9 +148,9 @@ export class Customer implements OnInit, OnDestroy {
         this.policies = [];
         this.isLoading = false;
         this.showNotificationMessage('Failed to load policies', 'error');
-      }
+      },
     });
-    
+
     // Load customer-specific policies
     this.customerService.getCustomerPolicies().subscribe({
       next: (data) => {
@@ -163,7 +165,7 @@ export class Customer implements OnInit, OnDestroy {
         } else {
           this.showNotificationMessage('Failed to load your policies', 'error');
         }
-      }
+      },
     });
   }
 
@@ -189,7 +191,7 @@ export class Customer implements OnInit, OnDestroy {
             this.showNotificationMessage('Update failed. Try again', 'error');
           }
           this.isProfileLoading = false;
-        }
+        },
       });
     } else {
       this.showNotificationMessage('Please fill all required fields', 'error');
@@ -205,7 +207,7 @@ export class Customer implements OnInit, OnDestroy {
       this.router.navigate(['/login']);
     }
   }
-  
+
   startNotificationPolling() {
     this.notificationInterval = setInterval(() => {
       this.loadNotifications();
@@ -222,9 +224,9 @@ export class Customer implements OnInit, OnDestroy {
           date: data.date,
           aadharnumber: data.aadharnumber,
           phone: data.phone,
-          address: data.address
+          address: data.address,
         });
-        
+
         // Update navbar display name from profile data
         if (data.name) {
           this.customerName = data.name;
@@ -237,7 +239,7 @@ export class Customer implements OnInit, OnDestroy {
         if (errorMsg && errorMsg.includes('not found')) {
           this.showNotificationMessage('Profile not found', 'error');
         }
-      }
+      },
     });
   }
 
@@ -245,7 +247,7 @@ export class Customer implements OnInit, OnDestroy {
     this.notificationMessage = message;
     this.notificationType = type;
     this.showNotification = true;
-    
+
     setTimeout(() => {
       this.showNotification = false;
     }, 3000);
@@ -256,16 +258,18 @@ export class Customer implements OnInit, OnDestroy {
       console.log('No policies available');
       return [];
     }
-    
+
     if (!this.searchTerm.trim()) {
       return this.policies;
     }
-    
+
     console.log('Filtering policies:', this.policies);
-    return this.policies.filter(policy => {
+    return this.policies.filter((policy) => {
       const name = (policy.name || policy[4] || '').toLowerCase();
       const type = (policy[5] || policy.policyType || '').toLowerCase();
-      return name.includes(this.searchTerm.toLowerCase()) || type.includes(this.searchTerm.toLowerCase());
+      return (
+        name.includes(this.searchTerm.toLowerCase()) || type.includes(this.searchTerm.toLowerCase())
+      );
     });
   }
 
@@ -273,15 +277,17 @@ export class Customer implements OnInit, OnDestroy {
     if (!this.myPolicies || this.myPolicies.length === 0) {
       return [];
     }
-    
+
     if (!this.searchTerm.trim()) {
       return this.myPolicies;
     }
-    
-    return this.myPolicies.filter(policy => {
+
+    return this.myPolicies.filter((policy) => {
       const name = (policy.name || '').toLowerCase();
       const type = (policy.policyType || '').toLowerCase();
-      return name.includes(this.searchTerm.toLowerCase()) || type.includes(this.searchTerm.toLowerCase());
+      return (
+        name.includes(this.searchTerm.toLowerCase()) || type.includes(this.searchTerm.toLowerCase())
+      );
     });
   }
 
@@ -289,15 +295,18 @@ export class Customer implements OnInit, OnDestroy {
     if (!this.customerClaims || this.customerClaims.length === 0) {
       return [];
     }
-    
+
     if (!this.searchTerm.trim()) {
       return this.customerClaims;
     }
-    
-    return this.customerClaims.filter(claim => {
+
+    return this.customerClaims.filter((claim) => {
       const claimId = (claim.claimId?.toString() || '').toLowerCase();
       const status = (claim.status || '').toLowerCase();
-      return claimId.includes(this.searchTerm.toLowerCase()) || status.includes(this.searchTerm.toLowerCase());
+      return (
+        claimId.includes(this.searchTerm.toLowerCase()) ||
+        status.includes(this.searchTerm.toLowerCase())
+      );
     });
   }
 
@@ -305,21 +314,24 @@ export class Customer implements OnInit, OnDestroy {
     if (!this.notifications || this.notifications.length === 0) {
       return [];
     }
-    
+
     if (!this.searchTerm.trim()) {
       return this.notifications;
     }
-    
-    return this.notifications.filter(notification => {
+
+    return this.notifications.filter((notification) => {
       const title = (notification.title || notification.type || '').toLowerCase();
       const message = (notification.message || notification.content || '').toLowerCase();
-      return title.includes(this.searchTerm.toLowerCase()) || message.includes(this.searchTerm.toLowerCase());
+      return (
+        title.includes(this.searchTerm.toLowerCase()) ||
+        message.includes(this.searchTerm.toLowerCase())
+      );
     });
   }
 
   isPolicyClaimed(policy: any): boolean {
     const policyId = policy.policyId || policy.id;
-    return this.customerClaims.some(claim => claim.policyId === policyId);
+    return this.customerClaims.some((claim) => claim.policyId === policyId);
   }
 
   openClaimForm(policy: any) {
@@ -327,17 +339,17 @@ export class Customer implements OnInit, OnDestroy {
       this.showNotificationMessage('This policy has already been claimed', 'error');
       return;
     }
-    
+
     this.selectedPolicy = policy;
     const coverageAmount = policy.coverageAmount || policy.coverage || parseFloat(policy[0]) || 0;
-    
+
     this.claimForm.patchValue({
       policyId: policy.policyId || policy.id,
       policyName: policy.name || 'No Name',
       customerId: this.customerId,
       customerName: this.customerName,
       coverageAmount: coverageAmount,
-      claimAmount: ''
+      claimAmount: '',
     });
     this.showClaimForm = true;
   }
@@ -350,37 +362,39 @@ export class Customer implements OnInit, OnDestroy {
 
   submitClaim() {
     const claimAmount = this.claimForm.get('claimAmount')?.value;
-    
+
     if (!claimAmount) {
       this.showNotificationMessage('Please enter claim amount', 'error');
       return;
     }
-    
+
     if (this.selectedPolicy) {
       // Get coverage amount from policy
-      const coverageAmount = this.selectedPolicy.coverageAmount || 
-                           this.selectedPolicy.coverage || 
-                           parseFloat(this.selectedPolicy[0]) || 0;
-      
+      const coverageAmount =
+        this.selectedPolicy.coverageAmount ||
+        this.selectedPolicy.coverage ||
+        parseFloat(this.selectedPolicy[0]) ||
+        0;
+
       // Validate claim amount against coverage amount
       if (parseFloat(claimAmount) > coverageAmount) {
         this.showNotificationMessage(
-          `Claim amount (₹${claimAmount}) cannot exceed policy coverage amount (₹${coverageAmount})`, 
+          `Claim amount (₹${claimAmount}) cannot exceed policy coverage amount (₹${coverageAmount})`,
           'error'
         );
         return;
       }
-      
+
       const claimData = {
         policyId: this.selectedPolicy.policyId || this.selectedPolicy.id,
         customerId: this.customerId,
         agentId: this.selectedPolicy.agentId || 17,
-        claimAmount: claimAmount
+        claimAmount: claimAmount,
       };
 
       console.log('Filing claim with data:', claimData);
       this.isClaimLoading = true;
-      
+
       this.customerService.fileClaim(claimData).subscribe({
         next: (response) => {
           console.log('Claim filed successfully:', response);
@@ -399,7 +413,7 @@ export class Customer implements OnInit, OnDestroy {
             this.showNotificationMessage('Claim filing failed', 'error');
           }
           this.isClaimLoading = false;
-        }
+        },
       });
     }
   }
@@ -414,28 +428,38 @@ export class Customer implements OnInit, OnDestroy {
         const errorMsg = error.error?.message || error.message;
         if (errorMsg && errorMsg.includes('not found')) {
           console.log('No claims found for customer');
-        } 
-      }
+        }
+      },
     });
   }
 
   getStatusColor(status: string): string {
     switch (status) {
-      case 'FILED': return '#007bff';
-      case 'UNDER_REVIEW': return '#ffc107';
-      case 'APPROVED': return '#28a745';
-      case 'REJECTED': return '#dc3545';
-      default: return '#6c757d';
+      case 'FILED':
+        return '#007bff';
+      case 'UNDER_REVIEW':
+        return '#ffc107';
+      case 'APPROVED':
+        return '#28a745';
+      case 'REJECTED':
+        return '#dc3545';
+      default:
+        return '#6c757d';
     }
   }
 
   getStatusIcon(status: string): string {
     switch (status) {
-      case 'FILED': return 'fas fa-file-alt';
-      case 'UNDER_REVIEW': return 'fas fa-search';
-      case 'APPROVED': return 'fas fa-check-circle';
-      case 'REJECTED': return 'fas fa-times-circle';
-      default: return 'fas fa-question-circle';
+      case 'FILED':
+        return 'fas fa-file-alt';
+      case 'UNDER_REVIEW':
+        return 'fas fa-search';
+      case 'APPROVED':
+        return 'fas fa-check-circle';
+      case 'REJECTED':
+        return 'fas fa-times-circle';
+      default:
+        return 'fas fa-question-circle';
     }
   }
 
@@ -448,20 +472,35 @@ export class Customer implements OnInit, OnDestroy {
     console.log('Policy data before processing:', policy);
     console.log('Policy array values:', {
       index0: policy[0],
-      index1: policy[1], 
+      index1: policy[1],
       index2: policy[2],
       index3: policy[3],
       index4: policy[4],
-      index5: policy[5]
+      index5: policy[5],
     });
-    
+
     // Extract values with proper type conversion
     const name = policy[4] || policy.name || 'No Name';
     const policyType = policy[5] || policy.policyType || policy.policy_type || policy.type || 'N/A';
-    const premiumAmount = parseFloat(policy[2]) || parseFloat(policy.premium_amount) || parseFloat(policy.premiumAmount) || parseFloat(policy.premium) || 0;
-    const coverageAmount = parseFloat(policy[0]) || parseFloat(policy.coverageamount) || parseFloat(policy.coverageAmount) || parseFloat(policy.coverage) || 0;
-    const coverageDetails = policy[3] || policy.coverage_details || policy.coverageDetails || policy.description || 'No Description';
-    
+    const premiumAmount =
+      parseFloat(policy[2]) ||
+      parseFloat(policy.premium_amount) ||
+      parseFloat(policy.premiumAmount) ||
+      parseFloat(policy.premium) ||
+      0;
+    const coverageAmount =
+      parseFloat(policy[0]) ||
+      parseFloat(policy.coverageamount) ||
+      parseFloat(policy.coverageAmount) ||
+      parseFloat(policy.coverage) ||
+      0;
+    const coverageDetails =
+      policy[3] ||
+      policy.coverage_details ||
+      policy.coverageDetails ||
+      policy.description ||
+      'No Description';
+
     const policyData = {
       customerId: this.customerId,
       name: name,
@@ -469,10 +508,16 @@ export class Customer implements OnInit, OnDestroy {
       premiumAmount: premiumAmount,
       coverageAmount: coverageAmount,
       coverageDetails: coverageDetails,
-      validityPeriod: 1
+      validityPeriod: 1,
     };
 
-    console.log('Extracted values:', { name, policyType, premiumAmount, coverageAmount, coverageDetails });
+    console.log('Extracted values:', {
+      name,
+      policyType,
+      premiumAmount,
+      coverageAmount,
+      coverageDetails,
+    });
     console.log('Sending policy data:', policyData);
 
     this.isPolicyLoading = true;
@@ -494,7 +539,7 @@ export class Customer implements OnInit, OnDestroy {
           this.showNotificationMessage('Policy purchase failed', 'error');
         }
         this.isPolicyLoading = false;
-      }
+      },
     });
   }
 
@@ -510,32 +555,41 @@ export class Customer implements OnInit, OnDestroy {
 
   getPolicyDetailValue(policy: any, field: string): any {
     switch (field) {
-      case 'name': return policy[4] || policy.name || 'No Name';
-      case 'type': return policy[5] || policy.policyType || policy.policy_type || policy.type || 'N/A';
-      case 'premium': return parseFloat(policy[2]) || parseFloat(policy.premium_amount) || parseFloat(policy.premiumAmount) || parseFloat(policy.premium) || 0;
-      case 'coverage': return parseFloat(policy[0]) || parseFloat(policy.coverageamount) || parseFloat(policy.coverageAmount) || parseFloat(policy.coverage) || 0;
-      case 'details': return policy[3] || policy.coverage_details || policy.coverageDetails || policy.description || 'No Description';
-      case 'id': return policy[1] || policy.policy_id || policy.policyId || policy.id || 'N/A';
-      default: return 'N/A';
+      case 'name':
+        return policy[4] || policy.name || 'No Name';
+      case 'type':
+        return policy[5] || policy.policyType || policy.policy_type || policy.type || 'N/A';
+      case 'premium':
+        return (
+          parseFloat(policy[2]) ||
+          parseFloat(policy.premium_amount) ||
+          parseFloat(policy.premiumAmount) ||
+          parseFloat(policy.premium) ||
+          0
+        );
+      case 'coverage':
+        return (
+          parseFloat(policy[0]) ||
+          parseFloat(policy.coverageamount) ||
+          parseFloat(policy.coverageAmount) ||
+          parseFloat(policy.coverage) ||
+          0
+        );
+      case 'details':
+        return (
+          policy[3] ||
+          policy.coverage_details ||
+          policy.coverageDetails ||
+          policy.description ||
+          'No Description'
+        );
+      case 'id':
+        return policy[1] || policy.policy_id || policy.policyId || policy.id || 'N/A';
+      default:
+        return 'N/A';
     }
   }
 
-  submitQuery() {
-    if (this.queryForm.valid) {
-      this.isQueryLoading = true;
-      
-      // Simulate form submission (replace with actual API call if needed)
-      setTimeout(() => {
-        this.showNotificationMessage('Your query has been submitted successfully! We will get back to you soon.', 'success');
-        this.queryForm.reset();
-        this.isQueryLoading = false;
-      }, 1500);
-    } else {
-      this.showNotificationMessage('Please fill all required fields correctly.', 'error');
-      this.queryForm.markAllAsTouched();
-    }
-  }
-  
   loadNotifications() {
     if (this.customerId) {
       console.log('Loading notifications for customer ID:', this.customerId);
@@ -547,63 +601,85 @@ export class Customer implements OnInit, OnDestroy {
         error: (error) => {
           console.error('Error loading customer notifications:', error);
           this.notifications = [];
-        }
+        },
       });
     }
   }
-  
+
   toggleNotifications() {
     this.showNotificationPanel = !this.showNotificationPanel;
   }
-  
+
   toggleNotificationExpand(notification: any) {
     notification.expanded = !notification.expanded;
   }
-  
+
   markAsRead(notification: any, event: Event) {
     event.stopPropagation();
     this.customerService.deleteNotification(notification.id).subscribe({
       next: () => {
-        this.notifications = this.notifications.filter(n => n.id !== notification.id);
+        this.notifications = this.notifications.filter((n) => n.id !== notification.id);
       },
       error: (error) => {
         console.error('Error marking notification as read:', error);
-      }
+      },
     });
   }
-  
+
   getNotificationIcon(type: string): string {
     switch (type?.toLowerCase()) {
-      case 'policy': return 'fa-shield-alt';
-      case 'claim': return 'fa-file-medical';
-      case 'payment': return 'fa-credit-card';
-      case 'alert': return 'fa-exclamation-triangle';
-      case 'info': return 'fa-info-circle';
-      case 'success': return 'fa-check-circle';
-      case 'warning': return 'fa-exclamation-circle';
-      case 'error': return 'fa-times-circle';
-      case 'reminder': return 'fa-clock';
-      case 'update': return 'fa-sync-alt';
-      default: return 'fa-bell';
+      case 'policy':
+        return 'fa-shield-alt';
+      case 'claim':
+        return 'fa-file-medical';
+      case 'payment':
+        return 'fa-credit-card';
+      case 'alert':
+        return 'fa-exclamation-triangle';
+      case 'info':
+        return 'fa-info-circle';
+      case 'success':
+        return 'fa-check-circle';
+      case 'warning':
+        return 'fa-exclamation-circle';
+      case 'error':
+        return 'fa-times-circle';
+      case 'reminder':
+        return 'fa-clock';
+      case 'update':
+        return 'fa-sync-alt';
+      default:
+        return 'fa-bell';
     }
   }
-  
+
   getNotificationIconClass(type: string): string {
     switch (type?.toLowerCase()) {
-      case 'policy': return 'bg-primary';
-      case 'claim': return 'bg-success';
-      case 'payment': return 'bg-warning';
-      case 'alert': return 'bg-danger';
-      case 'info': return 'bg-info';
-      case 'success': return 'bg-success';
-      case 'warning': return 'bg-warning';
-      case 'error': return 'bg-danger';
-      case 'reminder': return 'bg-secondary';
-      case 'update': return 'bg-primary';
-      default: return 'bg-primary';
+      case 'policy':
+        return 'bg-primary';
+      case 'claim':
+        return 'bg-success';
+      case 'payment':
+        return 'bg-warning';
+      case 'alert':
+        return 'bg-danger';
+      case 'info':
+        return 'bg-info';
+      case 'success':
+        return 'bg-success';
+      case 'warning':
+        return 'bg-warning';
+      case 'error':
+        return 'bg-danger';
+      case 'reminder':
+        return 'bg-secondary';
+      case 'update':
+        return 'bg-primary';
+      default:
+        return 'bg-primary';
     }
   }
-  
+
   toggleTheme() {
     this.themeService.toggleTheme();
   }
@@ -613,13 +689,20 @@ export class Customer implements OnInit, OnDestroy {
 
   getSearchPlaceholder(): string {
     switch (this.activeSection) {
-      case 'policies': return 'Search available policies...';
-      case 'myPolicies': return 'Search your policies...';
-      case 'claims': return 'Search your claims...';
-      case 'notifications': return 'Search notifications...';
-      case 'profile': return 'Search profile settings...';
-      case 'help': return 'Search help topics...';
-      default: return 'Search policies, claims, or help...';
+      case 'policies':
+        return 'Search available policies...';
+      case 'myPolicies':
+        return 'Search your policies...';
+      case 'claims':
+        return 'Search your claims...';
+      case 'notifications':
+        return 'Search notifications...';
+      case 'profile':
+        return 'Search profile settings...';
+      case 'help':
+        return 'Search help topics...';
+      default:
+        return 'Search policies, claims, or help...';
     }
   }
 

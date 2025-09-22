@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of, catchError } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
 import { JwtService } from './jwt.service';
 
 @Injectable({
@@ -10,17 +10,10 @@ export class CustomerService {
   private apiUrl = 'http://localhost:8763';
 
   constructor(private http: HttpClient, private jwtService: JwtService) {}
-
-  private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('jwt');
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    });
-  }
+  // Interceptor automatically adds JWT token to all requests
 
   getAllPolicies(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/api/policylist`, { headers: this.getHeaders() });
+    return this.http.get(`${this.apiUrl}/api/policylist`);
   }
   
   getCustomerPolicies(): Observable<any> {
@@ -28,22 +21,16 @@ export class CustomerService {
     if (!customerId) {
       return of([]);
     }
-    return this.http.get(`${this.apiUrl}/api/policies/getCustomerPolicyDetails/${customerId}`, {
-      headers: this.getHeaders(),
-    });
+    return this.http.get(`${this.apiUrl}/api/policies/getCustomerPolicyDetails/${customerId}`);
   }
 
   getPolicyById(policyId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/api/policies/${policyId}`, {
-      headers: this.getHeaders(),
-    });
+    return this.http.get(`${this.apiUrl}/api/policies/${policyId}`);
   }
 
   getCustomerProfile(): Observable<any> {
     const customerId = this.jwtService.getCustomerId();
-    return this.http.get(`${this.apiUrl}/customer/getCustomer/${customerId}`, {
-      headers: this.getHeaders(),
-    });
+    return this.http.get(`${this.apiUrl}/customer/getCustomer/${customerId}`);
   }
 
   updateProfile(customerData: any): Observable<any> {
@@ -58,41 +45,27 @@ export class CustomerService {
       phone: customerData.phone,
       address: customerData.address
     };
-    return this.http.put(`${this.apiUrl}/customer/Update`, updateData, {
-      headers: this.getHeaders(),
-      responseType: 'text'
-    });
+    return this.http.put(`${this.apiUrl}/customer/Update`, updateData, { responseType: 'text' });
   }
 
   fileClaim(claimData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/api/claims/file`, claimData, {
-      headers: this.getHeaders(),
-      responseType: 'text'
-    });
+    return this.http.post(`${this.apiUrl}/api/claims/file`, claimData, { responseType: 'text' });
   }
 
   getCustomerClaims(): Observable<any> {
     const customerId = this.jwtService.getCustomerId();
-    return this.http.get(`${this.apiUrl}/api/claims/customer/${customerId}`, {
-      headers: this.getHeaders()
-    });
+    return this.http.get(`${this.apiUrl}/api/claims/customer/${customerId}`);
   }
 
   buyPolicy(policyData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/api/policies/create`, policyData, {
-      headers: this.getHeaders(),
-      responseType: 'text'
-    });
+    return this.http.post(`${this.apiUrl}/api/policies/create`, policyData, { responseType: 'text' });
   }
   
   getNotifications(customerId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/notify/customer/${customerId}`, { headers: this.getHeaders() });
+    return this.http.get(`${this.apiUrl}/notify/customer/${customerId}`);
   }
   
   deleteNotification(notificationId: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/notify/delete/${notificationId}`, { 
-      headers: this.getHeaders(),
-      responseType: 'text'
-    });
+    return this.http.delete(`${this.apiUrl}/notify/delete/${notificationId}`, { responseType: 'text' });
   }
 }
