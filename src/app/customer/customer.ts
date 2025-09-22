@@ -6,7 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { JwtService } from '../Services/jwt.service';
 import { CustomerService } from '../Services/customer.service';
-import { ThemeService } from '../Services/theme.service';
+
 
 @Component({
   selector: 'app-customer',
@@ -46,15 +46,13 @@ export class Customer implements OnInit, OnDestroy {
   showNotificationPanel = false;
   notificationInterval: any;
 
-  // Theme
-  isDarkMode = false;
+
 
   constructor(
     private jwtService: JwtService,
     private customerService: CustomerService,
     private fb: FormBuilder,
-    private router: Router,
-    private themeService: ThemeService
+    private router: Router
   ) {
     this.profileForm = this.fb.group({
       name: ['', Validators.required],
@@ -114,9 +112,7 @@ export class Customer implements OnInit, OnDestroy {
     this.loadClaims();
     this.loadNotifications();
     this.startNotificationPolling();
-    this.themeService.isDarkMode$.subscribe((isDark) => {
-      this.isDarkMode = isDark;
-    });
+
   }
 
   ngOnDestroy() {
@@ -680,9 +676,7 @@ export class Customer implements OnInit, OnDestroy {
     }
   }
 
-  toggleTheme() {
-    this.themeService.toggleTheme();
-  }
+
 
   // Search Functionality
   showMobileMenu = false;
