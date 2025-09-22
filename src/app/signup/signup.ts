@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { ThemeService } from '../Services/theme.service';
+
 
 @Component({
   selector: 'app-signup',
@@ -20,13 +20,12 @@ export class SignupComponent {
   notificationMessage = '';
   notificationType: 'success' | 'error' = 'success';
   showPassword = false;
-  isDarkMode = false;
+
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private http: HttpClient,
-    private themeService: ThemeService
+    private http: HttpClient
   ) {
     this.signupForm = this.fb.group({
       name: ['', Validators.required],
@@ -39,9 +38,7 @@ export class SignupComponent {
 
     });
     
-    this.themeService.isDarkMode$.subscribe(isDark => {
-      this.isDarkMode = isDark;
-    });
+
   }
 
   onSubmitSignup() {
@@ -164,7 +161,5 @@ export class SignupComponent {
     }
   }
   
-  toggleTheme() {
-    this.themeService.toggleTheme();
-  }
+
 }

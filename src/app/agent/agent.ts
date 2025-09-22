@@ -7,7 +7,7 @@ import { AgentService } from '../Services/agent.service';
 
 @Component({
   selector: 'app-agent',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule],
   templateUrl: './agent.html',
   styleUrl: './agent.css'
 })
