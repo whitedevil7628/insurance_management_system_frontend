@@ -52,16 +52,39 @@ export class Agent implements OnInit, OnDestroy {
   }
 
   loadAgentData() {
-    console.log('Loading agent data...');
-    this.agentService.getAgentData()
+    const agentId = this.jwtService.getCustomerId();
+    console.log('Loading agent data for ID:', agentId);
+    
+    if (!agentId) {
+      console.error('No agent ID found in token');
+      this.loadNotifications();
+      return;
+    }
+
+    // Load agent profile data
+    this.agentService.getAgentProfile(agentId)
       .subscribe({
         next: (response: any) => {
-          console.log('Agent data response:', response);
-          this.agentData = response.agent;
+          console.log('Agent profile response:', response);
+          this.agentData = response || {};
+          // Update navbar display name from profile data
+          if (response?.name) {
+            // Agent name is already available from JWT, but we can update with fresh data
+          }
           this.loadNotifications();
         },
         error: (error) => {
-          console.error('Error loading agent data:', error);
+          console.error('Error loading agent profile:', error);
+          // Set default values from JWT if API fails
+          const jwtName = this.jwtService.getUserName();
+          this.agentData = {
+            name: jwtName || 'Agent',
+            agentId: agentId,
+            email: '',
+            phone: '',
+            gender: '',
+            address: ''
+          };
           this.loadNotifications();
         }
       });

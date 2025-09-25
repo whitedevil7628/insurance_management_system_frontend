@@ -307,43 +307,49 @@
                     <div class="col-md-6">
                       <div class="info-item">
                         <label class="info-label"><i class="fas fa-user me-2"></i>Full Name</label>
-                        <div class="info-value">{{ agentData?.name || 'Nahush Patankar' }}</div>
+                        <div class="info-value">{{ agentData?.name || 'Not Available' }}</div>
                       </div>
                     </div>
                     <div class="col-md-6">
                       <div class="info-item">
                         <label class="info-label"><i class="fas fa-envelope me-2"></i>Email Address</label>
-                        <div class="info-value">{{ agentData?.orgEmail || 'nahush.patankar@securelife.com' }}</div>
+                        <div class="info-value">{{ agentData?.email || agentData?.orgEmail || 'Not Available' }}</div>
                       </div>
                     </div>
                     <div class="col-md-6">
                       <div class="info-item">
                         <label class="info-label"><i class="fas fa-phone me-2"></i>Phone Number</label>
-                        <div class="info-value">{{ agentData?.phone || '+91 98765 43210' }}</div>
+                        <div class="info-value">{{ agentData?.phone || agentData?.phoneNumber || 'Not Available' }}</div>
                       </div>
                     </div>
                     <div class="col-md-6">
                       <div class="info-item">
                         <label class="info-label"><i class="fas fa-id-badge me-2"></i>Agent ID</label>
-                        <div class="info-value">{{ agentData?.agentId || 'AGT001' }}</div>
+                        <div class="info-value">{{ agentData?.agentId || 'Not Available' }}</div>
                       </div>
                     </div>
                     <div class="col-md-6">
                       <div class="info-item">
                         <label class="info-label"><i class="fas fa-venus-mars me-2"></i>Gender</label>
-                        <div class="info-value">{{ agentData?.gender || 'Male' }}</div>
+                        <div class="info-value">{{ agentData?.gender || 'Not Available' }}</div>
                       </div>
                     </div>
                     <div class="col-md-6">
                       <div class="info-item">
-                        <label class="info-label"><i class="fas fa-building me-2"></i>Department</label>
-                        <div class="info-value">Claims Processing</div>
+                        <label class="info-label"><i class="fas fa-calendar me-2"></i>Date of Birth</label>
+                        <div class="info-value">{{ agentData?.date || agentData?.dateOfBirth || 'Not Available' }}</div>
                       </div>
                     </div>
                     <div class="col-12">
                       <div class="info-item">
                         <label class="info-label"><i class="fas fa-map-marker-alt me-2"></i>Address</label>
-                        <div class="info-value">{{ agentData?.address || 'Mumbai, Maharashtra, India' }}</div>
+                        <div class="info-value">{{ agentData?.address || 'Not Available' }}</div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="info-item">
+                        <label class="info-label"><i class="fas fa-id-card me-2"></i>Aadhar Number</label>
+                        <div class="info-value">{{ agentData?.aadharnumber || agentData?.aadharNumber || 'Not Available' }}</div>
                       </div>
                     </div>
                   </div>
