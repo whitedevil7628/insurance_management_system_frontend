@@ -23,6 +23,10 @@ export class AgentService {
     return this.http.get(`${this.baseUrl}/agents/claims/all`, { headers: this.getHeaders() });
   }
 
+  getAgentProfile(agentId: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/agents/getAgent/${agentId}`, { headers: this.getHeaders() });
+  }
+
   getAgentClaims(agentId: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/api/claims/agent/${agentId}`, { headers: this.getHeaders() });
   }

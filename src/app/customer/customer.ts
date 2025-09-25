@@ -37,7 +37,7 @@ export class Customer implements OnInit, OnDestroy {
   selectedPolicy: any = null;
   selectedPolicyForDetails: any = null;
   claimForm: FormGroup;
-  queryForm: FormGroup;
+  // queryForm: FormGroup;
   customerClaims: any[] = [];
   isQueryLoading = false;
 
@@ -92,12 +92,12 @@ export class Customer implements OnInit, OnDestroy {
       }
     });
 
-    this.queryForm = this.fb.group({
-      name: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      service: ['', Validators.required],
-      message: ['', Validators.required],
-    });
+    // this.queryForm = this.fb.group({
+    //   name: ['', Validators.required],
+    //   email: ['', [Validators.required, Validators.email]],
+    //   service: ['', Validators.required],
+    //   message: ['', Validators.required],
+    // });
   }
 
   ngOnInit() {
