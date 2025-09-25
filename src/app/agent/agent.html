@@ -313,13 +313,13 @@
                     <div class="col-md-6">
                       <div class="info-item">
                         <label class="info-label"><i class="fas fa-envelope me-2"></i>Email Address</label>
-                        <div class="info-value">{{ agentData?.email || agentData?.orgEmail || 'Not Available' }}</div>
+                        <div class="info-value">{{ agentData?.email || 'Not Available' }}</div>
                       </div>
                     </div>
                     <div class="col-md-6">
                       <div class="info-item">
                         <label class="info-label"><i class="fas fa-phone me-2"></i>Phone Number</label>
-                        <div class="info-value">{{ agentData?.phone || agentData?.phoneNumber || 'Not Available' }}</div>
+                        <div class="info-value">{{ agentData?.phone || 'Not Available' }}</div>
                       </div>
                     </div>
                     <div class="col-md-6">
@@ -337,7 +337,7 @@
                     <div class="col-md-6">
                       <div class="info-item">
                         <label class="info-label"><i class="fas fa-calendar me-2"></i>Date of Birth</label>
-                        <div class="info-value">{{ agentData?.date || agentData?.dateOfBirth || 'Not Available' }}</div>
+                        <div class="info-value">{{ agentData?.date | date:'dd/MM/yyyy' || 'Not Available' }}</div>
                       </div>
                     </div>
                     <div class="col-12">
@@ -349,7 +349,7 @@
                     <div class="col-md-6">
                       <div class="info-item">
                         <label class="info-label"><i class="fas fa-id-card me-2"></i>Aadhar Number</label>
-                        <div class="info-value">{{ agentData?.aadharnumber || agentData?.aadharNumber || 'Not Available' }}</div>
+                        <div class="info-value">{{ agentData?.aadharnumber || 'Not Available' }}</div>
                       </div>
                     </div>
                   </div>
