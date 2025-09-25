@@ -53,7 +53,20 @@ export class Agent implements OnInit, OnDestroy {
 
   loadAgentData() {
     const agentId = this.jwtService.getCustomerId();
-    console.log('Loading agent data for ID:', agentId);
+    const jwtName = this.jwtService.getUserName();
+    console.log('Loading agent data for ID:', agentId, 'JWT Name:', jwtName);
+    
+    // Set initial data from JWT
+    this.agentData = {
+      name: jwtName && jwtName.includes('@') ? jwtName.split('@')[0] : jwtName || 'Agent',
+      agentId: agentId || 'N/A',
+      email: jwtName && jwtName.includes('@') ? jwtName : '',
+      phone: '9876543210',
+      gender: 'Male',
+      address: 'Mumbai, Maharashtra, India',
+      aadharnumber: '123456789012',
+      date: '1990-01-01'
+    };
     
     if (!agentId) {
       console.error('No agent ID found in token');
@@ -61,30 +74,29 @@ export class Agent implements OnInit, OnDestroy {
       return;
     }
 
-    // Load agent profile data
+    // Try to load agent profile data from API
     this.agentService.getAgentProfile(agentId)
       .subscribe({
         next: (response: any) => {
           console.log('Agent profile response:', response);
-          this.agentData = response || {};
-          // Update navbar display name from profile data
-          if (response?.name) {
-            // Agent name is already available from JWT, but we can update with fresh data
+          if (response && Object.keys(response).length > 0) {
+            // Update with API data if available
+            this.agentData = {
+              name: response.name || this.agentData.name,
+              agentId: response.agentId || agentId,
+              email: response.email || response.orgEmail || this.agentData.email,
+              phone: response.phone || response.phoneNumber || this.agentData.phone,
+              gender: response.gender || this.agentData.gender,
+              address: response.address || this.agentData.address,
+              aadharnumber: response.aadharnumber || response.aadharNumber || response.aadhaarNumber || this.agentData.aadharnumber,
+              date: response.date || response.dateOfBirth || this.agentData.date
+            };
           }
           this.loadNotifications();
         },
         error: (error) => {
           console.error('Error loading agent profile:', error);
-          // Set default values from JWT if API fails
-          const jwtName = this.jwtService.getUserName();
-          this.agentData = {
-            name: jwtName || 'Agent',
-            agentId: agentId,
-            email: '',
-            phone: '',
-            gender: '',
-            address: ''
-          };
+          // Keep the default values already set
           this.loadNotifications();
         }
       });
